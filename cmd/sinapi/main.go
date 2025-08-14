@@ -3,7 +3,6 @@ package main
 
 import (
 	"go-confess-sins-api/internal/config"
-	"go-confess-sins-api/internal/sinapi"
 	"go-confess-sins-api/internal/sinapi/handlers"
 	"go-confess-sins-api/internal/sinapi/store"
 	"log"
@@ -39,11 +38,11 @@ func main() {
 	router.GET("/sins", handler.GetSins)
 	router.POST("/sins", handler.CreateSin)
 	// --- Private Routes (Auth Middleware Applied) ---
-	privateRoutes := router.Group("/")
-	privateRoutes.Use(sinapi.AuthMiddleware(dbStore))
-	{
+	// privateRoutes := router.Group("/")
+	// privateRoutes.Use(sinapi.AuthMiddleware(dbStore))
+	// {
 
-		privateRoutes.POST("/sins", handler.CreateSin)
-	}
+	// 	privateRoutes.POST("/sins", handler.CreateSin)
+	// }
 	router.Run(":8080")
 }
