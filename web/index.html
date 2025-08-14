@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Code Confessional</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Latest Confessions</h1>
+    {{ range .sins }}
+        <div class="sin-card">
+            <p>{{ .Description }}</p>
+            <span>Count: {{ .Count }}</span>
+        </div>
+    {{ end }}
+</body>
+</html>
