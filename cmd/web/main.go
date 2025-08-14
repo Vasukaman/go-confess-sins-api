@@ -23,11 +23,12 @@ func main() {
 	godotenv.Load(".env")
 	cfg := config.New()
 
-	sinApiURL := "http://localhost:8080" // Base URL for your API
+	sinApiURL := cfg.SinApiUrl
 
 	// --- GET / ---
 	// This handler now checks for a "newKey" in the URL to display it.
 	router.GET("/", func(c *gin.Context) {
+		sinApiURL := cfg.SinApiUrl
 		resp, err := http.Get(sinApiURL + "/sins")
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error: Could not reach the sin-api.")
