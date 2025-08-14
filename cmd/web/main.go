@@ -48,9 +48,12 @@ func main() {
 	// This handler now checks for a "newKey" in the URL to display it.
 	router.GET("/", func(c *gin.Context) {
 		sinApiURL := cfg.SinApiUrl
+
+		log.Printf("Connecting to sin-api at : %s", sinApiURL)
 		resp, err := http.Get(sinApiURL + "/sins")
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error: Could not reach the sin-api.")
+			log.Printf("API Error: %s", err)
 			return
 		}
 		defer resp.Body.Close()
