@@ -135,11 +135,20 @@ func main() {
 		}
 		defer resp.Body.Close()
 
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Error: Could not read API response.")
+			return
+		}
+
 		var keyResponse struct {
 			APIKey string `json:"api_key"`
 		}
-		if err := json.NewDecoder(resp.Body).Decode(&keyResponse); err != nil {
-			log.Printf("API Error: %s", resp.Body) // Log the error for you to see
+
+		// 2. Now, decode the JSON from our saved 'body' variable.
+		if err := json.Unmarshal(body, &keyResponse); err != nil {
+			// 3. If decoding fails, we can safely print the 'body' to see what went wrong.
+			log.Printf("API Error: Failed to unmarshal JSON. Body was: %s", string(body))
 			c.String(http.StatusInternalServerError, "Error: Could not parse key response.")
 			return
 		}
