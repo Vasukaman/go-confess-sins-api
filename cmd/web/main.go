@@ -139,6 +139,7 @@ func main() {
 			APIKey string `json:"api_key"`
 		}
 		if err := json.NewDecoder(resp.Body).Decode(&keyResponse); err != nil {
+			log.Printf("API Error: %s", err.Error()) // Log the error for you to see
 			c.String(http.StatusInternalServerError, "Error: Could not parse key response.")
 			return
 		}
