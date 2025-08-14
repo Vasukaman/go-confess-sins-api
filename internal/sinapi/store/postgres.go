@@ -3,9 +3,11 @@ package store
 
 import (
 	"context"
-	"go-confess-sins-api/pkg/models" // Import our new model
+	"crypto/rand"
+	"encoding/base64"
+	"go-confess-sins-api/pkg/models"
 
-	"github.com/jackc/pgx/v5/pgxpool" // We use pgxpool for connection pooling
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Store handles all database operations.
@@ -27,44 +29,58 @@ func (s *Store) Close() {
 	s.db.Close()
 }
 
-// CreateSin adds a new sin to the database.
-func (s *Store) CreateSin(description string) (models.Sin, error) {
-	var sin models.Sin
-	err := s.db.QueryRow(context.Background(),
-		"INSERT INTO sins (description) VALUES ($1) RETURNING id, description, count, created_at",
-		description,
-	).Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt)
+// --- API Key Methods ---
 
-	return sin, err
+// CreateAPIKey generates a new, secure, random API key and stores it.
+func (s *Store) CreateAPIKey() (string, error) {
+	// Generate 32 random bytes for a strong key.
+	keyBytes := make([]byte, 32)
+	if _, err := rand.Read(keyBytes); err != nil {
+		return "", err
+	}
+	// Encode the bytes into a URL-safe string.
+	apiKey := base64.URLEncoding.EncodeToString(keyBytes)
+
+	_, err := s.db.Exec(context.Background(), "INSERT INTO api_keys (key) VALUES ($1)", apiKey)
+	if err != nil {
+		return "", err
+	}
+
+	return apiKey, nil
 }
 
-// IncrementSinCount finds a sin by its description and increases its count.
-// If it doesn't exist, it creates it.
-func (s *Store) IncrementSinCount(description string) (models.Sin, error) {
+// GetAPIKeyID validates an API key and returns its internal integer ID.
+func (s *Store) GetAPIKeyID(apiKey string) (int, error) {
+	var id int
+	err := s.db.QueryRow(context.Background(),
+		"SELECT id FROM api_keys WHERE key = $1",
+		apiKey,
+	).Scan(&id)
+
+	return id, err // If no key is found, this will return an error.
+}
+
+// --- Sin Methods (Now scoped to an API Key) ---
+
+// IncrementSinCount finds or creates a sin for a specific user.
+func (s *Store) IncrementSinCount(apiKeyID int, description string) (models.Sin, error) {
 	var sin models.Sin
-	// This is a more advanced SQL command called an "UPSERT"
-	// It tries to UPDATE, and if it can't, it INSERTS.
 	err := s.db.QueryRow(context.Background(), `
-		INSERT INTO sins (description, count) VALUES ($1, 1)
-		ON CONFLICT (description) DO UPDATE
+		INSERT INTO sins (api_key_id, description, count) VALUES ($1, $2, 1)
+		ON CONFLICT (api_key_id, description) DO UPDATE
 		SET count = sins.count + 1
 		RETURNING id, description, count, created_at`,
-		description,
+		apiKeyID, description,
 	).Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt)
 
 	return sin, err
 }
 
-// DeleteSinByID removes a sin from the database using its ID.
-func (s *Store) DeleteSinByID(id int) error {
-	_, err := s.db.Exec(context.Background(), "DELETE FROM sins WHERE id = $1", id)
-	return err
-}
-
-func (s *Store) GetLatestSins(limit int) ([]models.Sin, error) {
+// GetSinsByAPIKeyID fetches all sins for a specific user.
+func (s *Store) GetSinsByAPIKeyID(apiKeyID int) ([]models.Sin, error) {
 	rows, err := s.db.Query(context.Background(),
-		"SELECT id, description, count, created_at FROM sins ORDER BY created_at DESC LIMIT $1",
-		limit)
+		"SELECT id, description, count, created_at FROM sins WHERE api_key_id = $1 ORDER BY created_at DESC",
+		apiKeyID)
 	if err != nil {
 		return nil, err
 	}
