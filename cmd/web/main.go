@@ -122,7 +122,23 @@ func main() {
 			return
 		}
 
-		c.Redirect(http.StatusFound, "/")
+		sinsResp, err := http.Get(sinApiURL + "/sins")
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Error: Could not fetch updated sins list.")
+			return
+		}
+		defer sinsResp.Body.Close()
+
+		var sins []models.Sin
+		if err := json.NewDecoder(sinsResp.Body).Decode(&sins); err != nil {
+			c.String(http.StatusInternalServerError, "Error: Could not parse updated sins list.")
+			return
+		}
+
+		// Render the page with the fresh data.
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"sins": sins,
+		})
 	})
 
 	// --- POST /create-key ---
