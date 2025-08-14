@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Code Confessional</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+       <form action="/confess" method="post" class="confess-form">
+            <h3>Confess a New Sin</h3>
+            <textarea name="description" placeholder="Describe your code sin..." required></textarea>
+            
+            <div class="optional-fields">
+                <input type="text" name="tags" placeholder="Tags (comma-separated, e.g., bug,frontend)">
+                <input type="number" name="severity" placeholder="Severity (0-5)" min="0" max="5">
+            </div>
+
+            <div class="form-footer">
+                <button type="submit">Confess</button>
+            </div>
+        </form>
+
+       <div class="api-key-section">
+            <form action="/create-key" method="post">
+                <button type="submit">Get a New API Key</button>
+            </form>
+            <!-- This text will only appear if a new key has been generated -->
+            {{ if .newKey }}
+                <p class="new-key-display">Your new key: <code>{{ .newKey }}</code></p>
+            {{ end }}
+        </div>
+
+    <div class="container">
+        <header>
+            <h1>The Code Confessional</h1>
+            <p>A log of developer sins, submitted anonymously.</p>
+        </header>
+          <main class="sins-list">
+            {{ range .sins }}
+                <div class="sin-card">
+                    <p class="description">"{{ .Description }}"</p>
+                    <div class="meta">
+                        {{ if .Severity }}
+                            <span class="severity">Severity: {{ .Severity }}</span>
+                        {{ end }}
+                        {{ if .Tags }}
+                            <div class="tags-container">
+                                {{ range .Tags }}
+                                    <span class="tag">{{ . }}</span>
+                                {{ end }}
+                            </div>
+                        {{ end }}
+                        <span class="count">Confessed: {{ .Count }} times</span>
+                    </div>
+                </div>
+            {{ end }}
+        </main>
+    </div>
+
+    
+</body>
+</html>

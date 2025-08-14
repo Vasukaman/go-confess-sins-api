@@ -1,0 +1,127 @@
+body {
+    font-family: 'Source Code Pro', monospace;
+    background-color: #121212;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #bb86fc;
+    margin: 0;
+}
+
+header p {
+    color: #888;
+}
+
+.sins-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sin-card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.sin-card:hover {
+    transform: translateY(-5px);
+}
+
+.description {
+    font-size: 1.1em;
+    margin: 0 0 15px 0;
+    color: #e0e0e0;
+}
+
+.meta {
+    font-size: 0.9em;
+    color: #888;
+    text-align: right;
+}
+
+
+.confess-form {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #121212;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 10px;
+    font-family: 'Source Code Pro', monospace;
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+input[type="text"] {
+    background-color: #121212;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 8px;
+    width: 60%;
+}
+
+button {
+    background-color: #bb86fc;
+    color: #121212;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.api-key-section {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.new-key-display {
+    margin-top: 15px;
+    color: #e0e0e0;
+}
+
+.new-key-display code {
+    background-color: #121212;
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: #bb86fc;
+    font-weight: bold;
+}

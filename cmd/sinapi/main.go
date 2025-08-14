@@ -34,13 +34,13 @@ func main() {
 	// Create and run the router
 	router := gin.Default()
 
-	router.POST("/keys", handler.CreateAPIKey) // We'll add this handler next
-	router.GET("/keys", handler.CreateAPIKey)
+	router.POST("/keys", handler.CreateAPIKey)
+	router.GET("/sins", handler.GetSins)
 	// --- Private Routes (Auth Middleware Applied) ---
 	privateRoutes := router.Group("/")
 	privateRoutes.Use(sinapi.AuthMiddleware(dbStore))
 	{
-		privateRoutes.GET("/sins", handler.GetSins)
+
 		privateRoutes.POST("/sins", handler.CreateSin)
 	}
 	router.Run(":8080")

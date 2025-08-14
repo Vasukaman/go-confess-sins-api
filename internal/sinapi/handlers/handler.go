@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"go-confess-sins-api/internal/sinapi/store"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+const GET_SINS_LIMIT = 10
 
 type Handler struct {
 	store *store.Store
@@ -26,7 +29,7 @@ func (h *Handler) CreateAPIKey(c *gin.Context) {
 }
 
 // GetSins is a private route that fetches sins for the authenticated user.
-func (h *Handler) GetSins(c *gin.Context) {
+func (h *Handler) GetSinsByKey(c *gin.Context) {
 	// 1. Get the apiKeyID that the middleware added to the context.
 	apiKeyID, exists := c.Get("apiKeyID")
 	if !exists {
@@ -43,6 +46,18 @@ func (h *Handler) GetSins(c *gin.Context) {
 	c.JSON(http.StatusOK, sins)
 }
 
+func (h *Handler) GetSins(c *gin.Context) {
+
+	// 2. Call the store with the specific user's ID.
+	sins, err := h.store.GetSins(GET_SINS_LIMIT)
+	if err != nil {
+		log.Printf("Error from store: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve sins"})
+		return
+	}
+	c.JSON(http.StatusOK, sins)
+}
+
 // CreateSin is a private route that creates a sin for the authenticated user.
 func (h *Handler) CreateSin(c *gin.Context) {
 	// Get the user's ID from the context.
@@ -53,16 +68,20 @@ func (h *Handler) CreateSin(c *gin.Context) {
 	}
 
 	var request struct {
-		Description string `json:"description" binding:"required"`
+		Description string   `json:"description" binding:"required"`
+		Tags        []string `json:"tags"`     // Optional
+		Severity    *int     `json:"severity"` // Optional
 	}
+
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Call the store with the user's ID and the new sin description.
-	sin, err := h.store.IncrementSinCount(apiKeyID.(int), request.Description)
+	//pass data to the store
+	sin, err := h.store.IncrementSinCount(apiKeyID.(int), request.Description, request.Tags, request.Severity)
 	if err != nil {
+		log.Printf("Error from store: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process sin"})
 		return
 	}
