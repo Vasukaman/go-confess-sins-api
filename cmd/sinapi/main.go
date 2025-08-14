@@ -35,6 +35,7 @@ func main() {
 	router := gin.Default()
 
 	router.POST("/keys", handler.CreateAPIKey)
+	router.GET("/keys", handler.CreateAPIKey)
 	router.GET("/sins", handler.GetSins)
 	// --- Private Routes (Auth Middleware Applied) ---
 	privateRoutes := router.Group("/")
