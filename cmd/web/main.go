@@ -23,7 +23,7 @@ func findAssetPath() string {
 		return "./web"
 	}
 	// We are running locally
-	return "../../web"
+	return "./web"
 }
 
 func main() {
