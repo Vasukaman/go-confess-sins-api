@@ -30,7 +30,7 @@ func main() {
 	router := gin.Default()
 
 	assetPath := findAssetPath()
-	templatePath := filepath.Join(assetPath, "templates*")
+	templatePath := filepath.Join(assetPath, "templates/*")
 	staticPath := filepath.Join(assetPath, "static")
 
 	log.Printf("Loading assets from: %s", assetPath)
