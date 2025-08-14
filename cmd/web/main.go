@@ -128,6 +128,7 @@ func main() {
 	// --- POST /create-key ---
 	// This new handler processes the "Get New Key" button press.
 	router.POST("/create-key", func(c *gin.Context) {
+		// 1. Call the sin-api to get a new key
 		resp, err := http.Post(sinApiURL+"/keys", "application/json", nil)
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error: Could not reach the sin-api.")
@@ -135,26 +136,33 @@ func main() {
 		}
 		defer resp.Body.Close()
 
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			c.String(http.StatusInternalServerError, "Error: Could not read API response.")
-			return
-		}
-
 		var keyResponse struct {
 			APIKey string `json:"api_key"`
 		}
-
-		// 2. Now, decode the JSON from our saved 'body' variable.
-		if err := json.Unmarshal(body, &keyResponse); err != nil {
-			// 3. If decoding fails, we can safely print the 'body' to see what went wrong.
-			log.Printf("API Error: Failed to unmarshal JSON. Body was: %s", string(body))
+		if err := json.NewDecoder(resp.Body).Decode(&keyResponse); err != nil {
 			c.String(http.StatusInternalServerError, "Error: Could not parse key response.")
 			return
 		}
 
-		// Redirect back to the homepage, but add the new key as a query parameter.
-		c.Redirect(http.StatusFound, "/?newKey="+keyResponse.APIKey)
+		// 2. THE FIX: Instead of redirecting, render the page again,
+
+		sinsResp, err := http.Get(sinApiURL + "/sins")
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Error: Could not reach the sin-api for sins list.")
+			return
+		}
+		defer sinsResp.Body.Close()
+
+		var sins []models.Sin
+		if err := json.NewDecoder(sinsResp.Body).Decode(&sins); err != nil {
+			c.String(http.StatusInternalServerError, "Error: Could not parse sin-api response.")
+			return
+		}
+
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"sins":   sins,
+			"newKey": keyResponse.APIKey,
+		})
 	})
 
 	router.Run(":9090")
