@@ -108,7 +108,7 @@ func main() {
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
-			c.String(http.StatusInternalServerError, "Error: Failed to submit sin to the API.")
+			c.String(http.StatusInternalServerError, "Error: Failed to submit sin to the API. "+err.Error())
 			return
 		}
 		defer resp.Body.Close()
