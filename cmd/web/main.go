@@ -8,6 +8,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -15,11 +17,28 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func findAssetPath() string {
+	if _, err := os.Stat("/.dockerenv"); err == nil {
+		// We are inside a Docker container
+		return "./web"
+	}
+	// We are running locally
+	return "../../web"
+}
+
 func main() {
 	router := gin.Default()
 
-	router.LoadHTMLGlob("../../web/templates/*")
-	router.Static("/static", "../../web/static")
+	assetPath := findAssetPath()
+	templatePath := filepath.Join(assetPath, "templates/*")
+	staticPath := filepath.Join(assetPath, "static")
+
+	log.Printf("Loading assets from: %s", assetPath)
+
+	// Use the dynamically found paths
+	router.LoadHTMLGlob(templatePath)
+	router.Static("/static", staticPath)
+
 	godotenv.Load(".env")
 	cfg := config.New()
 

@@ -1,3 +1,4 @@
+# --- Stage 1: The "Builder" ---
 FROM golang:1.24-alpine AS builder
 WORKDIR /src
 COPY go.mod go.sum ./
@@ -5,8 +6,23 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -o /src/web-server ./cmd/web
 
+# --- Stage 2: The "Final Image" ---
 FROM alpine:latest
 WORKDIR /app
-COPY --from=builder /src/web .
+
+# THE FIX IS HERE:
+# Copy the entire 'web' directory (containing templates and static files)
+# from the build context into the final container.
+COPY ./web ./web
+
+# Copy the compiled executable from the "builder" stage.
 COPY --from=builder /src/web-server .
-CMD ["/app/web-server"]
+
+# Now, update the LoadHTMLGlob and Static paths in your main.go
+# to look in the correct place inside the container.
+# router.LoadHTMLGlob("web/templates/*")
+# router.Static("/static", "web/static")
+
+
+# This is the command that will run when the container starts.
+CMD ["./web-server"]
