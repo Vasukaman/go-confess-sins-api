@@ -1,0 +1,31 @@
+# --- Stage 1: The "Builder" ---
+# This stage has all the Go tools and will compile our application.
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /src
+
+# Copy the module files first to leverage Docker's layer caching.
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source code.
+COPY . .
+
+# Build the specific service (the web frontend in this case).
+# This creates a single, static executable file at /src/web-server
+RUN CGO_ENABLED=0 go build -o /src/web-server ./cmd/web
+
+
+# --- Stage 2: The "Final Image" ---
+# This stage creates the tiny final container for production.
+FROM alpine:latest
+
+# Copy the templates and static files needed by the frontend server.
+WORKDIR /app
+COPY --from=builder /src/web .
+
+# Copy the compiled executable from the "builder" stage.
+COPY --from=builder /src/web-server .
+
+# This is the command that will run when the container starts.
+CMD ["/app/web-server"]
