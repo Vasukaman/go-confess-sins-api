@@ -37,6 +37,7 @@ func main() {
 	router.POST("/keys", handler.CreateAPIKey)
 	router.GET("/keys", handler.CreateAPIKey)
 	router.GET("/sins", handler.GetSins)
+	router.POST("/sins", handler.CreateSin)
 	// --- Private Routes (Auth Middleware Applied) ---
 	privateRoutes := router.Group("/")
 	privateRoutes.Use(sinapi.AuthMiddleware(dbStore))
