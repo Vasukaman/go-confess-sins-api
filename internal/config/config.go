@@ -7,6 +7,7 @@ type Config struct {
 	DatabaseURL   string
 	WebsiteAPIKey string
 	SinApiUrl     string
+	NatsApiUrl    string
 }
 
 // New loads configuration from environment variables.
@@ -15,5 +16,6 @@ func New() *Config {
 		DatabaseURL:   os.Getenv("DATABASE_URL"),
 		WebsiteAPIKey: os.Getenv("WEBSITE_API_KEY"),
 		SinApiUrl:     os.Getenv("SIN_API_URL"),
+		NatsApiUrl:    os.Getenv("NATS_API_URL"),
 	}
 }
