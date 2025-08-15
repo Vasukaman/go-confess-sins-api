@@ -8,6 +8,7 @@ import (
 	"go-confess-sins-api/internal/sinapi/store"
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -33,6 +34,10 @@ func main() {
 
 	// Create and run the router
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"https://go-confess-sins.up.railway.app"}
+	router.Use(cors.New(config))
 
 	// --- Public Routes ---
 	router.POST("/keys", handler.CreateAPIKey)
