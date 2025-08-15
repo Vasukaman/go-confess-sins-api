@@ -7,6 +7,7 @@ import (
 	"go-confess-sins-api/internal/sinapi/handlers"
 	"go-confess-sins-api/internal/sinapi/store"
 	"log"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -34,10 +35,15 @@ func main() {
 
 	// Create and run the router
 	router := gin.Default()
-
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://go-confess-sins.up.railway.app"}
-	router.Use(cors.New(config))
+	router.Use(cors.New(cors.Config{
+		// Replace this with your actual web-frontend URL
+		AllowOrigins:     []string{"https://go-confess-sins.up.railway.app"},
+		AllowMethods:     []string{"GET", "POST"},                             // Allow POST requests
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allow necessary headers
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// --- Public Routes ---
 	router.POST("/keys", handler.CreateAPIKey)
