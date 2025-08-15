@@ -53,5 +53,6 @@ func main() {
 		// You would also add your user-specific GET route here
 
 	}
+	router.Run(":8080")
 
 }
