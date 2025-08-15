@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	goaway "github.com/TwiN/go-away"
 	"github.com/gin-gonic/gin"
 )
 
@@ -58,6 +59,8 @@ func (h *Handler) GetSins(c *gin.Context) {
 	c.JSON(http.StatusOK, sins)
 }
 
+var customProfanityDetector = goaway.NewProfanityDetector().WithCustomDictionary(goaway.DefaultProfanities, append(goaway.DefaultFalsePositives, "fuck"), goaway.DefaultFalseNegatives)
+
 // CreateSin is a private route that creates a sin for the authenticated user.
 func (h *Handler) CreateSin(c *gin.Context) {
 	// Get the user's ID from the context.
@@ -78,8 +81,10 @@ func (h *Handler) CreateSin(c *gin.Context) {
 		return
 	}
 
+	censoredDescription := customProfanityDetector.Censor(request.Description)
+
 	//pass data to the store
-	sin, err := h.store.IncrementSinCount(apiKeyID.(int), request.Description, request.Tags, request.Severity)
+	sin, err := h.store.IncrementSinCount(apiKeyID.(int), censoredDescription, request.Tags, request.Severity)
 	if err != nil {
 		log.Printf("Error from store: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process sin"})
