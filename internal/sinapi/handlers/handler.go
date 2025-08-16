@@ -5,18 +5,22 @@ import (
 	"log"
 	"net/http"
 
+	"encoding/json"
+
 	goaway "github.com/TwiN/go-away"
 	"github.com/gin-gonic/gin"
+	"github.com/nats-io/nats.go"
 )
 
 const GET_SINS_LIMIT = 10
 
 type Handler struct {
 	store *store.Store
+	nc    *nats.Conn
 }
 
-func NewHandler(s *store.Store) *Handler {
-	return &Handler{store: s}
+func NewHandler(s *store.Store, nc *nats.Conn) *Handler {
+	return &Handler{store: s, nc: nc}
 }
 
 // CreateAPIKey handles the public route to generate a new key.
@@ -26,6 +30,7 @@ func (h *Handler) CreateAPIKey(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate API key"})
 		return
 	}
+
 	c.JSON(http.StatusCreated, gin.H{"api_key": apiKey})
 }
 
@@ -91,5 +96,11 @@ func (h *Handler) CreateSin(c *gin.Context) {
 		return
 	}
 
+	sinData, _ := json.Marshal(sin)
+	if err := h.nc.Publish("sins.updated", sinData); err != nil {
+		log.Printf("Warning: failed to publish sin update to NATS: %v", err)
+	}
+
 	c.JSON(http.StatusCreated, sin)
+
 }

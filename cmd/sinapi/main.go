@@ -11,6 +11,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/nats-io/nats.go"
 )
 
 func main() {
@@ -29,8 +30,14 @@ func main() {
 	}
 	defer dbStore.Close()
 
+	eventPublisher, err := nats.Connect(cfg.NatsApiUrl)
+	if err != nil {
+		log.Fatalf("Failed to connect to NATS: %v", err)
+	}
+	defer eventPublisher.Close()
+
 	// Initialize the handler
-	handler := handlers.NewHandler(dbStore)
+	handler := handlers.NewHandler(dbStore, eventPublisher)
 
 	// Create and run the router
 	router := gin.Default()
