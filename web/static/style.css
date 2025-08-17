@@ -136,3 +136,42 @@ button {
     border-radius: 4px;
     font-size: 0.8em;
 }
+
+
+.leaderboard {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+.leaderboard h2 {
+    text-align: center;
+    color: #bb86fc;
+    margin-top: 0;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.leaderboard-item:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-item span:first-child {
+    flex-grow: 1;
+    margin-right: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-item span:last-child {
+    font-weight: bold;
+    color: #bb86fc;
+}
