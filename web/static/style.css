@@ -219,3 +219,34 @@ button {
     80% { opacity: 1; }  /* Hold visible */
     100% { opacity: 0; } /* Fade out slow */
 }
+
+.main-content {
+    display: flex;
+    gap: 20px; /* Space between the columns */
+}
+
+.leaderboard {
+    flex-basis: 30%; /* Set the initial width to 30% */
+    margin-top: 0; /* Remove margin from original style */
+}
+
+.sins-list {
+    flex-basis: 70%; /* Set the initial width to 70% */
+}
+
+.shakeable {
+    transition: transform 0.1s;
+}
+
+/* Define the shake animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* The class that applies the animation */
+.shaking {
+    /* Starts fast, then slows down, runs for 1 second */
+    animation: shake 1s ease-out;
+}

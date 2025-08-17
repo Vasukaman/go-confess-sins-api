@@ -16,19 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showForgivenAnimation = () => {
        
-       
+           const elementsToShake = document.querySelectorAll('.sin-card, .leaderboard, header, api-key-section');
+    
         setTimeout(() => {
 
-
+    elementsToShake.forEach(el => el.classList.add('shaking'));
         forgivenOverlay.classList.add('visible');
         setTimeout(() => {
             forgivenOverlay.classList.remove('visible');
-        }, 3000)}
+             elementsToShake.forEach(el => el.classList.remove('shaking'));
+        }, 9000)}
         
-        , 9000);
+        , 3000);
         
     };
 
+
+   
 
     const playConfessionAudio = (text) => {
         const bellSound = new Audio('/static/submit.wav'); // Make sure you have this file
