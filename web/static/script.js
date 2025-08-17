@@ -131,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             newKeyDisplay.innerHTML = `Your new key: <code>${data.api_key}</code>`;
-            apiKeyInput.value = data.api_key; // Auto-fill the key into the confess form
         } catch (error) {
             alert('Failed to get new API key.');
             console.error('Get key error:', error);

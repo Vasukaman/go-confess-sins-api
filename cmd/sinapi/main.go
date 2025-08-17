@@ -60,11 +60,7 @@ func main() {
 	privateRoutes := router.Group("/")
 	privateRoutes.Use(sinapi.AuthMiddleware(dbStore))
 	{
-		// This route is now protected by the middleware.
 		privateRoutes.POST("/sins", handler.CreateSin)
-
-		// You would also add your user-specific GET route here
-
 	}
 	router.Run(":8080")
 

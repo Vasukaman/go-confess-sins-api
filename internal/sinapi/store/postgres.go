@@ -3,10 +3,13 @@ package store
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
+
 	"fmt"
 	"go-confess-sins-api/pkg/models"
+
+	"crypto/rand"
+	"encoding/base64"
+	"math/big"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -32,22 +35,40 @@ func (s *Store) Close() {
 
 // --- API Key Methods ---
 
+var firstWords = []string{"GOOD", "BAD", "LAZY", "CLEVER", "WEAK", "STRONG"}
+var secondWords = []string{"BOY", "GIRL", "DOG", "CAT", "HACKER", "DEBUGGER"}
+
 // CreateAPIKey generates a new, secure, random API key and stores it.
 func (s *Store) CreateAPIKey() (string, error) {
-	// Generate 32 random bytes for a strong key.
-	keyBytes := make([]byte, 32)
+	// 1. Generate a secure random base string (e.g., 24 bytes).
+	keyBytes := make([]byte, 24)
 	if _, err := rand.Read(keyBytes); err != nil {
 		return "", err
 	}
-	// Encode the bytes into a URL-safe string.
-	apiKey := base64.URLEncoding.EncodeToString(keyBytes)
+	baseKey := base64.URLEncoding.EncodeToString(keyBytes)
 
-	_, err := s.db.Exec(context.Background(), "INSERT INTO api_keys (key) VALUES ($1)", apiKey)
+	// 2. Securely pick a random word from each list.
+	firstWordIndex, _ := rand.Int(rand.Reader, big.NewInt(int64(len(firstWords))))
+	secondWordIndex, _ := rand.Int(rand.Reader, big.NewInt(int64(len(secondWords))))
+
+	firstWord := firstWords[firstWordIndex.Int64()]
+	secondWord := secondWords[secondWordIndex.Int64()]
+
+	// 3. Split the base key to create insertion points.
+	part1 := baseKey[0:8]
+	part2 := baseKey[8:24]
+	part3 := baseKey[24:]
+
+	// 4. Stitch the final key together.
+	finalKey := part1 + firstWord + part2 + secondWord + part3
+
+	// 5. Save the final, funny key to the database.
+	_, err := s.db.Exec(context.Background(), "INSERT INTO api_keys (key) VALUES ($1)", finalKey)
 	if err != nil {
 		return "", err
 	}
 
-	return apiKey, nil
+	return finalKey, nil
 }
 
 // GetAPIKeyID validates an API key and returns its internal integer ID.
