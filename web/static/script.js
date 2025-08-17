@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURATION ---
     const sinApiUrl = 'https://go-confess-sins-api-production.up.railway.app'; // Your live API URL
+    const leaderboardApiUrl = '/api/leaderboard';
 
     // --- DOM ELEMENTS ---
     const sinsList = document.getElementById('sins-list');
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const getKeyButton = document.getElementById('get-key-button');
     const newKeyDisplay = document.getElementById('new-key-display');
     const apiKeyInput = document.getElementById('api-key-input');
-
+const leaderboardList = document.getElementById('leaderboard-list');
     // --- FUNCTIONS ---
 
     const playConfessionAudio = (text) => {
@@ -115,8 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const leaderboardList = document.getElementById('leaderboard-list');
-    const leaderboardApiUrl = '/api/leaderboard';
+
     // Function to get leaderboard data
   const fetchLeaderboard = async () => {
     try {
@@ -139,6 +139,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 };
 
+    // Function to setup websocket
+    const setupWebSocket = () => {
+        // Construct the secure WebSocket URL from the page's location
+        const socketUrl = `wss://${window.location.host}/ws`;
+        const socket = new WebSocket(socketUrl);
+
+        socket.onopen = () => {
+            console.log("WebSocket connection established.");
+        };
+
+        // This function runs when a message is pushed from the server
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'update') {
+                console.log("Update received from server. Refreshing lists...");
+                // When an update is received, just re-run the fetch functions
+                fetchSins();
+                fetchLeaderboard();
+            }
+        };
+
+        socket.onclose = () => {
+            console.log("WebSocket connection closed. Reconnecting in 3 seconds...");
+            setTimeout(setupWebSocket, 3000); // Simple reconnect logic
+        };
+
+        socket.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            socket.close();
+        };
+    };
+
+
     // --- EVENT LISTENERS ---
     confessForm.addEventListener('submit', handleConfess);
     getKeyButton.addEventListener('click', getNewKey);
@@ -146,4 +179,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INITIAL LOAD ---
     fetchSins(); // Fetch sins when the page first loads
     fetchLeaderboard();
+    setupWebSocket();
 });

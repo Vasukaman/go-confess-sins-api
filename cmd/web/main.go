@@ -5,21 +5,46 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-confess-sins-api/internal/config"
+	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/nats-io/nats.go"
+	"github.com/olahol/melody"
 )
 
 func main() {
 	godotenv.Load("../../.env") // Load .env from project root
 	cfg := config.New()
 
+	melodyClient := melody.New()
 	router := gin.Default()
-
+	natsURL := cfg.NatsApiUrl
 	router.Static("/static", "./web/static")
 	router.StaticFile("/", "./web/templates/index.html")
+
+	router.GET("/ws", func(c *gin.Context) {
+		melodyClient.HandleRequest(c.Writer, c.Request)
+	})
+
+	// --- NATS CONNECTION ---
+	nc, err := nats.Connect(natsURL)
+	if err != nil {
+		log.Fatalf("Failed to connect to NATS: %v", err)
+	}
+	defer nc.Close()
+
+	// 3. Subscribe to NATS and broadcast updates using Melody's simple function.
+	_, err = nc.Subscribe("sins.updated", func(msg *nats.Msg) {
+		slog.Info("NATS update received, broadcasting to clients via Melody.")
+		melodyClient.Broadcast([]byte(`{"type": "update"}`))
+	})
+	if err != nil {
+		log.Fatalf("Failed to subscribe to NATS: %v", err)
+	}
 
 	// --- PROXY ENDPOINT ---
 	router.POST("/api/confess", func(c *gin.Context) {

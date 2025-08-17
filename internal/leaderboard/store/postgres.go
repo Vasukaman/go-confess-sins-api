@@ -38,14 +38,29 @@ func (s *Store) Close() {
 
 // UpdateSinFromEvent takes a Sin model and "upserts" it into the leaderboard table.
 func (s *Store) UpdateSinFromEvent(sin models.Sin) error {
-	_, err := s.db.Exec(context.Background(), `
+	// This is a single, powerful SQL command that does everything.
+	// It's a Common Table Expression (CTE) that checks the rank before inserting/updating.
+	query := `
+		WITH new_sin AS (
+			SELECT $1::INT AS sin_id, $2::TEXT AS description, $3::INT AS count, $4::TEXT[] AS tags, $5::SMALLINT AS severity
+		),
+		rankings AS (
+			SELECT sin_id, count, RANK() OVER (ORDER BY count DESC) as rank
+			FROM leaderboard
+			UNION ALL
+			SELECT sin_id, count, 1 FROM new_sin -- Assume the new sin is a potential #1
+			ORDER BY count DESC
+			LIMIT 10
+		)
 		INSERT INTO leaderboard (sin_id, description, count, tags, severity)
-		VALUES ($1, $2, $3, $4, $5)
+		SELECT sin_id, description, count, tags, severity FROM new_sin
+		WHERE sin_id IN (SELECT sin_id FROM rankings)
 		ON CONFLICT (sin_id) DO UPDATE
 		SET count = EXCLUDED.count,
 			tags = EXCLUDED.tags,
 			severity = EXCLUDED.severity;
-	`, sin.ID, sin.Description, sin.Count, sin.Tags, sin.Severity)
+	`
+	_, err := s.db.Exec(context.Background(), query, sin.ID, sin.Description, sin.Count, sin.Tags, sin.Severity)
 	return err
 }
 
