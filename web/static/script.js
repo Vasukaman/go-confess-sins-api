@@ -98,22 +98,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaderboardList = document.getElementById('leaderboard-list');
     const leaderboardApiUrl = 'https://appealing-reverence-production-28ad.up.railway.app/leaderboard';
     // Function to get leaderboard data
-    const fetchLeaderboard = async () => {
-        try {
-            const response = await fetch(leaderboardApiUrl);
-            const topSins = await response.json();
+  const fetchLeaderboard = async () => {
+    try {
+        const response = await fetch(leaderboardApiUrl);
+        console.log("Leaderboard data receivedjson:", response);
+        const topSins = await response.json();
 
-            leaderboardList.innerHTML = '';
-            topSins.forEach(sin => {
-                const item = document.createElement('div');
-                item.className = 'leaderboard-item';
-                item.innerHTML = `<span>${sin.Description}</span><span>${sin.Count}</span>`;
-                leaderboardList.appendChild(item);
-            });
-        } catch (error) {
-            console.error('Failed to fetch leaderboard:', error);
-        }
-    };
+        // THE DEBUGGING LINE IS HERE:
+        console.log("Leaderboard data received:", topSins);
+
+        leaderboardList.innerHTML = '';
+        topSins.forEach(sin => {
+            const item = document.createElement('div');
+            item.className = 'leaderboard-item';
+            item.innerHTML = `<span>${sin.Description}</span><span>${sin.Count}</span>`;
+            leaderboardList.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Failed to fetch leaderboard:', error);
+    }
+};
 
     // --- EVENT LISTENERS ---
     confessForm.addEventListener('submit', handleConfess);
