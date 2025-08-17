@@ -125,3 +125,14 @@ button {
     color: #bb86fc;
     font-weight: bold;
 }
+.tags-container {
+    display: inline-flex;
+    gap: 5px;
+    margin-right: 15px;
+}
+.tag {
+    background-color: #444;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+}

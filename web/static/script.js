@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURATION ---
     const sinApiUrl = 'https://go-confess-sins-api-production.up.railway.app'; // Your live API URL
-    const websiteApiKey = 'YOUR_WEBSITE_API_KEY'; // Your hardcoded key for the website
 
     // --- DOM ELEMENTS ---
     const sinsList = document.getElementById('sins-list');
@@ -14,23 +13,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to fetch and display sins
     const fetchSins = async () => {
-        try {
-            const response = await fetch(`${sinApiUrl}/sins`);
-            const sins = await response.json();
-            
-            sinsList.innerHTML = ''; // Clear the list before adding new items
-            sins.forEach(sin => {
-                const sinCard = document.createElement('div');
-                sinCard.className = 'sin-card';
-                sinCard.innerHTML = `<p class="description">"${sin.description}"</p>`;
-                sinsList.appendChild(sinCard);
-            });
-        } catch (error) {
-            sinsList.innerHTML = '<p>Could not load sins. Is the API running?</p>';
-            console.error('Fetch sins error:', error);
-        }
-    };
+    try {
+        const response = await fetch(`${sinApiUrl}/sins`);
+        const sins = await response.json();
+        
+        sinsList.innerHTML = ''; // Clear the list
+        sins.forEach(sin => {
+            const sinCard = document.createElement('div');
+            sinCard.className = 'sin-card';
 
+            // Start building the inner HTML for the meta section
+            let metaHTML = `<span class="count">Confessed: ${sin.count} times</span>`;
+
+            // Conditionally add severity if it exists
+            if (sin.severity != null) {
+                metaHTML = `<span class="severity">Severity: ${sin.severity}</span>` + metaHTML;
+            }
+
+            // Conditionally add tags if they exist and are not empty
+            if (sin.tags && sin.tags.length > 0) {
+                const tagsHTML = sin.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                metaHTML = `<div class="tags-container">${tagsHTML}</div>` + metaHTML;
+            }
+            
+            // Assemble the final card
+            sinCard.innerHTML = `
+                <p class="description">"${sin.description}"</p>
+                <div class="meta">${metaHTML}</div>
+            `;
+            sinsList.appendChild(sinCard);
+        });
+    } catch (error) {
+        sinsList.innerHTML = '<p>Could not load sins. Is the API running?</p>';
+        console.error('Fetch sins error:', error);
+    }
+};
     // Function to handle confessing a sin
     const handleConfess = async (event) => {
         event.preventDefault();
