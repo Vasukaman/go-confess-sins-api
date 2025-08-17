@@ -7,6 +7,8 @@ import (
 	"go-confess-sins-api/internal/sinapi/handlers"
 	"go-confess-sins-api/internal/sinapi/store"
 	"log"
+	"log/slog"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -15,6 +17,10 @@ import (
 )
 
 func main() {
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	// Load environment variables from .env file
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using system environment variables.")
