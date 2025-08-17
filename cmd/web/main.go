@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	godotenv.Load(".env") // Load .env from project root
+	godotenv.Load("../../.env") // Load .env from project root
 	cfg := config.New()
 
 	router := gin.Default()
