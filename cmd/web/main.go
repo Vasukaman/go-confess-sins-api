@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-confess-sins-api/internal/config"
+	"io"
 	"log"
 	"log/slog"
 	"net/http"
@@ -55,6 +56,12 @@ func main() {
 			return
 		}
 
+		description, ok := requestBody["description"].(string)
+		if !ok || description == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Description is required"})
+			return
+		}
+
 		// 2. Marshal the data back into JSON to send to the sin-api.
 		jsonBody, _ := json.Marshal(requestBody)
 
@@ -73,6 +80,25 @@ func main() {
 		}
 		defer resp.Body.Close()
 
+		go func() {
+			// a. Call your tts-service to get the audio data
+			// (This is the same logic you had in your old TTS proxy)
+			ttsURL := fmt.Sprintf("%s/speech?text=%s", cfg.TtsApiUrl, url.QueryEscape(description))
+			resp, err := http.Get(ttsURL)
+			if err != nil {
+				log.Printf("Failed to get TTS audio: %v", err)
+				return
+			}
+			defer resp.Body.Close()
+			audioData, err := io.ReadAll(resp.Body)
+			if err != nil {
+				log.Printf("Failed to read TTS audio: %v", err)
+				return
+			}
+
+			// b. Broadcast the raw audio data as a binary message.
+			melodyClient.BroadcastBinary(audioData)
+		}()
 		// This copies the status code, headers, and body from the sin-api's
 		// response directly to the response sent to the browser.
 		c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)

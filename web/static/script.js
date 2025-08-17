@@ -158,6 +158,10 @@ const leaderboardList = document.getElementById('leaderboard-list');
                 fetchSins();
                 fetchLeaderboard();
             }
+            else if (event.data instanceof ArrayBuffer) {
+                // We received raw audio data
+                playSound(event.data);
+            }
         };
 
         socket.onclose = () => {
@@ -171,7 +175,17 @@ const leaderboardList = document.getElementById('leaderboard-list');
         };
     };
 
-
+     const playSound = (audioData) => {
+        // Create an audio context
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Decode the raw array buffer into playable audio
+        audioContext.decodeAudioData(audioData, (buffer) => {
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+        });
+    };
     // --- EVENT LISTENERS ---
     confessForm.addEventListener('submit', handleConfess);
     getKeyButton.addEventListener('click', getNewKey);
