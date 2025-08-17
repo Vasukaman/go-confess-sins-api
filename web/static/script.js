@@ -33,31 +33,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to handle confessing a sin
     const handleConfess = async (event) => {
-    event.preventDefault();
-    
-    // ...
-    const description = document.getElementById('sin-description').value;
-    
-    // THE FIX IS HERE:
-    // We now send the request to our own server's proxy endpoint.
-    // We are NO LONGER sending the API key from the browser.
-    const apiUrl = '/api/confess'; 
+        event.preventDefault();
+        
+        // Play a sound on button click
+        new Audio('/static/submit.wav').play(); // Make sure you have this sound file
 
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ description: description }),
-        });
+        const description = document.getElementById('sin-description').value;
+        const apiKey = '/api/confess'
 
-        if (!response.ok) throw new Error('API returned an error.');
 
-        fetchSins(); // Refresh the list
-    } catch (error) {
-        alert('Failed to confess sin.');
-    }
-};
+        try {
+            const response = await fetch(`${sinApiUrl}/sins`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({ description: description }),
+            });
 
+            if (!response.ok) throw new Error('API returned an error.');
+
+            confessForm.reset(); // Clear the form
+            fetchSins(); // Refresh the list of sins
+        } catch (error) {
+            alert('Failed to confess sin.');
+            console.error('Confess error:', error);
+        }
+    };
     
     // Function to get a new API key
     const getNewKey = async () => {
