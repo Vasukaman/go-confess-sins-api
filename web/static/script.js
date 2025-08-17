@@ -19,13 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
        
         setTimeout(() => {
 
-            
+
         forgivenOverlay.classList.add('visible');
         setTimeout(() => {
             forgivenOverlay.classList.remove('visible');
         }, 3000)}
         
-        , 3000);
+        , 9000);
         
     };
 
