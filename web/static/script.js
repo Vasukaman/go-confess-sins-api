@@ -76,18 +76,20 @@ document.addEventListener('DOMContentLoaded', () => {
             confessForm.reset(); // Clear the form
               new Audio('/static/submit.wav').play(); 
 
-              
+
                   // Check if the browser supports the Web Speech API
             if ('speechSynthesis' in window) {
+                  console.log("TTS avaliable");
                 // Create a new speech object
                 const utterance = new SpeechSynthesisUtterance(text);
-                
+                 console.log("TTS created");
                 // Optional: configure the voice
                 utterance.pitch = 1.2;
                 utterance.rate = 1.2; // A little sped up, as you wanted
-
+             console.log("TTS set up");
                 // Tell the browser to speak
                 window.speechSynthesis.speak(utterance);
+                console.log("TTS spoke");
             } else {
                 console.log("This browser does not support Text-to-Speech.");
             }
