@@ -18,7 +18,8 @@ RUN CGO_ENABLED=0 go build -o /src/tts-server ./cmd/tts-service
 
 # --- Stage 2: The "Final Image" ---
 # This stage creates the tiny final container for production.
-FROM alpine:latestsss
+FROM alpine:latest
+
 
 # Copy only the compiled executable from the "builder" stage.
 # This makes the final image very small and secure.
