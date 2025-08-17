@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"go-confess-sins-api/internal/config"
 	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -63,6 +65,28 @@ func main() {
 		defer resp.Body.Close()
 
 		// Stream the response from the leaderboard service directly back to the browser
+		c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
+	})
+
+	router.GET("/api/speech", func(c *gin.Context) {
+		text := c.Query("text")
+		if text == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "text query parameter is required"})
+			return
+		}
+
+		// Build the full, encoded URL for the internal TTS service
+		ttsURL := fmt.Sprintf("%s/speech?text=%s", cfg.TtsApiUrl, url.QueryEscape(text))
+
+		// Call the TTS service
+		resp, err := http.Get(ttsURL)
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Could not reach TTS service"})
+			return
+		}
+		defer resp.Body.Close()
+
+		// Stream the audio response directly back to the browser
 		c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
 	})
 
