@@ -15,12 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCTIONS ---
 
     const showForgivenAnimation = () => {
+       
+       
+        setTimeout(() => {
+
+            
         forgivenOverlay.classList.add('visible');
-        // After the animation is done (3 seconds), remove the class
-        // so it can be triggered again next time.
         setTimeout(() => {
             forgivenOverlay.classList.remove('visible');
-        }, 3000);
+        }, 3000)}
+        
+        , 3000);
+        
     };
 
 
