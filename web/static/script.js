@@ -103,6 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
     getKeyButton.addEventListener('click', getNewKey);
 
     // --- INITIAL LOAD ---
-    fetchSins(); // Fetch sins when the page first loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchSins();
     fetchLeaderboard();
+    // ... rest of your initial setup
+});
 });
