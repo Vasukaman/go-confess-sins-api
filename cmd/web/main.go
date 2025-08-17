@@ -57,7 +57,7 @@ func main() {
 	router.GET("/api/leaderboard", func(c *gin.Context) {
 		resp, err := http.Get(leaderboardApiURL)
 		if err != nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Could not reach leaderboard service"})
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Could not reach leaderboard service: " + err.Error()})
 			return
 		}
 		defer resp.Body.Close()
