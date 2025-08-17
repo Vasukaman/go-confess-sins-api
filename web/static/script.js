@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         topSins.forEach(sin => {
             const item = document.createElement('div');
             item.className = 'leaderboard-item';
-            item.innerHTML = `<span>${sin.Description}</span><span>${sin.Count}</span>`;
+            item.innerHTML = `<span>${sin.description}</span><span>${sin.count}</span>`;
             leaderboardList.appendChild(item);
         });
     } catch (error) {
