@@ -39,26 +39,21 @@ document.addEventListener('DOMContentLoaded', () => {
         new Audio('/static/submit.wav').play(); // Make sure you have this sound file
 
         const description = document.getElementById('sin-description').value;
-        const apiKey = '/api/confess'
-
+        
+        const apiUrl = '/api/confess'; 
 
         try {
-            const response = await fetch(`${sinApiUrl}/sins`, {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`,
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ description: description }),
             });
 
             if (!response.ok) throw new Error('API returned an error.');
 
-            confessForm.reset(); // Clear the form
-            fetchSins(); // Refresh the list of sins
+            fetchSins(); // Refresh the list
         } catch (error) {
             alert('Failed to confess sin.');
-            console.error('Confess error:', error);
         }
     };
     
