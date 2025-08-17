@@ -11,6 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNCTIONS ---
 
+    const playConfessionAudio = (text) => {
+        const bellSound = new Audio('/static/submit.wav'); // Make sure you have this file
+        bellSound.play();
+
+        // When the bell sound finishes, play the TTS audio
+     
+            const encodedText = encodeURIComponent(text);
+            // This URL points to our new proxy endpoint
+            const speechUrl = `/api/speech?text=${encodedText}`;
+            
+            const speechAudio = new Audio(speechUrl);
+            speechAudio.play();
+        
+    };
+
     // Function to fetch and display sins
     const fetchSins = async () => {
     try {
@@ -74,9 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) throw new Error('API returned an error.');
             confessForm.reset(); // Clear the form
-              new Audio('/static/submit.wav').play(); 
-        console.log("TTS try");
-
+      
+     
+          playConfessionAudio(description);
             
 
 
