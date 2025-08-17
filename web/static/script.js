@@ -75,6 +75,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('API returned an error.');
             confessForm.reset(); // Clear the form
               new Audio('/static/submit.wav').play(); 
+
+              
+                  // Check if the browser supports the Web Speech API
+            if ('speechSynthesis' in window) {
+                // Create a new speech object
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Optional: configure the voice
+                utterance.pitch = 1.2;
+                utterance.rate = 1.2; // A little sped up, as you wanted
+
+                // Tell the browser to speak
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.log("This browser does not support Text-to-Speech.");
+            }
+
+
             fetchSins(); // Refresh the list
         } catch (error) {
             alert('Failed to confess sin.');
