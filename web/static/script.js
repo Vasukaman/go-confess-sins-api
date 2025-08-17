@@ -96,12 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const leaderboardList = document.getElementById('leaderboard-list');
-    const leaderboardApiUrl = 'appealing-reverence.railway.internal/leaderboard';
+    const leaderboardApiUrl = '/api/leaderboard';
     // Function to get leaderboard data
   const fetchLeaderboard = async () => {
     try {
         const response = await fetch(leaderboardApiUrl);
-        console.log("Leaderboard data receivedjson:", response);
+        console.log("Leaderboard data received json:", response);
         const topSins = await response.json();
 
         // THE DEBUGGING LINE IS HERE:

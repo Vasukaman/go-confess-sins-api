@@ -20,7 +20,6 @@ func main() {
 	router.StaticFile("/", "./web/templates/index.html")
 
 	// --- PROXY ENDPOINT ---
-	// This is the new, secure endpoint that your JavaScript will call.
 	router.POST("/api/confess", func(c *gin.Context) {
 		// 1. Get the JSON data that the browser sent.
 		var requestBody map[string]interface{}
@@ -49,6 +48,21 @@ func main() {
 
 		// This copies the status code, headers, and body from the sin-api's
 		// response directly to the response sent to the browser.
+		c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
+	})
+
+	leaderboardApiURL := cfg.LeaderboardApiUrl
+
+	// --- PROXY ENDPOINT FOR LEADERBOARD ---
+	router.GET("/api/leaderboard", func(c *gin.Context) {
+		resp, err := http.Get(leaderboardApiURL)
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Could not reach leaderboard service"})
+			return
+		}
+		defer resp.Body.Close()
+
+		// Stream the response from the leaderboard service directly back to the browser
 		c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
 	})
 
