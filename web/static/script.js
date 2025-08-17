@@ -152,7 +152,7 @@ const leaderboardList = document.getElementById('leaderboard-list');
         // This function runs when a message is pushed from the server
         socket.onmessage = (event) => {
 
-            console.log("Recieved socket message.");
+            console.log("Recieved socket message. "+event);
 
         if (typeof event.data === 'string') {
                 const data = JSON.parse(event.data);
@@ -163,11 +163,15 @@ const leaderboardList = document.getElementById('leaderboard-list');
                 fetchLeaderboard();
             }
         }
-            else if (event.data instanceof ArrayBuffer) {
-                // We received raw audio data
-                console.log("Recieveing TTS from the server");
-                playSound(event.data);
-            }
+            else if (event.data instanceof Blob) {
+                   console.log("Receiving TTS from the server");
+            
+                // The playSound function needs an ArrayBuffer, so we convert the Blob.
+                // The arrayBuffer() method is asynchronous and returns a Promise.
+                event.data.arrayBuffer().then(arrayBuffer => {
+                playSound(arrayBuffer);
+        });
+    }
         };
 
         socket.onclose = () => {
