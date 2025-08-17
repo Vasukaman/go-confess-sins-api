@@ -199,7 +199,7 @@ button {
 #forgiven-overlay.visible {
     pointer-events: auto;
     /* Apply a 3-second animation */
-    animation: fade-in-out 3s ease-in-out forwards;
+    animation: fade-in-out 5s ease-in-out forwards;
 }
 
 #forgiven-overlay .content img {
