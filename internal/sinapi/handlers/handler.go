@@ -97,6 +97,7 @@ func (h *Handler) CreateSin(c *gin.Context) {
 	}
 
 	sinData, _ := json.Marshal(sin)
+	log.Printf("Trying to push update to NATS")
 	if err := h.nc.Publish("sins.updated", sinData); err != nil {
 		log.Printf("Warning: failed to publish sin update to NATS: %v", err)
 	}
