@@ -175,3 +175,47 @@ button {
     font-weight: bold;
     color: #bb86fc;
 }
+
+
+
+#forgiven-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    /* Start hidden and non-interactive */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+#forgiven-overlay.visible {
+    pointer-events: auto;
+    /* Apply a 3-second animation */
+    animation: fade-in-out 3s ease-in-out forwards;
+}
+
+#forgiven-overlay .content img {
+    max-width: 150px;
+}
+
+#forgiven-overlay .content p {
+    font-size: 1.5em;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Define the animation keyframes */
+@keyframes fade-in-out {
+    0% { opacity: 0; }   /* Start invisible */
+    10% { opacity: 1; }  /* Fade in fast */
+    80% { opacity: 1; }  /* Hold visible */
+    100% { opacity: 0; } /* Fade out slow */
+}

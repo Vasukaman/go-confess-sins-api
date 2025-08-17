@@ -9,8 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const getKeyButton = document.getElementById('get-key-button');
     const newKeyDisplay = document.getElementById('new-key-display');
     const apiKeyInput = document.getElementById('api-key-input');
-const leaderboardList = document.getElementById('leaderboard-list');
+    const leaderboardList = document.getElementById('leaderboard-list');
+
+     const forgivenOverlay = document.getElementById('forgiven-overlay');
     // --- FUNCTIONS ---
+
+    const showForgivenAnimation = () => {
+        forgivenOverlay.classList.add('visible');
+        // After the animation is done (3 seconds), remove the class
+        // so it can be triggered again next time.
+        setTimeout(() => {
+            forgivenOverlay.classList.remove('visible');
+        }, 3000);
+    };
+
 
     const playConfessionAudio = (text) => {
         const bellSound = new Audio('/static/submit.wav'); // Make sure you have this file
@@ -91,7 +103,7 @@ const leaderboardList = document.getElementById('leaderboard-list');
             if (!response.ok) throw new Error('API returned an error.');
             confessForm.reset(); // Clear the form
       
-     
+          showForgivenAnimation();
           playConfessionAudio(description);
             
 
