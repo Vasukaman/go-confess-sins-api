@@ -151,13 +151,18 @@ const leaderboardList = document.getElementById('leaderboard-list');
 
         // This function runs when a message is pushed from the server
         socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+
+
+
+        if (typeof event.data === 'string') {
+                const data = JSON.parse(event.data);
             if (data.type === 'update') {
                 console.log("Update received from server. Refreshing lists...");
                 // When an update is received, just re-run the fetch functions
                 fetchSins();
                 fetchLeaderboard();
             }
+        }
             else if (event.data instanceof ArrayBuffer) {
                 // We received raw audio data
                 playSound(event.data);
