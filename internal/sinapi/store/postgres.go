@@ -85,6 +85,7 @@ func (s *Store) IncrementSinCount(apiKeyID int, description string, tags []strin
 	if err != nil {
 		return sin, fmt.Errorf("failed to scan sin row: %w", err)
 	}
+
 	return sin, nil
 }
 
