@@ -20,10 +20,10 @@ const leaderboardList = document.getElementById('leaderboard-list');
      
             const encodedText = encodeURIComponent(text);
             // This URL points to our new proxy endpoint
-            const speechUrl = `/api/speech?text=${encodedText}`;
+        //    const speechUrl = `/api/speech?text=${encodedText}`;
             
-            const speechAudio = new Audio(speechUrl);
-            speechAudio.play();
+        //    const speechAudio = new Audio(speechUrl);
+         //   speechAudio.play();
         
     };
 
@@ -165,6 +165,7 @@ const leaderboardList = document.getElementById('leaderboard-list');
         }
             else if (event.data instanceof ArrayBuffer) {
                 // We received raw audio data
+                console.log("Recieveing TTS from the server");
                 playSound(event.data);
             }
         };
