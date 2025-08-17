@@ -14,18 +14,35 @@
             <p>A log of developer sins, submitted anonymously.</p>
         </header>
 
+        <div class="container">
+          <aside class="leaderboard">
+            <h2>Top Sins</h2>
+            <div id="leaderboard-list"></div>
+        </aside>
+        </div>
+        
         <div class="api-key-section">
             <button id="get-key-button">Get a New API Key</button>
             <p id="new-key-display"></p>
         </div>
 
-        <form id="confess-form">
+       <form id="confess-form">
             <h3>Confess a New Sin</h3>
             <textarea id="sin-description" placeholder="Describe your code sin..." required></textarea>
+            
+            <div class="optional-fields">
+                <input type="text" id="sin-tags" placeholder="Tags (comma-separated, e.g., bug,frontend)">
+                <input type="number" id="sin-severity" placeholder="Severity (0-5)" min="0" max="5">
+            </div>
+
             <div class="form-footer">
+                <input type="text" id="api-key-input" placeholder="Your API Key" required>
                 <button type="submit">Confess</button>
             </div>
         </form>
+
+        <main class="sins-list">
+            </main>
 
         <main id="sins-list" class="sins-list"></main>
     </div>

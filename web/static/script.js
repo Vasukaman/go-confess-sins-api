@@ -34,11 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to handle confessing a sin
     const handleConfess = async (event) => {
         event.preventDefault();
-        
-        // Play a sound on button click
-        new Audio('/static/submit.wav').play(); // Make sure you have this sound file
-
+    
         const description = document.getElementById('sin-description').value;
+        const tags = document.getElementById('sin-tags').value;
+        const severity = document.getElementById('sin-severity').value;
+        const payload = { description };
+        if (tags) {
+            payload.tags = tags.split(',').map(tag => tag.trim());
+        }
+        if (severity) {
+            payload.severity = parseInt(severity, 10);
+        }
         
         const apiUrl = '/api/confess'; 
 
@@ -46,11 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ description: description }),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) throw new Error('API returned an error.');
-
+            confessForm.reset(); // Clear the form
+              new Audio('/static/submit.wav').play(); 
             fetchSins(); // Refresh the list
         } catch (error) {
             alert('Failed to confess sin.');
@@ -71,10 +78,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const leaderboardList = document.getElementById('leaderboard-list');
+    const leaderboardApiUrl = 'appealing-reverence-production-28ad.up.railway.app';
+    // Function to get leaderboard data
+    const fetchLeaderboard = async () => {
+        try {
+            const response = await fetch(leaderboardApiUrl);
+            const topSins = await response.json();
+
+            leaderboardList.innerHTML = '';
+            topSins.forEach(sin => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                item.innerHTML = `<span>${sin.description}</span><span>${sin.count}</span>`;
+                leaderboardList.appendChild(item);
+            });
+        } catch (error) {
+            console.error('Failed to fetch leaderboard:', error);
+        }
+    };
+
     // --- EVENT LISTENERS ---
     confessForm.addEventListener('submit', handleConfess);
     getKeyButton.addEventListener('click', getNewKey);
 
     // --- INITIAL LOAD ---
     fetchSins(); // Fetch sins when the page first loads
+    fetchLeaderboard();
 });
