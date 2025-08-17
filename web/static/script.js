@@ -152,7 +152,7 @@ const leaderboardList = document.getElementById('leaderboard-list');
         // This function runs when a message is pushed from the server
         socket.onmessage = (event) => {
 
-
+            console.log("Recieved socket message.");
 
         if (typeof event.data === 'string') {
                 const data = JSON.parse(event.data);

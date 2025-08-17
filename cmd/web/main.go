@@ -97,6 +97,8 @@ func main() {
 			}
 
 			// b. Broadcast the raw audio data as a binary message.
+
+			log.Printf("Translating TTS audio to sockets...")
 			melodyClient.BroadcastBinary(audioData)
 		}()
 		// This copies the status code, headers, and body from the sin-api's
