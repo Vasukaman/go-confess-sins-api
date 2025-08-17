@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('API returned an error.');
             confessForm.reset(); // Clear the form
               new Audio('/static/submit.wav').play(); 
-
+        console.log("TTS try");
 
                   // Check if the browser supports the Web Speech API
             if ('speechSynthesis' in window) {
