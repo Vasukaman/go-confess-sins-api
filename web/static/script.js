@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const leaderboardList = document.getElementById('leaderboard-list');
-    const leaderboardApiUrl = 'appealing-reverence-production-28ad.up.railway.app/leaderboard';
+    const leaderboardApiUrl = 'https://appealing-reverence-production-28ad.up.railway.app/leaderboard';
     // Function to get leaderboard data
     const fetchLeaderboard = async () => {
         try {
