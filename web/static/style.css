@@ -145,9 +145,8 @@ button {
     border: 1px solid #333;
     border-radius: 8px;
     padding: 20px;
-    margin-top: 30px;
-    flex: 0 0 180px; 
-    flex-basis: 30%; 
+    margin-top: 0;          /* keep from second rule */
+    flex: 0 0 180px;        /* fixed width */
 }
 
 .leaderboard h2 {
@@ -235,7 +234,7 @@ button {
 
 
 .sins-list {
-    flex-basis: 70%; /* Set the initial width to 70% */
+    flex: 1;
 }
 
 .shakeable {
