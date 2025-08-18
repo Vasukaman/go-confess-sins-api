@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         sins.forEach(sin => {
-          const sinCard = document.createElement('div');
+           const sinCard = document.createElement('div');
             sinCard.className = 'sin-card';
             
             let metaHTML = `<span class="count">Confessed: ${sin.count} times</span>`;
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             sinCard.innerHTML = `<p class="description">"${sin.description}"</p><div class="meta">${metaHTML}</div>`;
-            this.sinsList.appendChild(sinCard);
+            resultsContainer.appendChild(sinCard);
         });
     };
 
