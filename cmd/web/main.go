@@ -43,6 +43,7 @@ func main() {
 
 	router.Static("/static", "./web/static")
 	router.StaticFile("/", "./web/templates/index.html")
+	router.StaticFile("/search", "./web/templates/search.html")
 
 	router.GET("/ws", func(c *gin.Context) {
 		webHub.Melody.HandleRequest(c.Writer, c.Request)

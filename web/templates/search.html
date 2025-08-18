@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Sins - The Code Confessional</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Search the Archives</h1>
+            <p>Filter and sort all confessed sins.</p>
+        </header>
+
+        <form id="search-form" class="search-form">
+            <div class="form-row">
+                <input type="text" id="tags-input" placeholder="Tags (comma-separated)">
+            </div>
+            <div class="form-row">
+                <select id="sort-by-select">
+                    <option value="created_at">Sort by Date</option>
+                    <option value="count">Sort by Count</option>
+                    <option value="severity">Sort by Severity</option>
+                </select>
+                <select id="order-select">
+                    <option value="desc">Descending</option>
+                    <option value="asc">Ascending</option>
+                </select>
+                <button type="submit">Search</button>
+            </div>
+        </form>
+
+        <main id="search-results" class="sins-list"></main>
+        
+        <div id="pagination-controls" class="pagination"></div>
+    </div>
+    
+    <script src="/static/search.js"></script>
+</body>
+</html>
