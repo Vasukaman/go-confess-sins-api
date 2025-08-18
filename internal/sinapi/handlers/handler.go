@@ -1,17 +1,12 @@
 package handlers
 
 import (
-	"context"
 	"go-confess-sins-api/internal/sinapi/store"
 	"log"
 	"net/http"
 
 	"encoding/json"
 	"log/slog"
-
-	"crypto/rand"
-	"encoding/base64"
-	"math/big"
 
 	goaway "github.com/TwiN/go-away"
 	"github.com/gin-gonic/gin"
@@ -29,41 +24,15 @@ func NewHandler(s *store.Store, nc *nats.Conn) *Handler {
 	return &Handler{store: s, nc: nc}
 }
 
-var firstWords = []string{"GOOD", "BAD", "LAZY", "CLEVER", "WEAK", "STRONG"}
-var secondWords = []string{"BOY", "GIRL", "DOG", "CAT", "HACKER", "DEBUGGER"}
-
-// ... (Your Store struct and other functions are the same)
-
-func (h *Handler) CreateAPIKey() (string, error) {
-	// 1. Generate a secure random base string (e.g., 24 bytes).
-	keyBytes := make([]byte, 24)
-	if _, err := rand.Read(keyBytes); err != nil {
-		return "", err
-	}
-	baseKey := base64.URLEncoding.EncodeToString(keyBytes)
-
-	// 2. Securely pick a random word from each list.
-	firstWordIndex, _ := rand.Int(rand.Reader, big.NewInt(int64(len(firstWords))))
-	secondWordIndex, _ := rand.Int(rand.Reader, big.NewInt(int64(len(secondWords))))
-
-	firstWord := firstWords[firstWordIndex.Int64()]
-	secondWord := secondWords[secondWordIndex.Int64()]
-
-	// 3. Split the base key to create insertion points.
-	part1 := baseKey[0:8]
-	part2 := baseKey[8:24]
-	part3 := baseKey[24:]
-
-	// 4. Stitch the final key together.
-	finalKey := part1 + firstWord + part2 + secondWord + part3
-
-	// 5. Save the final, funny key to the database.
-	_, err := h.store.db.Exec(context.Background(), "INSERT INTO api_keys (key) VALUES ($1)", finalKey)
+// CreateAPIKey handles the public route to generate a new key.
+func (h *Handler) CreateAPIKey(c *gin.Context) {
+	apiKey, err := h.store.CreateAPIKey()
 	if err != nil {
-		return "", err
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate API key"})
+		return
 	}
 
-	return finalKey, nil
+	c.JSON(http.StatusCreated, gin.H{"api_key": apiKey})
 }
 
 // GetSins is a private route that fetches sins for the authenticated user.
