@@ -40,10 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         sins.forEach(sin => {
-            const sinCard = document.createElement('div');
+          const sinCard = document.createElement('div');
             sinCard.className = 'sin-card';
-            // (This rendering logic is the same as your index.js)
-            resultsContainer.appendChild(sinCard);
+            
+            let metaHTML = `<span class="count">Confessed: ${sin.count} times</span>`;
+            if (sin.Severity != null) {
+                metaHTML = `<span class="severity">Severity: ${sin.severity}</span>` + metaHTML;
+            }
+            if (sin.Tags && sin.Tags.length > 0) {
+                const tagsHTML = sin.Tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                metaHTML = `<div class="tags-container">${tagsHTML}</div>` + metaHTML;
+            }
+
+            sinCard.innerHTML = `<p class="description">"${sin.description}"</p><div class="meta">${metaHTML}</div>`;
+            this.sinsList.appendChild(sinCard);
         });
     };
 
