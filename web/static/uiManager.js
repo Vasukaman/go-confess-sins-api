@@ -15,16 +15,16 @@ export class UIManager {
             const sinCard = document.createElement('div');
             sinCard.className = 'sin-card';
             
-            let metaHTML = `<span class="count">Confessed: ${sin.Count} times</span>`;
+            let metaHTML = `<span class="count">Confessed: ${sin.count} times</span>`;
             if (sin.Severity != null) {
-                metaHTML = `<span class="severity">Severity: ${sin.Severity}</span>` + metaHTML;
+                metaHTML = `<span class="severity">Severity: ${sin.severity}</span>` + metaHTML;
             }
             if (sin.Tags && sin.Tags.length > 0) {
                 const tagsHTML = sin.Tags.map(tag => `<span class="tag">${tag}</span>`).join('');
                 metaHTML = `<div class="tags-container">${tagsHTML}</div>` + metaHTML;
             }
 
-            sinCard.innerHTML = `<p class="description">"${sin.Description}"</p><div class="meta">${metaHTML}</div>`;
+            sinCard.innerHTML = `<p class="description">"${sin.description}"</p><div class="meta">${metaHTML}</div>`;
             this.sinsList.appendChild(sinCard);
         });
     }
@@ -34,7 +34,7 @@ export class UIManager {
         topSins.forEach(sin => {
             const item = document.createElement('div');
             item.className = 'leaderboard-item';
-            item.innerHTML = `<span>${sin.Description}</span><span>${sin.Count}</span>`;
+            item.innerHTML = `<span>${sin.description}</span><span>${sin.count}</span>`;
             this.leaderboardList.appendChild(item);
         });
     }
