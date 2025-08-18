@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURATION ---
     // This assumes your web-frontend server is running and proxying requests
-    const searchApiUrl = '/search'; 
+    const searchApiUrl = '/api/search'; 
 
     // --- DOM ELEMENTS ---
     const searchForm = document.getElementById('search-form');

@@ -49,3 +49,9 @@ func (c *APIClient) GetSpeech(text string) ([]byte, error) {
 	defer resp.Body.Close()
 	return io.ReadAll(resp.Body)
 }
+
+func (c *APIClient) SearchSins(queryString string) (*http.Response, error) {
+	// Construct the full URL with the query string
+	fullURL := fmt.Sprintf("%s/search?%s", c.sinAPIURL, queryString)
+	return c.httpClient.Get(fullURL)
+}

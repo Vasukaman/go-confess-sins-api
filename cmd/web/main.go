@@ -53,6 +53,7 @@ func main() {
 	{
 		api.POST("/confess", handler.ConfessProxy)
 		api.GET("/leaderboard", handler.LeaderboardProxy)
+		api.GET("/search", handler.SearchProxy)
 	}
 
 	slog.Info("Web server starting on port 9090...")

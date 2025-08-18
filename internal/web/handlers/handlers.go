@@ -3,6 +3,7 @@ package handlers
 import (
 	"go-confess-sins-api/internal/web/clients"
 	"go-confess-sins-api/internal/web/hub"
+
 	"log/slog"
 	"net/http"
 
@@ -65,4 +66,17 @@ func (h *Handler) broadcastTTS(text string) {
 	}
 	slog.Info("Broadcasting TTS audio to clients.")
 	h.hub.Melody.BroadcastBinary(audioData)
+}
+
+func (h *Handler) SearchProxy(c *gin.Context) {
+	// Forward the original query string from the browser's request
+	// directly to the sin-api.
+	resp, err := h.apiClient.SearchSins(c.Request.URL.RawQuery)
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Could not reach sin-api for search"})
+		return
+	}
+	defer resp.Body.Close()
+
+	c.DataFromReader(resp.StatusCode, resp.ContentLength, resp.Header.Get("Content-Type"), resp.Body, nil)
 }
