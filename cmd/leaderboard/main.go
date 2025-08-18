@@ -1,12 +1,13 @@
 package main
 
 import (
-	"encoding/json"
-	"go-confess-sins-api/internal/config"
+	"context"
 	"go-confess-sins-api/internal/leaderboard/handlers"
 	"go-confess-sins-api/internal/leaderboard/store"
-	"go-confess-sins-api/pkg/models"
+	"go-confess-sins-api/internal/leaderboard/subscriber"
 	"log"
+	"log/slog"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -14,19 +15,20 @@ import (
 )
 
 func main() {
+	// --- SETUP ---
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using system environment variables.")
+		slog.Info("No .env file found, using system environment variables.")
 	}
-	// --- CONFIGURATION ---
-	// You would get these from your .env file / environment variables
-	cfg := config.New()
+	// You would load config from a config package
+	dbURL := os.Getenv("DATABASE_URL")
+	natsURL := os.Getenv("NATS_URL")
 
-	dbURL := cfg.DatabaseURL
-	natsURL := cfg.NatsApiUrl
 	// --- INITIALIZATION ---
+	ctx := context.Background()
 
 	// 1. Connect to the database
-	dbStore, err := store.New(dbURL)
+	dbStore, err := store.New(ctx, dbURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -39,33 +41,20 @@ func main() {
 	}
 	defer nc.Close()
 
-	// --- START BACKGROUND LISTENER ---
+	// --- START SERVICES ---
 
-	// 3. Subscribe to the "sins.updated" subject in the background
-	_, err = nc.Subscribe("sins.updated", func(msg *nats.Msg) {
-		log.Printf("Received an update from NATS")
-		var sin models.Sin
-		if err := json.Unmarshal(msg.Data, &sin); err != nil {
-			log.Printf("Error decoding message: %v", err)
-			return
-		}
-		// Update the leaderboard with the new data
-		if err := dbStore.UpdateSinFromEvent(sin); err != nil {
-			log.Printf("Error updating leaderboard: %v", err)
-		}
-	})
-	if err != nil {
-		log.Fatalf("Failed to subscribe to NATS: %v", err)
+	// 3. Initialize and start the NATS subscriber in the background
+	natsSubscriber := subscriber.NewNatsSubscriber(nc, dbStore)
+	if err := natsSubscriber.Start(); err != nil {
+		log.Fatalf("Failed to start NATS subscriber: %v", err)
 	}
-	log.Println("Listening for sin updates from NATS...")
 
-	// --- START API SERVER ---
-
-	// 4. Initialize the handler and router
+	// 4. Initialize the handler and API router
 	handler := handlers.NewHandler(dbStore)
 	router := gin.Default()
+	// You would add CORS middleware here for a real frontend
 	router.GET("/leaderboard", handler.GetLeaderboard)
 
-	log.Println("Leaderboard API server starting on port 8080...")
+	slog.Info("Leaderboard API server starting on port 8080...")
 	router.Run(":8080")
 }
