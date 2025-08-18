@@ -1,0 +1,31 @@
+# --- Stage 1: The "Builder" ---
+# This stage has all the Go tools and will compile our application.
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /src
+
+# Copy the module files first to leverage Docker's layer caching.
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of your application's source code.
+COPY . .
+
+# Build the specific service (the spammer-bot).
+RUN CGO_ENABLED=0 go build -o /src/spammer-bot ./cmd/spammer-bot
+
+
+# --- Stage 2: The "Final Image" ---
+# This stage creates the tiny final container for production.
+FROM alpine:latest
+
+WORKDIR /app
+
+# Copy the CSV file into the final container.
+COPY ./confessions.csv .
+
+# Copy only the compiled executable from the "builder" stage.
+COPY --from=builder /src/spammer-bot .
+
+# This is the command that will run when the container starts.
+CMD ["./spammer-bot"]

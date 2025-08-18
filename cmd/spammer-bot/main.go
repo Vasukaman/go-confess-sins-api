@@ -8,7 +8,10 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type WebStats struct {
@@ -23,11 +26,13 @@ const (
 
 func main() {
 	// --- CONFIGURATION ---
-	webFrontendURL := "https://go-confess-sins.up.railway.app"
+	godotenv.Load() // Load .env file
+
+	webFrontendURL := os.Getenv("WEB_FRONTEND_URL")
+	minDelay, _ := strconv.Atoi(os.Getenv("SPAMMER_MIN_DELAY_SECONDS"))
+	maxDelay, _ := strconv.Atoi(os.Getenv("SPAMMER_MAX_DELAY_SECONDS"))
+	silentIntervalSeconds, _ := strconv.Atoi(os.Getenv("SILENT_CHECK_INTERVAL_SECONDS"))
 	csvPath := "./confessions.csv"
-	activeModeMinDelay := 3  // 3 seconds
-	activeModeMaxDelay := 10 // 10 seconds
-	silentModeCheckInterval := 10 * time.Second
 
 	// --- SETUP ---
 	file, err := os.Open(csvPath)
@@ -44,7 +49,7 @@ func main() {
 	log.Printf("Loaded %d confessions.", len(confessions))
 
 	// --- STATE MACHINE LOOP ---
-	currentState := stateSilent // Start in silent mode
+	currentState := stateSilent
 
 	for {
 		switch currentState {
@@ -52,23 +57,21 @@ func main() {
 			log.Println("[Silent Mode] Checking for active users...")
 			if areUsersOnline(webFrontendURL) {
 				log.Println("Users found! Switching to Active Mode.")
-				currentState = stateActive // Switch state
+				currentState = stateActive
 			} else {
-				time.Sleep(silentModeCheckInterval)
+				time.Sleep(time.Duration(silentIntervalSeconds) * time.Second)
 			}
 
 		case stateActive:
 			log.Println("[Active Mode] Checking for users before confessing...")
 			if areUsersOnline(webFrontendURL) {
-				// If users are still here, confess a sin
 				confessRandomSin(webFrontendURL, confessions)
-				// Wait for a random duration before the next post
-				sleepDuration := time.Duration(rand.Intn(activeModeMaxDelay-activeModeMinDelay)+activeModeMinDelay) * time.Second
+				sleepDuration := time.Duration(rand.Intn(maxDelay-minDelay)+minDelay) * time.Second
 				log.Printf("[Active Mode] Waiting for %v...", sleepDuration)
 				time.Sleep(sleepDuration)
 			} else {
 				log.Println("No users online. Switching back to Silent Mode.")
-				currentState = stateSilent // Switch state
+				currentState = stateSilent
 			}
 		}
 	}
