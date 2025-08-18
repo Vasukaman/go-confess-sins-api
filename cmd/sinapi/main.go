@@ -46,7 +46,7 @@ func main() {
 	router.Use(cors.Default()) // A simple CORS config
 
 	// Group routes for better organization
-	api := router.Group("/api/v1")
+	api := router.Group("/")
 	{
 		// Public routes
 		api.POST("/keys", handler.CreateAPIKey)
