@@ -42,7 +42,7 @@ var secondWords = []string{"BOY", "GIRL", "DOG", "CAT", "HACKER", "DEBUGGER"}
 // CreateAPIKey generates a new, secure, random API key and stores it.
 func (s *Store) CreateAPIKey() (string, error) {
 	// 1. Generate a secure random base string.
-	keyBytes := make([]byte, 24)
+	keyBytes := make([]byte, 12)
 	if _, err := rand.Read(keyBytes); err != nil {
 		return "", err
 	}
