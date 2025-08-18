@@ -170,10 +170,11 @@ button {
 .leaderboard-item span:first-child {
     flex-grow: 1;
     margin-right: 15px;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;       /* instead of pre-wrap */
+    overflow-wrap: break-word; /* break long words */
+    word-break: break-word;    /* for extra safety */
+
+    
 }
 
 .leaderboard-item span:last-child {
