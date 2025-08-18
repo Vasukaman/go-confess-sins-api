@@ -229,7 +229,8 @@ button {
 .main-content {
     display: flex;
     gap: 20px; /* Space between the columns */
-    max-width: 800px
+     overflow: hidden;
+    max-width: 800px;
 }
 
 
