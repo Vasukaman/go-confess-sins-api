@@ -178,8 +178,10 @@ func (s *Store) GetSins(limit int) ([]models.Sin, error) {
 // SearchSinsParams defines the available search criteria.
 type SearchSinsParams struct {
 	Tags   []string
-	SortBy string // "count" or "created_at"
-	Order  string // "asc" or "desc"
+	SortBy string
+	Order  string
+	Limit  int
+	Offset int
 }
 
 // SearchSins dynamically builds and executes a search query.
@@ -208,8 +210,8 @@ func (s *Store) SearchSins(params SearchSinsParams) ([]models.Sin, error) {
 	}
 
 	// Always add a limit to prevent fetching too much data
-	query += fmt.Sprintf(" LIMIT $%d", argID)
-	args = append(args, 100) // Default limit of 100
+	query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argID, argID+1)
+	args = append(args, params.Limit, params.Offset)
 
 	// Execute the final, dynamically built query
 	rows, err := s.db.Query(context.Background(), query, args...)

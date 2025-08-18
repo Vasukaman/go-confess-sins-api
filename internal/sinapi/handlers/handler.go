@@ -6,6 +6,7 @@ import (
 	"go-confess-sins-api/pkg/models"
 	"log"
 	"net/http"
+	"strconv"
 
 	"log/slog"
 
@@ -125,13 +126,28 @@ func (h *Handler) SearchSins(c *gin.Context) {
 		tags = strings.Split(tagsQuery, ",")
 	}
 
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "25"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit > 100 {
+		limit = 100
+	} // Cap the limit for safety
+
+	offset := (page - 1) * limit
+
 	params := store.SearchSinsParams{
 		Tags:   tags,
 		SortBy: sortBy,
 		Order:  order,
+		Limit:  limit,
+		Offset: offset,
 	}
 
 	sins, err := h.store.SearchSins(params)
+
 	if err != nil {
 		slog.Error("Failed to search sins", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search sins"})
