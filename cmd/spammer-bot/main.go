@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"log"
@@ -14,13 +15,19 @@ type WebStats struct {
 	ConnectedUsers int `json:"connected_users"`
 }
 
+// Define the bot's states
+const (
+	stateSilent = "silent"
+	stateActive = "active"
+)
+
 func main() {
 	// --- CONFIGURATION ---
-	// You would load these from a config file or .env
-	webFrontendURL := "https://go-confess-sins.up.railway.app/api/confess"
-	minDelaySeconds := 3  // 5 minutes
-	maxDelaySeconds := 10 // 15 minutes
+	webFrontendURL := "https://go-confess-sins.up.railway.app"
 	csvPath := "./confessions.csv"
+	activeModeMinDelay := 3  // 3 seconds
+	activeModeMaxDelay := 10 // 10 seconds
+	silentModeCheckInterval := 10 * time.Second
 
 	// --- SETUP ---
 	file, err := os.Open(csvPath)
@@ -29,7 +36,6 @@ func main() {
 	}
 	defer file.Close()
 
-	// Read all confessions into memory
 	reader := csv.NewReader(file)
 	confessions, err := reader.ReadAll()
 	if err != nil {
@@ -37,30 +43,63 @@ func main() {
 	}
 	log.Printf("Loaded %d confessions.", len(confessions))
 
-	// --- MAIN LOOP ---
+	// --- STATE MACHINE LOOP ---
+	currentState := stateSilent // Start in silent mode
+
 	for {
-		// 1. Check if anyone is online.
-		log.Println("Checking for active users...")
-		statsURL := webFrontendURL + "/api/stats"
-		resp, err := http.Get(statsURL)
-		if err != nil {
-			log.Printf("Error checking for users: %v", err)
-		} else {
-			var stats WebStats
-			if err := json.NewDecoder(resp.Body).Decode(&stats); err == nil {
-				log.Printf("%d users are currently connected.", stats.ConnectedUsers)
-
-				// 2. Only confess a sin if there are users online.
-				if stats.ConnectedUsers > 0 {
-					// ... (your existing logic to pick a random sin and post it)
-				}
+		switch currentState {
+		case stateSilent:
+			log.Println("[Silent Mode] Checking for active users...")
+			if areUsersOnline(webFrontendURL) {
+				log.Println("Users found! Switching to Active Mode.")
+				currentState = stateActive // Switch state
+			} else {
+				time.Sleep(silentModeCheckInterval)
 			}
-			resp.Body.Close()
-		}
 
-		// 3. Wait for the next cycle.
-		sleepDuration := time.Duration(rand.Intn(maxDelaySeconds-minDelaySeconds)+minDelaySeconds) * time.Second
-		log.Printf("Waiting for %v...", sleepDuration)
-		time.Sleep(sleepDuration)
+		case stateActive:
+			log.Println("[Active Mode] Checking for users before confessing...")
+			if areUsersOnline(webFrontendURL) {
+				// If users are still here, confess a sin
+				confessRandomSin(webFrontendURL, confessions)
+				// Wait for a random duration before the next post
+				sleepDuration := time.Duration(rand.Intn(activeModeMaxDelay-activeModeMinDelay)+activeModeMinDelay) * time.Second
+				log.Printf("[Active Mode] Waiting for %v...", sleepDuration)
+				time.Sleep(sleepDuration)
+			} else {
+				log.Println("No users online. Switching back to Silent Mode.")
+				currentState = stateSilent // Switch state
+			}
+		}
+	}
+}
+
+// areUsersOnline is a helper function to check the website stats.
+func areUsersOnline(webURL string) bool {
+	resp, err := http.Get(webURL + "/api/stats")
+	if err != nil {
+		log.Printf("Error checking for users: %v", err)
+		return false
+	}
+	defer resp.Body.Close()
+
+	var stats WebStats
+	if err := json.NewDecoder(resp.Body).Decode(&stats); err == nil {
+		log.Printf("%d users are currently connected.", stats.ConnectedUsers)
+		return stats.ConnectedUsers > 0
+	}
+	return false
+}
+
+// confessRandomSin is a helper function to post a sin.
+func confessRandomSin(webURL string, confessions [][]string) {
+	randomSin := confessions[rand.Intn(len(confessions))][0]
+	payload := map[string]interface{}{"description": randomSin}
+	jsonBody, _ := json.Marshal(payload)
+
+	log.Printf("[Active Mode] Confessing sin: '%s'", randomSin)
+	_, err := http.Post(webURL+"/api/confess", "application/json", bytes.NewBuffer(jsonBody))
+	if err != nil {
+		log.Printf("Error confessing sin: %v", err)
 	}
 }
