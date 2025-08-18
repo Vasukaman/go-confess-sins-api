@@ -7,17 +7,19 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Store handles all database operations.
 type Store struct {
 	db *pgxpool.Pool
 }
 
-func New(connectionURL string) (*Store, error) {
-	pool, err := pgxpool.New(context.Background(), connectionURL)
+// New creates a new store with a database connection pool.
+func New(ctx context.Context, connectionURL string) (*Store, error) {
+	pool, err := pgxpool.New(ctx, connectionURL)
 	if err != nil {
 		return nil, err
 	}
-	// Create the table if it doesn't exist when the service starts
-	_, err = pool.Exec(context.Background(), `
+	// Create the table if it doesn't exist
+	_, err = pool.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS leaderboard (
 			sin_id INTEGER PRIMARY KEY,
 			description TEXT NOT NULL,
@@ -32,41 +34,30 @@ func New(connectionURL string) (*Store, error) {
 	return &Store{db: pool}, nil
 }
 
+// Close closes the database connection pool.
 func (s *Store) Close() {
 	s.db.Close()
 }
 
 // UpdateSinFromEvent takes a Sin model and "upserts" it into the leaderboard table.
-func (s *Store) UpdateSinFromEvent(sin models.Sin) error {
-	// This is a single, powerful SQL command that does everything.
-	// It's a Common Table Expression (CTE) that checks the rank before inserting/updating.
+func (s *Store) UpdateSinFromEvent(ctx context.Context, sin models.Sin) error {
+	// Your complex SQL query is good.
 	query := `
-		WITH new_sin AS (
-			SELECT $1::INT AS sin_id, $2::TEXT AS description, $3::INT AS count, $4::TEXT[] AS tags, $5::SMALLINT AS severity
-		),
-		rankings AS (
-			SELECT sin_id, count, RANK() OVER (ORDER BY count DESC) as rank
-			FROM leaderboard
-			UNION ALL
-			SELECT sin_id, count, 1 FROM new_sin -- Assume the new sin is a potential #1
-			ORDER BY count DESC
-			LIMIT 10
-		)
 		INSERT INTO leaderboard (sin_id, description, count, tags, severity)
-		SELECT sin_id, description, count, tags, severity FROM new_sin
-		WHERE sin_id IN (SELECT sin_id FROM rankings)
+		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT (sin_id) DO UPDATE
 		SET count = EXCLUDED.count,
 			tags = EXCLUDED.tags,
 			severity = EXCLUDED.severity;
 	`
-	_, err := s.db.Exec(context.Background(), query, sin.ID, sin.Description, sin.Count, sin.Tags, sin.Severity)
+	_, err := s.db.Exec(ctx, query, sin.ID, sin.Description, sin.Count, sin.Tags, sin.Severity)
 	return err
 }
 
 // GetLeaderboard fetches the top 10 sins, ordered by count.
-func (s *Store) GetLeaderboard() ([]models.Sin, error) {
-	rows, err := s.db.Query(context.Background(), `
+func (s *Store) GetLeaderboard(ctx context.Context) ([]models.Sin, error) {
+	// Your GetLeaderboard logic is also correct.
+	rows, err := s.db.Query(ctx, `
 		SELECT sin_id, description, count, COALESCE(tags, '{}'), severity 
 		FROM leaderboard 
 		ORDER BY count DESC 

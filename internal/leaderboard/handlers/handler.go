@@ -1,23 +1,23 @@
 package handlers
 
 import (
-	"go-confess-sins-api/internal/leaderboard/store"
+	"go-confess-sins-api/internal/leaderboard"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	store *store.Store
+	store leaderboard.Store
 }
 
-func NewHandler(s *store.Store) *Handler {
+func NewHandler(s leaderboard.Store) *Handler {
 	return &Handler{store: s}
 }
 
-// GetLeaderboard handles GET requests to /leaderboard
 func (h *Handler) GetLeaderboard(c *gin.Context) {
-	sins, err := h.store.GetLeaderboard()
+	// Pass the request context to the store method
+	sins, err := h.store.GetLeaderboard(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve leaderboard"})
 		return
