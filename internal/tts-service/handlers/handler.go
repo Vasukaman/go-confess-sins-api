@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	ttsservice "go-confess-sins-api/internal/tts-service" // Import the new package with the interface
+	ttsservice "go-confess-sins-api/internal/tts-service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

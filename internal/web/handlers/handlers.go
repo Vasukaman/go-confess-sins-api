@@ -2,21 +2,21 @@ package handlers
 
 import (
 	"go-confess-sins-api/internal/web/clients"
+	"go-confess-sins-api/internal/web/hub"
 	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/olahol/melody"
 )
 
 // Handler holds all the dependencies for our web handlers.
 type Handler struct {
 	apiClient *clients.APIClient
-	melody    *melody.Melody
+	hub       *hub.Hub
 }
 
-func New(apiClient *clients.APIClient, m *melody.Melody) *Handler {
-	return &Handler{apiClient: apiClient, melody: m}
+func New(apiClient *clients.APIClient, h *hub.Hub) *Handler {
+	return &Handler{apiClient: apiClient, hub: h}
 }
 
 // ConfessProxy handles the sin confession.
@@ -29,7 +29,6 @@ func (h *Handler) ConfessProxy(c *gin.Context) {
 
 	description, _ := requestBody["description"].(string)
 
-	// Use the client to make the API call
 	resp, err := h.apiClient.Confess(requestBody)
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Could not reach sin-api"})
@@ -56,11 +55,14 @@ func (h *Handler) LeaderboardProxy(c *gin.Context) {
 
 // broadcastTTS is a helper for the TTS logic.
 func (h *Handler) broadcastTTS(text string) {
+	if text == "" {
+		return
+	}
 	audioData, err := h.apiClient.GetSpeech(text)
 	if err != nil {
 		slog.Error("Failed to get TTS audio", "error", err)
 		return
 	}
 	slog.Info("Broadcasting TTS audio to clients.")
-	h.melody.BroadcastBinary(audioData)
+	h.hub.Melody.BroadcastBinary(audioData)
 }
