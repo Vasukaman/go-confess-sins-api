@@ -12,7 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const leaderboardList = document.getElementById('leaderboard-list');
 
      const forgivenOverlay = document.getElementById('forgiven-overlay');
+     const descriptionTextarea = document.getElementById('sin-description');
+    const charCounter = document.getElementById('char-counter');
+    const maxLength = 500;
+
     // --- FUNCTIONS ---
+
+     descriptionTextarea.addEventListener('input', () => {
+        const remaining = maxLength - descriptionTextarea.value.length;
+        charCounter.textContent = remaining;
+    });
 
     const showForgivenAnimation = () => {
        

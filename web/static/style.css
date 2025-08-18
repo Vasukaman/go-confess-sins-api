@@ -39,6 +39,7 @@ header p {
     border-radius: 8px;
     padding: 20px;
     transition: transform 0.2s ease-in-out;
+      overflow-wrap: break-word;
 }
 
 .sin-card:hover {
@@ -49,6 +50,7 @@ header p {
     font-size: 1.1em;
     margin: 0 0 15px 0;
     color: #e0e0e0;
+    white-space: pre-wrap;
 }
 
 .meta {
@@ -249,4 +251,12 @@ button {
 .shaking {
     /* Starts fast, then slows down, runs for 1 second */
     animation: shake 1s ease-out;
+}
+
+#char-counter {
+    text-align: right;
+    font-size: 0.8em;
+    color: #888;
+    margin-top: -5px;
+    margin-bottom: 10px;
 }

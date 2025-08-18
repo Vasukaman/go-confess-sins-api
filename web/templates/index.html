@@ -22,7 +22,9 @@
 
        <form id="confess-form">
             <h3>Confess a New Sin</h3>
-            <textarea id="sin-description" placeholder="Describe your code sin..." required></textarea>
+            <textarea id="sin-description" placeholder="Describe your code sin..." required maxlength="500"></textarea>
+            <div id="char-counter">500</div> </form>
+
             
             <div class="optional-fields">
                 <input type="text" id="sin-tags" placeholder="Tags (comma-separated, e.g., bug,frontend)">
