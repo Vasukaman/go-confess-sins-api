@@ -231,10 +231,7 @@ button {
     max-width: 800px
 }
 
-.leaderboard {
-    flex-basis: 30%; /* Set the initial width to 30% */
-    margin-top: 0; /* Remove margin from original style */
-}
+
 
 .sins-list {
     flex-basis: 70%; /* Set the initial width to 70% */
