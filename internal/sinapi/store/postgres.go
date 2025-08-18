@@ -12,6 +12,8 @@ import (
 	"encoding/base64"
 	"math/big"
 
+	"database/sql"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -168,6 +170,65 @@ func (s *Store) GetSins(limit int) ([]models.Sin, error) {
 			sin.Severity = &severity
 		}
 
+		sins = append(sins, sin)
+	}
+	return sins, nil
+}
+
+// SearchSinsParams defines the available search criteria.
+type SearchSinsParams struct {
+	Tags   []string
+	SortBy string // "count" or "created_at"
+	Order  string // "asc" or "desc"
+}
+
+// SearchSins dynamically builds and executes a search query.
+func (s *Store) SearchSins(params SearchSinsParams) ([]models.Sin, error) {
+	// Start with the base query
+	query := "SELECT id, description, count, created_at, COALESCE(tags, '{}'), severity FROM sins WHERE 1=1"
+	args := []interface{}{}
+	argID := 1
+
+	// Dynamically add a WHERE clause for tags if provided
+	if len(params.Tags) > 0 {
+		query += fmt.Sprintf(" AND tags @> $%d", argID) // '@>' is the Postgres "contains" operator for arrays
+		args = append(args, params.Tags)
+		argID++
+	}
+
+	// Dynamically add ORDER BY clause, safely checking the values
+	if params.SortBy == "count" || params.SortBy == "created_at" {
+		query += " ORDER BY " + params.SortBy
+		if params.Order == "asc" || params.Order == "desc" {
+			query += " " + params.Order
+		}
+	} else {
+		// Default sort
+		query += " ORDER BY created_at DESC"
+	}
+
+	// Always add a limit to prevent fetching too much data
+	query += fmt.Sprintf(" LIMIT $%d", argID)
+	args = append(args, 100) // Default limit of 100
+
+	// Execute the final, dynamically built query
+	rows, err := s.db.Query(context.Background(), query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var sins []models.Sin
+	for rows.Next() {
+		var sin models.Sin
+		var severity sql.NullInt32 // Use a nullable type for scanning
+		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &severity); err != nil {
+			return nil, err
+		}
+		if severity.Valid {
+			s := int(severity.Int32)
+			sin.Severity = &s
+		}
 		sins = append(sins, sin)
 	}
 	return sins, nil

@@ -10,6 +10,7 @@ import (
 	"log/slog"
 
 	"fmt"
+	"strings"
 
 	goaway "github.com/TwiN/go-away"
 	"github.com/gin-gonic/gin"
@@ -111,4 +112,31 @@ func getAPIKeyIDFromContext(c *gin.Context) int {
 		return 0
 	}
 	return apiKeyID.(int)
+}
+
+func (h *Handler) SearchSins(c *gin.Context) {
+	// Get the query parameters from the URL
+	tagsQuery := c.Query("tags")
+	sortBy := c.Query("sortBy") // e.g., "count"
+	order := c.Query("order")   // e.g., "desc"
+
+	var tags []string
+	if tagsQuery != "" {
+		tags = strings.Split(tagsQuery, ",")
+	}
+
+	params := store.SearchSinsParams{
+		Tags:   tags,
+		SortBy: sortBy,
+		Order:  order,
+	}
+
+	sins, err := h.store.SearchSins(params)
+	if err != nil {
+		slog.Error("Failed to search sins", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search sins"})
+		return
+	}
+
+	c.JSON(http.StatusOK, sins)
 }

@@ -51,6 +51,7 @@ func main() {
 		// Public routes
 		api.POST("/keys", handler.CreateAPIKey)
 		api.GET("/sins", handler.GetSins)
+		api.GET("/search", handler.SearchSins)
 
 		// Private routes
 		private := api.Group("/")
