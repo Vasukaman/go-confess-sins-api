@@ -1,27 +1,31 @@
 package handlers
 
 import (
+	"go-confess-sins-api/internal/sinapi"
 	"go-confess-sins-api/internal/sinapi/store"
+	"go-confess-sins-api/pkg/models"
 	"log"
 	"net/http"
 
-	"encoding/json"
 	"log/slog"
+
+	"fmt"
 
 	goaway "github.com/TwiN/go-away"
 	"github.com/gin-gonic/gin"
-	"github.com/nats-io/nats.go"
 )
 
 const GET_SINS_LIMIT = 10
 
 type Handler struct {
-	store *store.Store
-	nc    *nats.Conn
+	store     *store.Store
+	publisher sinapi.Publisher
+	censor    *goaway.ProfanityDetector
 }
 
-func NewHandler(s *store.Store, nc *nats.Conn) *Handler {
-	return &Handler{store: s, nc: nc}
+func NewHandler(s *store.Store, p sinapi.Publisher) *Handler {
+	censor := goaway.NewProfanityDetector().WithCustomDictionary(goaway.DefaultProfanities, append(goaway.DefaultFalsePositives, "fuck"), goaway.DefaultFalseNegatives)
+	return &Handler{store: s, publisher: p, censor: censor}
 }
 
 // CreateAPIKey handles the public route to generate a new key.
@@ -36,16 +40,13 @@ func (h *Handler) CreateAPIKey(c *gin.Context) {
 }
 
 // GetSins is a private route that fetches sins for the authenticated user.
-func (h *Handler) GetSinsByKey(c *gin.Context) {
-	// 1. Get the apiKeyID that the middleware added to the context.
-	apiKeyID, exists := c.Get("apiKeyID")
-	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "API Key ID not found in context"})
-		return
+func (h *Handler) GetSinsByUser(c *gin.Context) {
+	apiKeyID := getAPIKeyIDFromContext(c)
+	if apiKeyID == 0 {
+		return // The helper function already sent the error response
 	}
 
-	// 2. Call the store with the specific user's ID.
-	sins, err := h.store.GetSinsByAPIKeyID(apiKeyID.(int))
+	sins, err := h.store.GetSinsByAPIKeyID(apiKeyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve sins"})
 		return
@@ -69,40 +70,47 @@ var customProfanityDetector = goaway.NewProfanityDetector().WithCustomDictionary
 
 // CreateSin is a private route that creates a sin for the authenticated user.
 func (h *Handler) CreateSin(c *gin.Context) {
-	// Get the user's ID from the context.
-	apiKeyID, exists := c.Get("apiKeyID")
-	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "API Key ID not found in context"})
+	apiKeyID := getAPIKeyIDFromContext(c)
+	if apiKeyID == 0 {
 		return
 	}
 
-	var request struct {
-		Description string   `json:"description" binding:"required"`
-		Tags        []string `json:"tags"`     // Optional
-		Severity    *int     `json:"severity"` // Optional
-	}
-
+	var request models.Sin // Use the model directly for binding
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	censoredDescription := customProfanityDetector.Censor(request.Description)
+	const maxChars = 500
+	if len(request.Description) > maxChars {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Description cannot exceed %d characters.", maxChars)})
+		return
+	}
 
-	//pass data to the store
-	sin, err := h.store.IncrementSinCount(apiKeyID.(int), censoredDescription, request.Tags, request.Severity)
+	// Use the censor from the handler struct
+	request.Description = h.censor.Censor(request.Description)
+
+	sin, err := h.store.IncrementSinCount(apiKeyID, request.Description, request.Tags, request.Severity)
 	if err != nil {
-		log.Printf("Error from store: %v", err)
+		slog.Error("Failed to process sin in store", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process sin"})
 		return
 	}
 
-	sinData, _ := json.Marshal(sin)
-	slog.Info("Trying to push update to NATS")
-	if err := h.nc.Publish("sins.updated", sinData); err != nil {
-		slog.Error("Warning: failed to publish sin update to NATS: %v", err)
+	// Use the publisher from the handler struct
+	slog.Info("Publishing sin update to NATS", "sin_id", sin.ID)
+	if err := h.publisher.PublishSinUpdate(sin); err != nil {
+		slog.Warn("Failed to publish sin update to NATS", "error", err, "sin_id", sin.ID)
 	}
 
 	c.JSON(http.StatusCreated, sin)
+}
 
+func getAPIKeyIDFromContext(c *gin.Context) int {
+	apiKeyID, exists := c.Get("apiKeyID")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "API Key ID not found in context"})
+		return 0
+	}
+	return apiKeyID.(int)
 }

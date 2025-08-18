@@ -1,10 +1,10 @@
-// in file: /cmd/sinapi/main.go
 package main
 
 import (
 	"go-confess-sins-api/internal/config"
-	"go-confess-sins-api/internal/sinapi"
+	"go-confess-sins-api/internal/sinapi/events"
 	"go-confess-sins-api/internal/sinapi/handlers"
+	"go-confess-sins-api/internal/sinapi/middleware"
 	"go-confess-sins-api/internal/sinapi/store"
 	"log"
 	"log/slog"
@@ -17,51 +17,49 @@ import (
 )
 
 func main() {
-
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
-
-	// Load environment variables from .env file
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using system environment variables.")
+	// --- SETUP ---
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
+	if err := godotenv.Load(); err != nil { /* ... */
 	}
-
-	// Create a new config object which reads from the environment
 	cfg := config.New()
 
-	// Initialize the database store using the config
+	// --- INITIALIZE ADAPTERS ---
 	dbStore, err := store.New(cfg.DatabaseURL)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatalf("Failed to connect to db: %v", err)
 	}
 	defer dbStore.Close()
 
-	eventPublisher, err := nats.Connect(cfg.NatsApiUrl)
+	nc, err := nats.Connect(cfg.NatsApiUrl)
 	if err != nil {
 		log.Fatalf("Failed to connect to NATS: %v", err)
 	}
-	defer eventPublisher.Close()
+	defer nc.Close()
 
-	// Initialize the handler
-	handler := handlers.NewHandler(dbStore, eventPublisher)
+	// --- INITIALIZE CORE LOGIC ---
+	publisher := events.NewPublisher(nc)
+	handler := handlers.NewHandler(dbStore, publisher)
+	authMiddleware := middleware.NewAuth(dbStore)
 
-	// Create and run the router
+	// --- SETUP ROUTER ---
 	router := gin.Default()
+	router.Use(cors.Default()) // A simple CORS config
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://go-confess-sins.up.railway.app"}
-	router.Use(cors.New(config))
-
-	// --- Public Routes ---
-	router.POST("/keys", handler.CreateAPIKey)
-	router.GET("/sins", handler.GetSins) // The public list of sins
-
-	// --- Private Routes (Auth Middleware Applied) ---
-	privateRoutes := router.Group("/")
-	privateRoutes.Use(sinapi.AuthMiddleware(dbStore))
+	// Group routes for better organization
+	api := router.Group("/api/v1")
 	{
-		privateRoutes.POST("/sins", handler.CreateSin)
-	}
-	router.Run(":8080")
+		// Public routes
+		api.POST("/keys", handler.CreateAPIKey)
+		api.GET("/sins", handler.GetSins)
 
+		// Private routes
+		private := api.Group("/")
+		private.Use(authMiddleware.Middleware())
+		{
+			private.POST("/sins", handler.CreateSin)
+			private.GET("/my-sins", handler.GetSinsByUser)
+		}
+	}
+
+	router.Run(":8080")
 }

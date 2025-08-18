@@ -113,10 +113,9 @@ func (s *Store) IncrementSinCount(apiKeyID int, description string, tags []strin
 	return sin, nil
 }
 
-// GetSinsByAPIKeyID fetches all sins for a specific user.
 func (s *Store) GetSinsByAPIKeyID(apiKeyID int) ([]models.Sin, error) {
 	rows, err := s.db.Query(context.Background(),
-		"SELECT id, description, count, created_at, tags, severity FROM sins WHERE api_key_id = $1 ORDER BY created_at DESC",
+		"SELECT id, description, count, created_at, COALESCE(tags, '{}'), severity FROM sins WHERE api_key_id = $1 ORDER BY created_at DESC",
 		apiKeyID)
 	if err != nil {
 		return nil, err
@@ -126,7 +125,7 @@ func (s *Store) GetSinsByAPIKeyID(apiKeyID int) ([]models.Sin, error) {
 	var sins []models.Sin
 	for rows.Next() {
 		var sin models.Sin
-		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt); err != nil {
+		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &sin.Severity); err != nil {
 			return nil, err
 		}
 		sins = append(sins, sin)
