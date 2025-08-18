@@ -159,6 +159,7 @@ button {
     justify-content: space-between;
     padding: 10px;
     border-bottom: 1px solid #2a2a2a;
+    overflow-wrap: break-word;
 }
 
 .leaderboard-item:last-child {
@@ -168,7 +169,8 @@ button {
 .leaderboard-item span:first-child {
     flex-grow: 1;
     margin-right: 15px;
-    white-space: nowrap;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
     overflow: hidden;
     text-overflow: ellipsis;
 }
