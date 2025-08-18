@@ -58,9 +58,9 @@ func (s *Store) CreateAPIKey() (string, error) {
 	secondWord := secondWords[secondWordIndex.Int64()]
 
 	// 3. Split the lowercase base key to create insertion points.
-	part1 := lowerBaseKey[0:8]
-	part2 := lowerBaseKey[8:14]
-	part3 := lowerBaseKey[14:]
+	part1 := lowerBaseKey[0:4]
+	part2 := lowerBaseKey[4:10]
+	part3 := lowerBaseKey[10:]
 
 	// 4. Stitch the final key together.
 	finalKey := part1 + firstWord + part2 + secondWord + part3
