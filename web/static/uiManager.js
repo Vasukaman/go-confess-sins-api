@@ -1,4 +1,4 @@
-class UIManager {
+export class UIManager {
     constructor() {
         this.sinsList = document.getElementById('sins-list');
         this.leaderboardList = document.getElementById('leaderboard-list');
