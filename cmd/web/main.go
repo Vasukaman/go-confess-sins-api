@@ -9,6 +9,7 @@ import (
 	"go-confess-sins-api/internal/web/subscriber"
 	"log"
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -54,6 +55,11 @@ func main() {
 		api.POST("/confess", handler.ConfessProxy)
 		api.GET("/leaderboard", handler.LeaderboardProxy)
 		api.GET("/search", handler.SearchProxy)
+		api.GET("/stats", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{
+				"connected_users": webHub.Melody.Len(),
+			})
+		})
 	}
 
 	slog.Info("Web server starting on port 9090...")
