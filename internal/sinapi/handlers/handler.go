@@ -66,8 +66,6 @@ func (h *Handler) GetSins(c *gin.Context) {
 	c.JSON(http.StatusOK, sins)
 }
 
-var customProfanityDetector = goaway.NewProfanityDetector().WithCustomDictionary(goaway.DefaultProfanities, append(goaway.DefaultFalsePositives, "fuck"), goaway.DefaultFalseNegatives)
-
 // CreateSin is a private route that creates a sin for the authenticated user.
 func (h *Handler) CreateSin(c *gin.Context) {
 	apiKeyID := getAPIKeyIDFromContext(c)
