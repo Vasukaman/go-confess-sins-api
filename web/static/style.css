@@ -296,3 +296,21 @@ button {
     justify-content: space-between;
     margin-top: 30px;
 }
+
+.nav-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: #333;
+    color: #bb86fc;
+    border: 1px solid #bb86fc;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-button:hover {
+    background-color: #bb86fc;
+    color: #121212;
+}

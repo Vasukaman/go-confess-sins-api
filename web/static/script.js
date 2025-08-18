@@ -99,7 +99,7 @@ class App {
         });
 
         this.getKeyButton.addEventListener('click', async () => {
-            // ... (this logic is fine, but it can use the uiManager)
+            
             try {
                 const data = await this.apiClient.getNewKey();
                 this.uiManager.displayNewKey(data.api_key);
