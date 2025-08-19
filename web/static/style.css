@@ -611,16 +611,7 @@ button {
     border-radius: 6px;
     box-shadow: 0 0 8px white;
 }
-#severity-handle-grip { /* The handle on the right */
-    position: absolute;
-    right: -14px; /* Position it outside the bar */
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 80%;
-    background-color: white;
-    border-radius: 4px;
-}
+
 
 .severity-control-wrapper {
     display: flex;
@@ -668,7 +659,7 @@ button {
     right: -14px;
     top: 50%;
     transform: translateY(-50%);
-    width: 10px;
+    width: 50px;
     height: 80%;
     background-color: var(--handle-color);
     border-radius: 4px;
