@@ -24,7 +24,7 @@ class App {
     async refreshData() {
         try {
             const sins = await this.apiClient.fetchSins();
-            this.uiManager.renderSins(sins, thi.sinsList);
+            this.uiManager.renderSins(sins, this.sinsList);
         } catch (error) {
             console.error('Fetch sins error:', error);
         }
