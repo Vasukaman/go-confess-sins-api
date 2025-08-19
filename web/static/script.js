@@ -117,13 +117,13 @@ class App {
         });
     }
 
-    init() {
+  async  init() {
         this.setupEventListeners();
         this.refreshData();
         this.setupWebSocket();
 
          try {
-            const emojis = this.apiClient.fetchAllowedEmojis();   
+            const emojis = await this.apiClient.fetchAllowedEmojis();   
             this.uiManager.renderEmojiPicker(emojis);
         } catch (error) {
             console.error("Failed to load emoji picker:", error);
