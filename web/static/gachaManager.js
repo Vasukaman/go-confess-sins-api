@@ -24,7 +24,7 @@ export class GachaManager {
         this.severityHandle = document.getElementById('severity-handle-wrapper');
 
         this.severityBar = document.getElementById('severity-selector-bar');
-        this.severityHandle = document.getElementById('severity-handle-wrapper');
+         this.severityHandle = document.getElementById('severity-handle-wrapper');
         this.severityHandleGrip = document.getElementById('severity-handle-grip');
         this.gachaBarFill = document.getElementById('gacha-bar-fill');
         this.severitySections = this.severityBar.querySelectorAll('.severity-section');
