@@ -14,9 +14,13 @@
             <p>Filter and sort all confessed sins.</p>
         </header>
 
-        <form id="search-form" class="search-form">
+                <form id="search-form" class="search-form">
+            <div class="form-row">
+                <input type="text" id="description-input" placeholder="Search in description...">
+            </div>
             <div class="form-row">
                 <input type="text" id="tags-input" placeholder="Tags (comma-separated)">
+                <div id="emoji-picker" class="emoji-picker"></div>
             </div>
             <div class="form-row">
                 <select id="sort-by-select">

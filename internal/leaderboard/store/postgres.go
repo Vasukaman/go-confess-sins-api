@@ -41,24 +41,23 @@ func (s *Store) Close() {
 
 // UpdateSinFromEvent takes a Sin model and "upserts" it into the leaderboard table.
 func (s *Store) UpdateSinFromEvent(ctx context.Context, sin models.Sin) error {
-	// Your complex SQL query is good.
 	query := `
-		INSERT INTO leaderboard (sin_id, description, count, tags, severity)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO leaderboard (sin_id, description, count, tags, severity, emoji)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		ON CONFLICT (sin_id) DO UPDATE
 		SET count = EXCLUDED.count,
 			tags = EXCLUDED.tags,
-			severity = EXCLUDED.severity;
+			severity = EXCLUDED.severity,
+			emoji = EXCLUDED.emoji;
 	`
-	_, err := s.db.Exec(ctx, query, sin.ID, sin.Description, sin.Count, sin.Tags, sin.Severity)
+	_, err := s.db.Exec(ctx, query, sin.ID, sin.Description, sin.Count, sin.Tags, sin.Severity, sin.Emoji)
 	return err
 }
 
-// GetLeaderboard fetches the top 10 sins, ordered by count.
+// GetLeaderboard now selects and scans the emoji.
 func (s *Store) GetLeaderboard(ctx context.Context) ([]models.Sin, error) {
-	// Your GetLeaderboard logic is also correct.
 	rows, err := s.db.Query(ctx, `
-		SELECT sin_id, description, count, COALESCE(tags, '{}'), severity 
+		SELECT sin_id, description, count, COALESCE(tags, '{}'), severity, emoji 
 		FROM leaderboard 
 		ORDER BY count DESC 
 		LIMIT 10
@@ -71,7 +70,8 @@ func (s *Store) GetLeaderboard(ctx context.Context) ([]models.Sin, error) {
 	var sins []models.Sin
 	for rows.Next() {
 		var sin models.Sin
-		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.Tags, &sin.Severity); err != nil {
+		// THE FIX IS HERE: Add &sin.Emoji to the Scan
+		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.Tags, &sin.Severity, &sin.Emoji); err != nil {
 			return nil, err
 		}
 		sins = append(sins, sin)

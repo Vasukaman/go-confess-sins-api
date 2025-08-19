@@ -184,17 +184,19 @@ func (s *Store) GetSins(limit int) ([]models.Sin, error) {
 
 // SearchSinsParams defines the available search criteria.
 type SearchSinsParams struct {
-	Tags   []string
-	SortBy string
-	Order  string
-	Limit  int
-	Offset int
+	Tags        []string
+	Description string
+	Emoji       string
+	SortBy      string
+	Order       string
+	Limit       int
+	Offset      int
 }
 
 // SearchSins dynamically builds and executes a search query.
 func (s *Store) SearchSins(params SearchSinsParams) ([]models.Sin, error) {
 	// Start with the base query
-	query := "SELECT id, description, count, created_at, COALESCE(tags, '{}'), severity FROM sins WHERE 1=1"
+	query := "SELECT id, description, count, created_at, COALESCE(tags, '{}'), severity, emoji FROM sins WHERE 1=1"
 	args := []interface{}{}
 	argID := 1
 
@@ -205,14 +207,27 @@ func (s *Store) SearchSins(params SearchSinsParams) ([]models.Sin, error) {
 		argID++
 	}
 
+	// Dynamically add a WHERE clause for the description (case-insensitive search)
+	if params.Description != "" {
+		query += fmt.Sprintf(" AND description ILIKE $%d", argID)
+		args = append(args, "%"+params.Description+"%") // Add wildcards for partial matching
+		argID++
+	}
+
+	// Dynamically add a WHERE clause for the emoji
+	if params.Emoji != "" {
+		query += fmt.Sprintf(" AND emoji = $%d", argID)
+		args = append(args, params.Emoji)
+		argID++
+	}
+
 	// Dynamically add ORDER BY clause, safely checking the values
-	if params.SortBy == "count" || params.SortBy == "created_at" {
+	if params.SortBy == "count" || params.SortBy == "created_at" || params.SortBy == "severity" {
 		query += " ORDER BY " + params.SortBy
 		if params.Order == "asc" || params.Order == "desc" {
 			query += " " + params.Order
 		}
 	} else {
-		// Default sort
 		query += " ORDER BY created_at DESC"
 	}
 
@@ -230,13 +245,17 @@ func (s *Store) SearchSins(params SearchSinsParams) ([]models.Sin, error) {
 	var sins []models.Sin
 	for rows.Next() {
 		var sin models.Sin
-		var severity sql.NullInt32 // Use a nullable type for scanning
-		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &severity); err != nil {
+		var severity sql.NullInt32
+		var emoji sql.NullString
+		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &severity, &emoji); err != nil {
 			return nil, err
 		}
 		if severity.Valid {
 			s := int(severity.Int32)
 			sin.Severity = &s
+		}
+		if emoji.Valid {
+			sin.Emoji = &emoji.String
 		}
 		sins = append(sins, sin)
 	}

@@ -1,76 +1,39 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- CONFIGURATION ---
-    // This assumes your web-frontend server is running and proxying requests
-    const searchApiUrl = '/api/search'; 
+import { ApiClient } from './apiClient.js';
+import { UIManager } from './uiManager.js';
 
-    // --- DOM ELEMENTS ---
-    const searchForm = document.getElementById('search-form');
-    const resultsContainer = document.getElementById('search-results');
-    const paginationContainer = document.getElementById('pagination-controls');
+// --- The SearchApp Class ---
+class SearchApp {
+    constructor() {
+        // 2. Initialize your components.
+        this.apiClient = new ApiClient('https://go-confess-sins-api-production.up.railway.app', '');
+        this.uiManager = new UIManager();
+        
+        // --- DOM ELEMENTS ---
+        this.searchForm = document.getElementById('search-form');
+        this.paginationContainer = document.getElementById('pagination-controls');
+        
+        // --- STATE ---
+        this.currentPage = 1;
+        this.currentParams = new URLSearchParams();
+    }
 
-    // --- STATE ---
-    let currentPage = 1;
-    let currentParams = new URLSearchParams(); // Stores the current search filters
-
-    // --- FUNCTIONS ---
-
-    // The main function to perform a search
-    const performSearch = async () => {
-        currentParams.set('page', currentPage);
-        currentParams.set('limit', 25); // 25 results per page
+    // The search function now uses the ApiClient.
+    async performSearch() {
+        this.currentParams.set('page', this.currentPage);
+        this.currentParams.set('limit', 25);
 
         try {
-            const response = await fetch(`${searchApiUrl}?${currentParams.toString()}`);
-            if (!response.ok) throw new Error('Search request failed');
-            
-            const sins = await response.json();
-            renderResults(sins);
-            renderPagination(sins.length);
+            const sins = await this.apiClient.searchSins(this.currentParams.toString());
+            // The UIManager handles the rendering.
+            this.uiManager.renderSins(sins); 
+            this.renderPagination(sins.length);
         } catch (error) {
-            resultsContainer.innerHTML = `<p>Error: ${error.message}</p>`;
             console.error('Search error:', error);
         }
-    };
+    }
 
-    // Renders the list of sins
-    const renderResults = (sins) => {
-        resultsContainer.innerHTML = '';
-        if (!sins || sins.length === 0) {
-            resultsContainer.innerHTML = '<p>No sins found for this query.</p>';
-            return;
-        }
-        sins.forEach(sin => {
-           const sinCard = document.createElement('div');
-            sinCard.className = 'sin-card';
-            
-            let metaHTML = `<span class="count">Confessed: ${sin.count} times</span>`;
-            if (sin.Severity != null) {
-                metaHTML = `<span class="severity">Severity: ${sin.severity}</span>` + metaHTML;
-            }
-            if (sin.Tags && sin.Tags.length > 0) {
-                const tagsHTML = sin.Tags.map(tag => `<span class="tag">${tag}</span>`).join('');
-                metaHTML = `<div class="tags-container">${tagsHTML}</div>` + metaHTML;
-            }
-
-             let emojiHTML = '';
-            if (sin.emoji) {
-                emojiHTML = `<div class="sin-emoji">${sin.emoji}</div>`;
-            }
-            
-
-              sinCard.innerHTML = `
-                ${emojiHTML}
-                <div class="sin-content">
-                    <p class="description">"${sin.description}"</p>
-                    <div class="meta">${metaHTML}</div>
-                </div>
-            `;
-            resultsContainer.appendChild(sinCard);
-        });
-    };
-
-    // Renders the "Previous" and "Next" buttons
-    const renderPagination = (resultsCount) => {
+    // Pagination logic remains here as it's specific to the search page.
+    renderPagination = (resultsCount) => {
         paginationContainer.innerHTML = '';
 
         if (currentPage > 1) {
@@ -94,24 +57,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- EVENT LISTENERS ---
-    searchForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        currentPage = 1; // Reset to page 1 for a new search
+    setupEventListeners() {
+        this.searchForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            this.currentPage = 1;
 
-        // Build the query parameters from the form
-        const tags = document.getElementById('tags-input').value;
-        const sortBy = document.getElementById('sort-by-select').value;
-        const order = document.getElementById('order-select').value;
+            const tags = document.getElementById('tags-input').value;
+            const description = document.getElementById('description-input').value;
+            const emoji = document.getElementById('emoji-input').value;
+            const sortBy = document.getElementById('sort-by-select').value;
+            const order = document.getElementById('order-select').value;
 
-        currentParams = new URLSearchParams();
-        if (tags) currentParams.set('tags', tags);
-        if (sortBy) currentParams.set('sortBy', sortBy);
-        if (order) currentParams.set('order', order);
+            this.currentParams = new URLSearchParams();
+            if (tags) this.currentParams.set('tags', tags);
+            if (description) this.currentParams.set('description', description);
+            if (emoji) this.currentParams.set('emoji', emoji);
+            if (sortBy) this.currentParams.set('sortBy', sortBy);
+            if (order) this.currentParams.set('order', order);
+            
+            this.performSearch();
+        });
+    }
+
+    async init() {
+        this.setupEventListeners();
         
-        performSearch();
-    });
+        // Fetch and render the emoji picker for the search form.
+        try {
+            const emojis = await this.apiClient.fetchAllowedEmojis();
+            this.uiManager.renderEmojiPicker(emojis); // Reusing the UIManager method
+        } catch (error) {
+            console.error("Failed to load emoji picker:", error);
+        }
 
-    // --- INITIAL LOAD ---
-    performSearch(); // Perform an initial search when the page loads
+        this.performSearch(); // Perform initial search
+    }
+}
+
+// --- Start the Application ---
+document.addEventListener('DOMContentLoaded', () => {
+    const searchApp = new SearchApp();
+    searchApp.init();
 });
