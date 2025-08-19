@@ -39,7 +39,7 @@ export class GachaManager {
         switch (data.type) {
             case "roll_result":
                 // Start the animation with the data from the server
-                this._runRollAnimation(data.payload.reel, this._runRollAnimation(data.payload.reel, data.payload.winnerIndex, data.payload.prize);
+                this._runRollAnimation(data.payload.reel, this._runRollAnimation(data.payload.reel, data.payload.winnerIndex, data.payload.prize));
                 break;
             case "player_state_update":
                 this.updateAllSlots(data.payload);
