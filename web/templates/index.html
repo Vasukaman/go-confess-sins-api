@@ -35,29 +35,29 @@
                 </div>
 
             </form>
-            <div id="gacha-game-container" class="main-content" style="padding: 20px; background-color: #2a2a2a; border-radius: 8px; margin-bottom: 20px;">
+           <div id="gacha-game-container">
                 <h2>Gacha Game</h2>
-                <div class="controls" style="margin-bottom: 15px;">
-                    <button id="gacha-roll-button">Roll (Severity 1)</button>
-                </div>
-                <div>
-                    <strong>Visual Reel Result:</strong>
-                    <div id="gacha-reel" style="background-color: #1e1e1e; min-height: 40px; padding: 10px; border-radius: 4px; font-size: 24px; word-break: break-all; margin-top: 5px;"></div>
-                </div>
-                <div class="slots-area" style="margin-top: 20px;">
-                    <div>
-                        <strong>Gacha Slot:</strong>
-                        <div class="slots-container" style="display: flex; gap: 10px; margin-top: 5px; margin-bottom: 15px;">
-                            <button id="gacha_slot" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
-                        </div>
+
+                <div class="gacha-reel-area">
+                    <div id="gacha-viewport">
+                        <div id="gacha-reel"></div>
                     </div>
-                    <div>
-                        <strong>Inventory Slots:</strong>
-                        <div class="slots-container" style="display: flex; gap: 10px; margin-top: 5px;">
-                            <button id="inventory_slot_0" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
-                            <button id="inventory_slot_1" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
-                            <button id="inventory_slot_2" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
-                        </div>
+                    <button id="gacha-roll-button">Roll</button>
+                </div>
+
+                <div class="inventory-area">
+                    <strong>Inventory Slots:</strong>
+                    <div class="slots-container">
+                        <button id="inventory_slot_0" class="slot">-</button>
+                        <button id="inventory_slot_1" class="slot">-</button>
+                        <button id="inventory_slot_2" class="slot">-</button>
+                    </div>
+                </div>
+                
+                <div class="gacha-slot-area">
+                    <strong>Gacha Slot:</strong>
+                    <div class="slots-container">
+                        <button id="gacha_slot" class="slot">-</button>
                     </div>
                 </div>
             </div>

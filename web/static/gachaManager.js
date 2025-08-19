@@ -8,9 +8,9 @@ export class GachaManager {
         this.socket = socket;
         this.firstSelectedSlotId = null;
 
-        // Get references to all the UI elements
         this.rollButton = document.getElementById('gacha-roll-button');
-        this.reelDisplay = document.getElementById('gacha-reel');
+        this.viewportElement = document.getElementById('gacha-viewport');
+        this.reelElement = document.getElementById('gacha-reel');
         this.slotElements = {
             'gacha_slot': document.getElementById('gacha_slot'),
             'inventory_slot_0': document.getElementById('inventory_slot_0'),
@@ -30,11 +30,12 @@ export class GachaManager {
     }
 
     // Call this from your main WebSocket's onmessage handler to route messages
-    handleServerMessage(data) {
+     handleServerMessage(data) {
         console.log("GachaManager received:", data);
         switch (data.type) {
             case "roll_result":
-                this.updateReel(data.payload);
+                // Start the animation with the data from the server
+                this._runRollAnimation(data.payload.reel, data.payload.winnerIndex);
                 break;
             case "player_state_update":
                 this.updateAllSlots(data.payload);
@@ -42,19 +43,78 @@ export class GachaManager {
             case "error":
                 console.error("Gacha Error:", data.payload.message);
                 alert(`Gacha Error: ${data.payload.message}`);
+                this.isRolling = false; // Re-enable button on error
+                this.rollButton.disabled = false;
                 break;
         }
     }
-
     sendRollRequest() {
+        if (this.isRolling) return; // Don't allow rolling while animating
+        this.isRolling = true;
+        this.rollButton.disabled = true; // Disable button during roll
+
         const message = {
             type: "start_roll",
             payload: {
-                severity: 1 // Hardcoded for testing
+                severity: 1
             }
         };
         this.socket.send(JSON.stringify(message));
     }
+
+
+    _runRollAnimation(reelItems, winnerIndex) {
+        // 1. Setup the reel
+        this.reelElement.innerHTML = ''; // Clear previous items
+        this.reelElement.style.transform = 'translateX(0px)'; // Reset position
+
+        // Populate the reel with new emoji items
+        reelItems.forEach(itemData => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'reel-item';
+            itemDiv.textContent = itemData.emoji;
+            this.reelElement.appendChild(itemDiv);
+        });
+
+        const winnerElement = this.reelElement.children[winnerIndex];
+        if (!winnerElement) {
+            console.error("Winner element not found!");
+            this.isRolling = false;
+            this.rollButton.disabled = false;
+            return;
+        }
+        
+        // 2. Calculate the target position
+        const viewportWidth = this.viewportElement.offsetWidth;
+        // We want to center the winner element inside the viewport
+        const targetX = (viewportWidth / 2) - (winnerElement.offsetLeft + winnerElement.offsetWidth / 2);
+
+        // 3. Animate
+        const duration = 4000; // 4 seconds
+        const startTime = performance.now();
+
+        const animate = (currentTime) => {
+            const elapsedTime = currentTime - startTime;
+            if (elapsedTime >= duration) {
+                // Animation finished
+                this.reelElement.style.transform = `translateX(${targetX}px)`;
+                this.isRolling = false;
+                this.rollButton.disabled = false;
+                return;
+            }
+
+            // Easing function (easeOutCubic) - starts fast, ends slow
+            const progress = 1 - Math.pow(1 - (elapsedTime / duration), 3);
+            const currentX = progress * targetX;
+            
+            this.reelElement.style.transform = `translateX(${currentX}px)`;
+
+            requestAnimationFrame(animate); // Request the next frame
+        };
+
+        requestAnimationFrame(animate); // Start the animation loop
+    }
+
 
     handleSlotClick(event) {
         const clickedSlotId = event.currentTarget.id;

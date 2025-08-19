@@ -351,7 +351,105 @@ button {
     flex-grow: 1;
 }
 
-    .slot.selected {
-                    border: 3px solid #03dac6;
-                    box-shadow: 0 0 10px #03dac6;
-                }
+   .slot.selected {
+        border: 3px solid #03dac6;
+        box-shadow: 0 0 10px #03dac6;
+    }
+
+    #gacha-game-container {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Container for the reel and roll button */
+.gacha-reel-area {
+    position: relative; /* Needed to position the button on top */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* The visible "window". It's 4 items wide. */
+#gacha-viewport {
+    width: 320px; /* 80px per item * 4 items */
+    height: 80px;
+    background-color: #1e1e1e;
+    border: 2px solid #444;
+    border-radius: 8px;
+    overflow: hidden; /* This hides the rest of the long reel */
+    position: relative;
+}
+
+/* A marker in the middle of the viewport to show the winning spot */
+#gacha-viewport::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #bb86fc;
+    transform: translateX(-50%);
+    box-shadow: 0 0 8px #bb86fc;
+    border-radius: 2px;
+    opacity: 0.5;
+    z-index: 1;
+}
+
+/* The long strip of emojis that moves */
+#gacha-reel {
+    display: flex; /* Aligns emoji items in a row */
+    height: 100%;
+    /* The transform property will be set by JavaScript to move the reel */
+}
+
+/* A single emoji item in the reel */
+.reel-item {
+    flex-shrink: 0; /* Prevents items from squishing */
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    box-sizing: border-box;
+}
+
+/* Position the roll button on top of the viewport */
+#gacha-roll-button {
+    position: absolute;
+    z-index: 10; /* Ensures it's on top of everything */
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    opacity: 0.9;
+}
+
+/* Styling for the inventory and gacha slots */
+.inventory-area, .gacha-slot-area {
+    margin-top: 20px;
+}
+.slots-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+.slot {
+    width: 70px;
+    height: 70px;
+    font-size: 36px;
+    background-color: #333;
+    border: 2px solid #555;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
