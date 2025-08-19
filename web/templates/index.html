@@ -38,60 +38,38 @@
          <div id="gacha-game-container">
     <h2>Gacha Game</h2>
 
-    <!-- This area holds all the interactive gacha elements -->
+  <!-- GACHA GAME UI - START -->
 <div id="gacha-game-container">
     <h2>Gacha Game</h2>
     <div class="gacha-main-area">
-        <!-- 4 & 5. The new severity selector -->
-        <div id="severity-selector-bar">
-            <div class="severity-section" data-severity="5">5</div>
-            <div class="severity-section" data-severity="4">4</div>
-            <div class="severity-section" data-severity="3">3</div>
-            <div class="severity-section" data-severity="2">2</div>
-            <div class="severity-section" data-severity="1">1</div>
-            <!-- The draggable handle -->
-            <div id="severity-handle-wrapper">
-                <div id="severity-handle-grip"></div>
+
+        <!-- NEW: Wrapper for the entire selector control -->
+        <div class="severity-control-wrapper">
+            <div id="severity-selector-bar">
+                <div class="severity-section" data-severity="5">5</div>
+                <div class="severity-section" data-severity="4">4</div>
+                <div class="severity-section" data-severity="3">3</div>
+                <div class="severity-section" data-severity="2">2</div>
+                <div class="severity-section" data-severity="1">1</div>
+                <div id="severity-handle-wrapper">
+                    <div id="severity-handle-grip"></div>
+                </div>
+            </div>
+
+            <!-- The vertical bar now contains a dynamic fill element -->
+            <div class="gacha-left-bar">
+                <div id="gacha-bar-fill"></div>
             </div>
         </div>
-
-        <!-- The vertical bar from the previous step -->
-        <div class="gacha-left-bar"></div>
 
         <div class="gacha-center-column">
-            <div class="gacha-reel-area">
-                <div id="gacha-viewport">
-                    <button id="gacha_slot" class="slot gacha-slot-overlay">-</button>
-                    <div id="gacha-reel"></div>
-                </div>
-            </div>
-            <div class="inventory-area">
-                <div class="slots-container">
-                    <div class="slot-wrapper">
-                        <div class="luck-display"></div>
-                        <button id="inventory_slot_0" class="slot">-</button>
-                    </div>
-                    <div class="slot-wrapper">
-                        <div class="luck-display"></div>
-                        <button id="inventory_slot_1" class="slot">-</button>
-                    </div>
-                    <div class="slot-wrapper">
-                        <div class="luck-display"></div>
-                        <button id="inventory_slot_2" class="slot">-</button>
-                    </div>
-                </div>
-            </div>
+            <!-- ... (rest of your gacha-center-column HTML is unchanged) ... -->
         </div>
 
-        <button id="gacha-roll-button">🎲</button>
-
-        <div id="item-display-circle" class="slot">
-            <div id="item-display-emoji">-</div>
-            <div id="item-display-luck">Luck: ?</div>
-        </div>
+        <!-- ... (rest of your gacha-main-area HTML is unchanged) ... -->
     </div>
 </div>
-
+<!-- GACHA GAME UI - END -->
             <div class="main-content">
                         <aside class="leaderboard">
                             <h2>Top Sins</h2>

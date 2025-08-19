@@ -22,6 +22,13 @@ export class GachaManager {
         
           this.severityBar = document.getElementById('severity-selector-bar');
         this.severityHandle = document.getElementById('severity-handle-wrapper');
+
+        this.severityBar = document.getElementById('severity-selector-bar');
+        this.severityHandle = document.getElementById('severity-handle-wrapper');
+        this.severityHandleOutline = this.severityHandle.querySelector('::before'); // For color
+        this.severityHandleGrip = document.getElementById('severity-handle-grip');
+        this.gachaBarFill = document.getElementById('gacha-bar-fill');
+        this.severitySections = this.severityBar.querySelectorAll('.severity-section');
         this.isDraggingSeverity = false;
 
 
@@ -228,61 +235,82 @@ export class GachaManager {
         }
     }
 
-     _setupSeveritySelector() {
+      _setupSeveritySelector() {
         const handleDragStart = (e) => {
             this.isDraggingSeverity = true;
-            // Prevents text selection while dragging
             e.preventDefault();
         };
 
         const handleDragMove = (e) => {
             if (!this.isDraggingSeverity) return;
 
-            // Get the Y position of the mouse/touch relative to the bar
             const barRect = this.severityBar.getBoundingClientRect();
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
             const relativeY = clientY - barRect.top;
 
-            // Move the handle visually
-            this.severityHandle.style.transition = 'none'; // Disable transition during drag
-            this.severityHandle.style.top = `${relativeY - (this.severityHandle.offsetHeight / 2)}px`;
+            // Move the handle visually without transition
+            this.severityHandle.style.transition = 'none';
+            const handleTop = relativeY - (this.severityHandle.offsetHeight / 2);
+            this.severityHandle.style.top = `${handleTop}px`;
+            
+            // Update visuals in real-time while dragging
+            this._updateSeverityVisuals(handleTop);
         };
 
-        const handleDragEnd = (e) => {
+        const handleDragEnd = () => {
             if (!this.isDraggingSeverity) return;
             this.isDraggingSeverity = false;
 
             const barRect = this.severityBar.getBoundingClientRect();
             const sectionHeight = barRect.height / 5;
             const handleTop = this.severityHandle.offsetTop;
-
-            // Calculate which section the middle of the handle is in
             const middleOfHandle = handleTop + (this.severityHandle.offsetHeight / 2);
             const sectionIndex = Math.floor(middleOfHandle / sectionHeight);
-            
-            // Clamp the value between 0 and 4
             const clampedIndex = Math.max(0, Math.min(4, sectionIndex));
-
-            // Severity is 5 minus the index (since 5 is at the top, index 0)
+            
             this.currentSeverity = 5 - clampedIndex;
             console.log(`Severity set to: ${this.currentSeverity}`);
 
-            // Snap the handle to the correct position
+            // Snap the handle and visuals to the final position
+            const finalTop = clampedIndex * sectionHeight;
             this.severityHandle.style.transition = 'top 0.1s ease-out';
-            this.severityHandle.style.top = `${clampedIndex * sectionHeight}px`;
+            this.severityHandle.style.top = `${finalTop}px`;
+            this._updateSeverityVisuals(finalTop);
         };
 
-        // Mouse events
+        // Mouse and Touch events
         this.severityHandle.addEventListener('mousedown', handleDragStart);
         window.addEventListener('mousemove', handleDragMove);
         window.addEventListener('mouseup', handleDragEnd);
-
-        // Touch events for mobile
         this.severityHandle.addEventListener('touchstart', handleDragStart);
         window.addEventListener('touchmove', handleDragMove);
         window.addEventListener('touchend', handleDragEnd);
 
-        // Set initial position
-        this.severityHandle.style.top = `${4 * (this.severityBar.offsetHeight / 5)}px`;
+        // Set initial position and visuals
+        const initialTop = 4 * (this.severityBar.offsetHeight / 5);
+        this.severityHandle.style.top = `${initialTop}px`;
+        this._updateSeverityVisuals(initialTop);
+    }
+
+
+      _updateSeverityVisuals(handleTop) {
+        const barRect = this.severityBar.getBoundingClientRect();
+        const sectionHeight = barRect.height / 5;
+        const middleOfHandle = handleTop + (this.severityHandle.offsetHeight / 2);
+        let sectionIndex = Math.floor(middleOfHandle / sectionHeight);
+        sectionIndex = Math.max(0, Math.min(4, sectionIndex));
+
+        // Get the color from the current severity section
+        const currentSection = this.severitySections[sectionIndex];
+        const color = window.getComputedStyle(currentSection).backgroundColor;
+
+        // 1. Update the handle's color
+        // Note: We can't directly style ::before, so we use a CSS variable
+        this.severityHandle.style.setProperty('--handle-color', color);
+        this.severityHandleGrip.style.backgroundColor = color;
+
+        // 2. Update the fill element's color and position
+        this.gachaBarFill.style.backgroundColor = color;
+        this.gachaBarFill.style.top = `${sectionIndex * sectionHeight}px`;
     }
 }
