@@ -145,7 +145,7 @@ func (s *Store) GetSins(limit int) ([]models.Sin, error) {
 			created_at, 
 			COALESCE(tags, '{}'), 
 			COALESCE(severity, -1),-- -1 is a placeholder for NULL
-			COALESCE(emoji, "")
+			COALESCE(emoji, '')
 		FROM sins 
 		ORDER BY created_at DESC 
 		LIMIT $1`
