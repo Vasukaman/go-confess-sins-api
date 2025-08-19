@@ -33,6 +33,18 @@ export class ApiClient {
 
     async fetchAllowedEmojis() {
         const response = await fetch(`${this.sinApiUrl}/emojis`);
+            if (!response.ok) {
+            throw new Error('Fetching allowed emojies was unsuccesfulle((');
+        }
+        return response.json();
+    }
+
+      async searchSins(queryParams) {
+        // We now use the webApiUrl to go through the proxy
+        const response = await fetch(`${this.webApiUrl}/api/search?${queryParams}`);
+        if (!response.ok) {
+            throw new Error('Search request failed');
+        }
         return response.json();
     }
 }
