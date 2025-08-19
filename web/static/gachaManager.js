@@ -105,7 +105,7 @@ export class GachaManager {
         payload.inventorySlots.forEach((slotData) => {
             const slotElement = this.slotElements[slotData.id];
             if (slotElement) {
-                slotElement.textContent = slotData.item ? slotData.Item.emoji : '-';
+                slotElement.textContent = slotData.item ? slotData.item.emoji : '-';
             }
         });
     }
