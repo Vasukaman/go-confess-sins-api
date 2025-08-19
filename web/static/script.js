@@ -1,5 +1,6 @@
 import { ApiClient } from './apiClient.js';
 import { UIManager } from './uiManager.js';
+import { GachaManager } from './gachaManager.js'; 
 // You would also create and import a WebSocketManager class
 
 class App {
@@ -8,6 +9,8 @@ class App {
             'https://go-confess-sins-api-production.up.railway.app',
             '' // The webApiUrl is relative, so we leave it blank
         );
+        this.socket = null;      // Will be initialized in setupWebSocket
+        this.gachaManager = null; // Will be initialized in setupWebSocket
         this.uiManager = new UIManager();
         
         // --- Form Elements ---
@@ -45,13 +48,21 @@ class App {
     
     setupWebSocket() {
         const socketUrl = `wss://${window.location.host}/ws`;
-        const socket = new WebSocket(socketUrl);
+        this.socket = new WebSocket(socketUrl);
+        //GACHA
+        this.gachaManager = new GachaManager(this.socket);
+        this.gachaManager.init();
 
-        socket.onopen = () => console.log("WebSocket connection established.");
-        socket.onmessage = (event) => {
+
+        this.socket.onopen = () => console.log("WebSocket connection established.");
+        this.socket.onmessage = (event) => {
             if (typeof event.data === 'string') {
                 const data = JSON.parse(event.data);
-                if (data.type === 'update') {
+                
+            const gachaMessageTypes = ["roll_result", "player_state_update", "error"];
+                if (gachaMessageTypes.includes(data.type)) {
+                    this.gachaManager.handleServerMessage(data);
+                } else if (data.type === 'update') { // Your existing logic
                     console.log("Update received from server. Refreshing lists...");
                     this.refreshData();
                 }
@@ -60,13 +71,13 @@ class App {
                 event.data.arrayBuffer().then(arrayBuffer => this.playSound(arrayBuffer));
             }
         };
-        socket.onclose = () => {
+        this.socket.onclose = () => {
             console.log("WebSocket connection closed. Reconnecting in 3 seconds...");
             setTimeout(() => this.setupWebSocket(), 3000);
         };
-        socket.onerror = (error) => {
+        this.socket.onerror = (error) => {
             console.error("WebSocket error:", error);
-            socket.close();
+            this.socket.close();
         };
     }
 

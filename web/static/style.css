@@ -350,3 +350,8 @@ button {
 .sin-content {
     flex-grow: 1;
 }
+
+    .slot.selected {
+                    border: 3px solid #03dac6;
+                    box-shadow: 0 0 10px #03dac6;
+                }

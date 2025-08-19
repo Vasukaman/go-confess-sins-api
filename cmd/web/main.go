@@ -13,6 +13,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -27,6 +28,9 @@ func main() {
 	// --- INITIALIZE COMPONENTS ---
 	apiClient := clients.New(cfg.SinApiUrl, cfg.TtsApiUrl, cfg.LeaderboardApiUrl, cfg.WebsiteAPIKey)
 	webHub := hub.New()
+
+	// SETUP WEBSOCKET HANDLERS ---
+	webHub.SetupHandlers()
 
 	natsListener, err := subscriber.New(cfg.NatsApiUrl, webHub)
 	if err != nil {
@@ -47,7 +51,10 @@ func main() {
 	router.StaticFile("/search", "./web/templates/search.html")
 
 	router.GET("/ws", func(c *gin.Context) {
-		webHub.Melody.HandleRequest(c.Writer, c.Request)
+		userID := uuid.NewString()
+		webHub.Melody.HandleRequestWithKeys(c.Writer, c.Request, gin.H{
+			"userID": userID,
+		})
 	})
 
 	api := router.Group("/api")

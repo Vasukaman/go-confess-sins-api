@@ -1,62 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Code Confessional</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>The Code Confessional</h1>
-            <p>A log of developer sins, submitted anonymously.</p>
-              <a href="/search" class="nav-button">Search Sins</a>
-        </header>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Code Confessional</title>
+        <link rel="stylesheet" href="/static/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>The Code Confessional</h1>
+                <p>A log of developer sins, submitted anonymously.</p>
+                <a href="/search" class="nav-button">Search Sins</a>
+            </header>
 
-  
-        <div class="api-key-section">
-            <button id="get-key-button">Get a New API Key</button>
-            <p id="new-key-display"></p>
-        </div>
-
-       <form id="confess-form">
-            <h3>Confess a New Sin</h3>
-            <textarea id="sin-description" placeholder="Describe your code sin..." required maxlength="500"></textarea>
-            <div id="char-counter">500</div> 
-
-
-            <div class="optional-fields">
-                <input type="text" id="sin-tags" placeholder="Tags (comma-separated, e.g., bug,frontend)">
-                <input type="number" id="sin-severity" placeholder="Severity (0-5)" min="0" max="5">
-                <div id="emoji-picker" class="emoji-picker"></div>
-                <button type="submit">Confess</button>
+    
+            <div class="api-key-section">
+                <button id="get-key-button">Get a New API Key</button>
+                <p id="new-key-display"></p>
             </div>
 
-        </form>
+        <form id="confess-form">
+                <h3>Confess a New Sin</h3>
+                <textarea id="sin-description" placeholder="Describe your code sin..." required maxlength="500"></textarea>
+                <div id="char-counter">500</div> 
 
-          <div class="main-content">
-                      <aside class="leaderboard">
-                         <h2>Top Sins</h2>
-                            <div id="leaderboard-list"></div>
-                      </aside>
 
-                     <main id="sins-list" class="sins-list"></main>
-               
+                <div class="optional-fields">
+                    <input type="text" id="sin-tags" placeholder="Tags (comma-separated, e.g., bug,frontend)">
+                    <input type="number" id="sin-severity" placeholder="Severity (0-5)" min="0" max="5">
+                    <div id="emoji-picker" class="emoji-picker"></div>
+                    <button type="submit">Confess</button>
+                </div>
 
+            </form>
+            <div id="gacha-game-container" class="main-content" style="padding: 20px; background-color: #2a2a2a; border-radius: 8px; margin-bottom: 20px;">
+                <h2>Gacha Game</h2>
+                <div class="controls" style="margin-bottom: 15px;">
+                    <button id="gacha-roll-button">Roll (Severity 1)</button>
+                </div>
+                <div>
+                    <strong>Visual Reel Result:</strong>
+                    <div id="gacha-reel" style="background-color: #1e1e1e; min-height: 40px; padding: 10px; border-radius: 4px; font-size: 24px; word-break: break-all; margin-top: 5px;"></div>
+                </div>
+                <div class="slots-area" style="margin-top: 20px;">
+                    <div>
+                        <strong>Gacha Slot:</strong>
+                        <div class="slots-container" style="display: flex; gap: 10px; margin-top: 5px; margin-bottom: 15px;">
+                            <button id="gacha_slot" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>Inventory Slots:</strong>
+                        <div class="slots-container" style="display: flex; gap: 10px; margin-top: 5px;">
+                            <button id="inventory_slot_0" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
+                            <button id="inventory_slot_1" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
+                            <button id="inventory_slot_2" class="slot" style="width: 70px; height: 70px; font-size: 36px;">-</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <div class="main-content">
+                        <aside class="leaderboard">
+                            <h2>Top Sins</h2>
+                                <div id="leaderboard-list"></div>
+                        </aside>
 
-            
-   
+                        <main id="sins-list" class="sins-list"></main>
+                
 
-    <div id="forgiven-overlay">
-        <div class="content">
-            <img src="/static/candle.gif" alt="Candle"> <p>Your sin is forgiven.</p>
+                </div>
+
+
+                
+    
+
+        <div id="forgiven-overlay">
+            <div class="content">
+                <img src="/static/candle.gif" alt="Candle"> <p>Your sin is forgiven.</p>
+            </div>
         </div>
-    </div>
-     </div>
-    <script type="module" src="/static/script.js"></script>
-</body>
-</html>
+        </div>
+        <script type="module" src="/static/script.js"></script>
+    </body>
+    </html>
