@@ -118,7 +118,7 @@ func (s *Store) IncrementSinCount(apiKeyID int, description string, tags []strin
 
 func (s *Store) GetSinsByAPIKeyID(apiKeyID int) ([]models.Sin, error) {
 	rows, err := s.db.Query(context.Background(),
-		"SELECT id, description, count, created_at, COALESCE(tags, '{}'), severity FROM sins WHERE api_key_id = $1 ORDER BY created_at DESC",
+		"SELECT id, description, count, created_at, COALESCE(tags, '{}'), severity, emoji FROM sins WHERE api_key_id = $1 ORDER BY created_at DESC",
 		apiKeyID)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (s *Store) GetSinsByAPIKeyID(apiKeyID int) ([]models.Sin, error) {
 	var sins []models.Sin
 	for rows.Next() {
 		var sin models.Sin
-		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &sin.Severity); err != nil {
+		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &sin.Severity, &sin.Emoji); err != nil {
 			return nil, err
 		}
 		sins = append(sins, sin)
@@ -144,7 +144,8 @@ func (s *Store) GetSins(limit int) ([]models.Sin, error) {
 			count, 
 			created_at, 
 			COALESCE(tags, '{}'), 
-			COALESCE(severity, -1) -- Use -1 as a placeholder for NULL
+			COALESCE(severity, -1),-- -1 is a placeholder for NULL
+			COALESCE(emoji, "")
 		FROM sins 
 		ORDER BY created_at DESC 
 		LIMIT $1`
@@ -159,16 +160,21 @@ func (s *Store) GetSins(limit int) ([]models.Sin, error) {
 	for rows.Next() {
 		var sin models.Sin
 
-		// Create a temporary variable to scan the severity into.
+		// Creating a temporary variables to be able to have null for them in sin.
 		var severity int
+		var emoji string
 
 		// Scan into the temporary variable.
-		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &severity); err != nil {
+		if err := rows.Scan(&sin.ID, &sin.Description, &sin.Count, &sin.CreatedAt, &sin.Tags, &severity, &emoji); err != nil {
 			return nil, err
 		}
 
 		if severity != -1 {
 			sin.Severity = &severity
+		}
+
+		if emoji != "" {
+			sin.Emoji = &emoji
 		}
 
 		sins = append(sins, sin)
