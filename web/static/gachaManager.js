@@ -17,6 +17,10 @@ export class GachaManager {
             'inventory_slot_1': document.getElementById('inventory_slot_1'),
             'inventory_slot_2': document.getElementById('inventory_slot_2'),
         };
+        this.itemDisplayEmoji = document.getElementById('item-display-emoji');
+        this.itemDisplayLuck = document.getElementById('item-display-luck');
+
+
     }
 
     // Call this to set up all event listeners
@@ -63,12 +67,12 @@ export class GachaManager {
     }
 
 
-    _runRollAnimation(reelItems, winnerIndex) {
+    _runRollAnimation(reelItems, winnerIndex, prizeItem) {
         // 1. Setup the reel
-        this.reelElement.innerHTML = ''; // Clear previous items
-        this.reelElement.style.transform = 'translateX(0px)'; // Reset position
+        this.reelElement.innerHTML = '';
+        this.reelElement.style.transform = 'translateX(0px)';
+        this.slotElements['gacha_slot'].textContent = '-'; // Clear gacha slot
 
-        // Populate the reel with new emoji items
         reelItems.forEach(itemData => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'reel-item';
@@ -77,20 +81,14 @@ export class GachaManager {
         });
 
         const winnerElement = this.reelElement.children[winnerIndex];
-        if (!winnerElement) {
-            console.error("Winner element not found!");
-            this.isRolling = false;
-            this.rollButton.disabled = false;
-            return;
-        }
+        if (!winnerElement) { /* ... error handling ... */ return; }
         
-        // 2. Calculate the target position
+        // 2. Calculate target position
         const viewportWidth = this.viewportElement.offsetWidth;
-        // We want to center the winner element inside the viewport
         const targetX = (viewportWidth / 2) - (winnerElement.offsetLeft + winnerElement.offsetWidth / 2);
 
         // 3. Animate
-        const duration = 4000; // 4 seconds
+        const duration = 4000;
         const startTime = performance.now();
 
         const animate = (currentTime) => {
@@ -100,19 +98,22 @@ export class GachaManager {
                 this.reelElement.style.transform = `translateX(${targetX}px)`;
                 this.isRolling = false;
                 this.rollButton.disabled = false;
+                
+                // --- NEW LOGIC ON COMPLETION ---
+                // 1. Hide the prize item in the reel
+                winnerElement.style.opacity = '0';
+                // 2. Place the prize emoji in the gacha slot button
+                this.slotElements['gacha_slot'].textContent = prizeItem.emoji;
+                // --- END NEW LOGIC ---
                 return;
             }
 
-            // Easing function (easeOutCubic) - starts fast, ends slow
             const progress = 1 - Math.pow(1 - (elapsedTime / duration), 3);
             const currentX = progress * targetX;
-            
             this.reelElement.style.transform = `translateX(${currentX}px)`;
-
-            requestAnimationFrame(animate); // Request the next frame
+            requestAnimationFrame(animate);
         };
-
-        requestAnimationFrame(animate); // Start the animation loop
+        requestAnimationFrame(animate);
     }
 
 
@@ -141,6 +142,7 @@ export class GachaManager {
             };
             this.socket.send(JSON.stringify(message));
             this.resetSelection();
+            this._updateDisplayCircle();
         }
     }
 
@@ -154,19 +156,64 @@ export class GachaManager {
     updateReel(payload) {
         const reelText = payload.reel.map(itemInstance => itemInstance.emoji).join('');
         this.reelDisplay.textContent = reelText;
+
+          this._updateDisplayCircle();
     }
 
-    updateAllSlots(payload) {
-        // Update the Gacha Slot based on the full player state
+     updateAllSlots(payload) {
+        // We need to store the full slot data to access luck values later
+        this.gachaSlotData = payload.gachaSlot;
+        this.inventorySlotsData = payload.inventorySlots;
+
+        // Update Gacha Slot
         const gachaSlotElement = this.slotElements['gacha_slot'];
-        gachaSlotElement.textContent = payload.gachaSlot.item ? payload.gachaSlot.item.emoji : '-';
+        gachaSlotElement.textContent = this.gachaSlotData.item ? this.gachaSlotData.item.emoji : '-';
+        this._updateLuckDisplay(gachaSlotElement, this.gachaSlotData.item);
 
         // Update Inventory Slots
-        payload.inventorySlots.forEach((slotData) => {
+        this.inventorySlotsData.forEach((slotData) => {
             const slotElement = this.slotElements[slotData.id];
             if (slotElement) {
                 slotElement.textContent = slotData.item ? slotData.item.emoji : '-';
+                this._updateLuckDisplay(slotElement, slotData.item);
             }
         });
+        this._updateDisplayCircle(); 
     }
+
+     _updateLuckDisplay(slotElement, item) {
+        const wrapper = slotElement.parentElement;
+        const luckDisplay = wrapper.querySelector('.luck-display');
+        if (item) {
+            luckDisplay.textContent = '🍀'; // Using an emoji for luck
+            luckDisplay.style.display = 'flex';
+        } else {
+            luckDisplay.style.display = 'none';
+        }
+    }
+
+    _updateDisplayCircle() {
+        if (!this.firstSelectedSlotId) {
+            this.itemDisplayEmoji.textContent = '-';
+            this.itemDisplayLuck.textContent = 'Luck: ?';
+            return;
+        }
+
+        let selectedItem = null;
+        if (this.firstSelectedSlotId === 'gacha_slot') {
+            selectedItem = this.gachaSlotData?.item;
+        } else {
+            const slotData = this.inventorySlotsData.find(s => s.id === this.firstSelectedSlotId);
+            selectedItem = slotData?.item;
+        }
+
+        if (selectedItem) {
+            this.itemDisplayEmoji.textContent = selectedItem.emoji;
+            this.itemDisplayLuck.textContent = `Luck: ${selectedItem.luckValue}`;
+        } else {
+            this.itemDisplayEmoji.textContent = '-';
+            this.itemDisplayLuck.textContent = 'Luck: ?';
+        }
+    }
+
 }

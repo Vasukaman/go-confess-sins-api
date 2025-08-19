@@ -35,32 +35,54 @@
                 </div>
 
             </form>
-           <div id="gacha-game-container">
-                <h2>Gacha Game</h2>
+         <div id="gacha-game-container">
+    <h2>Gacha Game</h2>
 
-                <div class="gacha-reel-area">
-                    <div id="gacha-viewport">
-                        <div id="gacha-reel"></div>
-                    </div>
-                    <button id="gacha-roll-button">Roll</button>
+    <!-- This area holds all the interactive gacha elements -->
+    <div class="gacha-main-area">
+        <!-- 5. The new vertical bar on the left -->
+        <div class="gacha-left-bar"></div>
+
+        <div class="gacha-center-column">
+            <!-- This area holds the reel and the roll button -->
+            <div class="gacha-reel-area">
+                <div id="gacha-viewport">
+                    <!-- The gacha slot is now an invisible button INSIDE the viewport -->
+                    <button id="gacha_slot" class="slot gacha-slot-overlay">-</button>
+                    <div id="gacha-reel"></div>
                 </div>
+            </div>
 
-                <div class="inventory-area">
-                    <strong>Inventory Slots:</strong>
-                    <div class="slots-container">
+            <!-- Inventory slots are centered underneath the reel -->
+            <div class="inventory-area">
+                <div class="slots-container">
+                    <!-- Each slot now has a luck display div -->
+                    <div class="slot-wrapper">
+                        <div class="luck-display"></div>
                         <button id="inventory_slot_0" class="slot">-</button>
+                    </div>
+                    <div class="slot-wrapper">
+                        <div class="luck-display"></div>
                         <button id="inventory_slot_1" class="slot">-</button>
+                    </div>
+                    <div class="slot-wrapper">
+                        <div class="luck-display"></div>
                         <button id="inventory_slot_2" class="slot">-</button>
                     </div>
                 </div>
-                
-                <div class="gacha-slot-area">
-                    <strong>Gacha Slot:</strong>
-                    <div class="slots-container">
-                        <button id="gacha_slot" class="slot">-</button>
-                    </div>
-                </div>
             </div>
+        </div>
+
+        <!-- 1. The roll button is now a sibling for easier positioning -->
+        <button id="gacha-roll-button">🎲</button>
+
+        <!-- 3. The big display circle for the selected item -->
+        <div id="item-display-circle" class="slot">
+            <div id="item-display-emoji">-</div>
+            <div id="item-display-luck">Luck: ?</div>
+        </div>
+    </div>
+</div>
 
             <div class="main-content">
                         <aside class="leaderboard">
