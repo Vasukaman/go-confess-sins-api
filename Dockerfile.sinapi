@@ -10,6 +10,6 @@ RUN CGO_ENABLED=0 go build -o /src/sin-api ./cmd/sinapi
 
 FROM alpine:latest
 
-COPY ./emojies.csv .
+COPY ./emojis.csv .
 COPY --from=builder /src/sin-api /app/sin-api
 CMD ["/app/sin-api"]
