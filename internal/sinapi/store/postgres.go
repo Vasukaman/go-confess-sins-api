@@ -90,7 +90,7 @@ func (s *Store) GetAPIKeyID(apiKey string) (int, error) {
 // --- Sin Methods (Now scoped to an API Key) ---
 
 // IncrementSinCount finds or creates a sin for a specific user.
-func (s *Store) IncrementSinCount(apiKeyID int, description string, tags []string, severity *int, emoji string) (models.Sin, error) {
+func (s *Store) IncrementSinCount(apiKeyID int, description string, tags []string, severity *int, emoji *string) (models.Sin, error) {
 	var sin models.Sin
 
 	err := s.db.QueryRow(context.Background(), `

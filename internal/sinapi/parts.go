@@ -9,7 +9,7 @@ import (
 type Store interface {
 	CreateAPIKey() (string, error)
 	GetAPIKeyID(apiKey string) (int, error)
-	IncrementSinCount(apiKeyID int, description string, tags []string, severity *int) (models.Sin, error)
+	IncrementSinCount(apiKeyID int, description string, tags []string, severity *int, emoji *string) (models.Sin, error)
 	GetSinsByAPIKeyID(apiKeyID int) ([]models.Sin, error)
 	GetSins(limit int) ([]models.Sin, error)
 }

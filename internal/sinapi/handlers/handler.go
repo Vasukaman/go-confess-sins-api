@@ -100,7 +100,7 @@ func (h *Handler) CreateSin(c *gin.Context) {
 	// Use the censor from the handler struct
 	request.Description = h.censor.Censor(request.Description)
 
-	sin, err := h.store.IncrementSinCount(apiKeyID, request.Description, request.Tags, request.Severity, *request.Emoji)
+	sin, err := h.store.IncrementSinCount(apiKeyID, request.Description, request.Tags, request.Severity, request.Emoji)
 	if err != nil {
 		slog.Error("Failed to process sin in store", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process sin"})
