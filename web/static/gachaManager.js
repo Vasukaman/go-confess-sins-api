@@ -312,5 +312,8 @@ export class GachaManager {
         // 2. Update the fill element's color and position
         this.gachaBarFill.style.backgroundColor = color;
         this.gachaBarFill.style.top = `${sectionIndex * sectionHeight}px`;
+
+        const fillHeightPercentage = (5 - sectionIndex) * 20; // 20% height per section
+        this.gachaBarFill.style.height = `${fillHeightPercentage}%`;
     }
 }

@@ -628,24 +628,22 @@ button {
 
 #gacha-bar-fill {
     position: absolute;
+    bottom: 0; /* Anchor the fill to the bottom of the bar */
     width: 100%;
-    height: 20%; /* Height is 1/5th of the parent bar */
-    /* background-color and top will be set by JavaScript */
-    transition: top 0.1s ease-out, background-color 0.1s ease-out; /* Smooth transitions */
+    /* height and background-color will be set by JavaScript */
+    transition: height 0.1s ease-out, background-color 0.1s ease-out; /* Smooth transitions */
 }
 
-
-/* Draggable Severity Handle - UPDATED */
+/* Draggable Severity Handle - UPDATED for new shape and size */
 #severity-handle-wrapper {
     position: absolute;
-    left: -10px; /* Overlap with the selector bar */
-    width: 110px; /* Make it wide enough to cover both bars */
+    left: 0; /* Align with the left edge of the selector bar */
+    width: 120px; /* Make it wide enough to cover both bars and the gap */
     height: 36px;
     cursor: ns-resize;
-    z-index: 5; /* Position it BETWEEN the selector and the right bar */
+    z-index: 5;
     transition: top 0.1s ease-out;
-
-     --handle-color: white; 
+    --handle-color: white; /* Define a default color variable */
 }
 
 #severity-handle-wrapper::before { /* The hollow rectangle */
@@ -658,12 +656,7 @@ button {
     border: 4px solid var(--handle-color);
     border-radius: 6px;
     box-shadow: 0 0 8px var(--handle-color);
-    /* Color will be set by JavaScript */
-     transition: border-color 0.1s ease-out;
-
-    /* Use the variable for the border */
-    
-   
+    transition: border-color 0.1s ease-out;
 }
 
 #severity-handle-grip { /* The handle on the right */
@@ -673,8 +666,7 @@ button {
     transform: translateY(-50%);
     width: 10px;
     height: 80%;
-   background-color: var(--handle-color); 
+    background-color: var(--handle-color);
     border-radius: 4px;
-    /* Color will be set by JavaScript */
     transition: background-color 0.1s ease-out;
 }
