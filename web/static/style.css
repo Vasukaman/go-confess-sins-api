@@ -321,7 +321,13 @@ button {
     display: flex;
     gap: 10px;
     margin-top: 10px;
+
+     max-width: 100%;       /* Ensure it doesn't overflow its parent */
+    overflow-x: auto;    /* Allow horizontal scrolling */
+    white-space: nowrap;   /* Prevent emojis from wrapping to a new line */
+    padding-bottom: 10px;  /* Add space for the scrollbar */
 }
+
 .emoji {
     font-size: 1.5em;
     cursor: pointer;

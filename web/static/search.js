@@ -12,7 +12,7 @@ class SearchApp {
         this.searchForm = document.getElementById('search-form');
         this.paginationContainer = document.getElementById('pagination-controls');
         this.resultsContainer = document.getElementById('search-results');
-        
+
         // --- STATE ---
         this.currentPage = 1;
         this.currentParams = new URLSearchParams();
@@ -35,7 +35,7 @@ class SearchApp {
 
     // Pagination logic remains here as it's specific to the search page.
     renderPagination = (resultsCount) => {
-        paginationContainer.innerHTML = '';
+        this.paginationContainer.innerHTML = '';
 
         if (currentPage > 1) {
             const prevButton = document.createElement('button');
@@ -65,10 +65,11 @@ class SearchApp {
 
             const tags = document.getElementById('tags-input').value;
             const description = document.getElementById('description-input').value;
-            const emoji = document.getElementById('emoji-input').value;
             const sortBy = document.getElementById('sort-by-select').value;
             const order = document.getElementById('order-select').value;
+            const emoji = this.uiManager.selectedEmoji;
 
+            
             this.currentParams = new URLSearchParams();
             if (tags) this.currentParams.set('tags', tags);
             if (description) this.currentParams.set('description', description);

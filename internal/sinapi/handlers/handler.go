@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"encoding/csv"
 	"go-confess-sins-api/internal/sinapi"
 	"go-confess-sins-api/internal/sinapi/store"
 	"go-confess-sins-api/pkg/models"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"log/slog"
@@ -20,14 +22,45 @@ import (
 const GET_SINS_LIMIT = 10
 
 type Handler struct {
-	store     *store.Store
-	publisher sinapi.Publisher
-	censor    *goaway.ProfanityDetector
+	store         *store.Store
+	publisher     sinapi.Publisher
+	censor        *goaway.ProfanityDetector
+	allowedEmojis map[string]bool
+}
+
+func loadEmojis(filePath string) (map[string]bool, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	allowedEmojis := make(map[string]bool)
+	for _, record := range records {
+		if len(record) > 0 {
+			allowedEmojis[record[0]] = true
+		}
+	}
+	return allowedEmojis, nil
 }
 
 func NewHandler(s *store.Store, p sinapi.Publisher) *Handler {
 	censor := goaway.NewProfanityDetector().WithCustomDictionary(goaway.DefaultProfanities, append(goaway.DefaultFalsePositives, "fuck"), goaway.DefaultFalseNegatives)
-	return &Handler{store: s, publisher: p, censor: censor}
+	emojis, err := loadEmojis("emojis.csv")
+	if err != nil {
+		// In a real app, you might want a fallback or to panic.
+		// For now, we'll log it and continue with an empty map.
+		slog.Error("Failed to load emojis.csv", "error", err)
+		emojis = make(map[string]bool)
+	}
+
+	return &Handler{store: s, publisher: p, censor: censor, allowedEmojis: emojis}
 }
 
 // CreateAPIKey handles the public route to generate a new key.
@@ -68,8 +101,6 @@ func (h *Handler) GetSins(c *gin.Context) {
 	c.JSON(http.StatusOK, sins)
 }
 
-var allowedEmojis = map[string]bool{"🔥": true, "🐛": true, "💀": true, "🤦": true, "🤔": true}
-
 // CreateSin is a private route that creates a sin for the authenticated user.
 func (h *Handler) CreateSin(c *gin.Context) {
 	apiKeyID := getAPIKeyIDFromContext(c)
@@ -91,7 +122,7 @@ func (h *Handler) CreateSin(c *gin.Context) {
 
 	//If emoji is provided, we need to validate it
 	if request.Emoji != nil {
-		if _, ok := allowedEmojis[*request.Emoji]; !ok {
+		if _, ok := h.allowedEmojis[*request.Emoji]; !ok {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid emoji provided."})
 			return
 		}
@@ -169,8 +200,8 @@ func (h *Handler) SearchSins(c *gin.Context) {
 
 func (h *Handler) GetAllowedEmojis(c *gin.Context) {
 	// Create a slice of strings from the map keys
-	keys := make([]string, 0, len(allowedEmojis))
-	for k := range allowedEmojis {
+	keys := make([]string, 0, len(h.allowedEmojis))
+	for k := range h.allowedEmojis {
 		keys = append(keys, k)
 	}
 	c.JSON(http.StatusOK, keys)
