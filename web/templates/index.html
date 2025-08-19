@@ -56,17 +56,38 @@
                 </div>
             </div>
 
-            <!-- The vertical bar now contains a dynamic fill element -->
-            <div class="gacha-left-bar">
-                <div id="gacha-bar-fill"></div>
+          
+        <div class="gacha-center-column">
+            <div class="gacha-reel-area">
+                <div id="gacha-viewport">
+                    <button id="gacha_slot" class="slot gacha-slot-overlay">-</button>
+                    <div id="gacha-reel"></div>
+                </div>
+            </div>
+            <div class="inventory-area">
+                <div class="slots-container">
+                    <div class="slot-wrapper">
+                        <div class="luck-display"></div>
+                        <button id="inventory_slot_0" class="slot">-</button>
+                    </div>
+                    <div class="slot-wrapper">
+                        <div class="luck-display"></div>
+                        <button id="inventory_slot_1" class="slot">-</button>
+                    </div>
+                    <div class="slot-wrapper">
+                        <div class="luck-display"></div>
+                        <button id="inventory_slot_2" class="slot">-</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="gacha-center-column">
-            <!-- ... (rest of your gacha-center-column HTML is unchanged) ... -->
-        </div>
+        <button id="gacha-roll-button">🎲</button>
 
-        <!-- ... (rest of your gacha-main-area HTML is unchanged) ... -->
+        <div id="item-display-circle" class="slot">
+            <div id="item-display-emoji">-</div>
+            <div id="item-display-luck">Luck: ?</div>
+        </div>
     </div>
 </div>
 <!-- GACHA GAME UI - END -->
