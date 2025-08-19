@@ -39,24 +39,34 @@
     <h2>Gacha Game</h2>
 
     <!-- This area holds all the interactive gacha elements -->
+<div id="gacha-game-container">
+    <h2>Gacha Game</h2>
     <div class="gacha-main-area">
-        <!-- 5. The new vertical bar on the left -->
+        <!-- 4 & 5. The new severity selector -->
+        <div id="severity-selector-bar">
+            <div class="severity-section" data-severity="5">5</div>
+            <div class="severity-section" data-severity="4">4</div>
+            <div class="severity-section" data-severity="3">3</div>
+            <div class="severity-section" data-severity="2">2</div>
+            <div class="severity-section" data-severity="1">1</div>
+            <!-- The draggable handle -->
+            <div id="severity-handle-wrapper">
+                <div id="severity-handle-grip"></div>
+            </div>
+        </div>
+
+        <!-- The vertical bar from the previous step -->
         <div class="gacha-left-bar"></div>
 
         <div class="gacha-center-column">
-            <!-- This area holds the reel and the roll button -->
             <div class="gacha-reel-area">
                 <div id="gacha-viewport">
-                    <!-- The gacha slot is now an invisible button INSIDE the viewport -->
                     <button id="gacha_slot" class="slot gacha-slot-overlay">-</button>
                     <div id="gacha-reel"></div>
                 </div>
             </div>
-
-            <!-- Inventory slots are centered underneath the reel -->
             <div class="inventory-area">
                 <div class="slots-container">
-                    <!-- Each slot now has a luck display div -->
                     <div class="slot-wrapper">
                         <div class="luck-display"></div>
                         <button id="inventory_slot_0" class="slot">-</button>
@@ -73,10 +83,8 @@
             </div>
         </div>
 
-        <!-- 1. The roll button is now a sibling for easier positioning -->
         <button id="gacha-roll-button">🎲</button>
 
-        <!-- 3. The big display circle for the selected item -->
         <div id="item-display-circle" class="slot">
             <div id="item-display-emoji">-</div>
             <div id="item-display-luck">Luck: ?</div>

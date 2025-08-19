@@ -19,6 +19,10 @@ export class GachaManager {
         };
         this.itemDisplayEmoji = document.getElementById('item-display-emoji');
         this.itemDisplayLuck = document.getElementById('item-display-luck');
+        
+          this.severityBar = document.getElementById('severity-selector-bar');
+        this.severityHandle = document.getElementById('severity-handle-wrapper');
+        this.isDraggingSeverity = false;
 
 
     }
@@ -26,7 +30,7 @@ export class GachaManager {
     // Call this to set up all event listeners
     init() {
         this.rollButton.addEventListener('click', () => this.sendRollRequest());
-
+         this._setupSeveritySelector();     
         // Add a single click listener for all slots
         for (const slotId in this.slotElements) {
             this.slotElements[slotId].addEventListener('click', (event) => this.handleSlotClick(event));
@@ -60,7 +64,7 @@ export class GachaManager {
         const message = {
             type: "start_roll",
             payload: {
-                severity: 1
+                severity: this.currentSeverity
             }
         };
         this.socket.send(JSON.stringify(message));
@@ -124,6 +128,7 @@ export class GachaManager {
             // This is the first click
             this.firstSelectedSlotId = clickedSlotId;
             event.currentTarget.classList.add('selected');
+              this._updateDisplayCircle();
         } else {
             // This is the second click
             if (this.firstSelectedSlotId === clickedSlotId) {
@@ -220,4 +225,61 @@ export class GachaManager {
         }
     }
 
+     _setupSeveritySelector() {
+        const handleDragStart = (e) => {
+            this.isDraggingSeverity = true;
+            // Prevents text selection while dragging
+            e.preventDefault();
+        };
+
+        const handleDragMove = (e) => {
+            if (!this.isDraggingSeverity) return;
+
+            // Get the Y position of the mouse/touch relative to the bar
+            const barRect = this.severityBar.getBoundingClientRect();
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const relativeY = clientY - barRect.top;
+
+            // Move the handle visually
+            this.severityHandle.style.transition = 'none'; // Disable transition during drag
+            this.severityHandle.style.top = `${relativeY - (this.severityHandle.offsetHeight / 2)}px`;
+        };
+
+        const handleDragEnd = (e) => {
+            if (!this.isDraggingSeverity) return;
+            this.isDraggingSeverity = false;
+
+            const barRect = this.severityBar.getBoundingClientRect();
+            const sectionHeight = barRect.height / 5;
+            const handleTop = this.severityHandle.offsetTop;
+
+            // Calculate which section the middle of the handle is in
+            const middleOfHandle = handleTop + (this.severityHandle.offsetHeight / 2);
+            const sectionIndex = Math.floor(middleOfHandle / sectionHeight);
+            
+            // Clamp the value between 0 and 4
+            const clampedIndex = Math.max(0, Math.min(4, sectionIndex));
+
+            // Severity is 5 minus the index (since 5 is at the top, index 0)
+            this.currentSeverity = 5 - clampedIndex;
+            console.log(`Severity set to: ${this.currentSeverity}`);
+
+            // Snap the handle to the correct position
+            this.severityHandle.style.transition = 'top 0.1s ease-out';
+            this.severityHandle.style.top = `${clampedIndex * sectionHeight}px`;
+        };
+
+        // Mouse events
+        this.severityHandle.addEventListener('mousedown', handleDragStart);
+        window.addEventListener('mousemove', handleDragMove);
+        window.addEventListener('mouseup', handleDragEnd);
+
+        // Touch events for mobile
+        this.severityHandle.addEventListener('touchstart', handleDragStart);
+        window.addEventListener('touchmove', handleDragMove);
+        window.addEventListener('touchend', handleDragEnd);
+
+        // Set initial position
+        this.severityHandle.style.top = `${4 * (this.severityBar.offsetHeight / 5)}px`;
+    }
 }
