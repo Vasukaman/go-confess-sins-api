@@ -115,6 +115,7 @@ export class GachaManager {
                 winnerElement.style.opacity = '0';
                 // 2. Place the prize emoji in the gacha slot button
                 this.slotElements['gacha_slot'].textContent = prizeItem.emoji;
+                  this.gachaSlotData.item = prizeItem;
                 // --- END NEW LOGIC ---
                 return;
             }
