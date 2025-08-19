@@ -454,8 +454,7 @@ button {
     border-radius: 8px; /* Square with rounded corners */
     padding: 0;
     border: 3px solid #444;
-    background-color: transparent;
-    border: none;
+
 }
 .gacha-slot-overlay {
     position: absolute;
@@ -464,9 +463,6 @@ button {
     transform: translate(-50%, -50%);
     z-index: 10; /* Set a HIGHER layer order to be on top and clickable */
 
-    /* Force invisibility */
-    background-color: transparent;
-    border: none;
     
     /* Ensure the emoji text is visible and looks good */
     color: white;
@@ -474,12 +470,15 @@ button {
 
     /* Make sure it doesn't interfere with mouse events on the reel below */
     pointer-events: auto;
+
+    background-color: transparent !important;
+    border: none !important;
 }
 
 .gacha-slot-overlay.selected {
     /* A more visible selection style for an invisible button */
-    border: 3px dashed #03dac6;
-    background-color: rgba(3, 218, 198, 0.1); /* Slight glow */
+    border: 3px dashed #03dac6 !important; ; 
+    background-color: rgba(3, 218, 198, 0.1) !important ; /* Slight glow */
     box-shadow: 0 0 10px #03dac6;
 }
 

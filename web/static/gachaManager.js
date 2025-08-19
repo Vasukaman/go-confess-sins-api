@@ -197,7 +197,7 @@ export class GachaManager {
             return;
     }
         if (item) {
-            luckDisplay.textContent = '🍀'; // Using an emoji for luck
+            luckDisplay.textContent = item.luckValue; 
             luckDisplay.style.display = 'flex';
         } else {
             luckDisplay.style.display = 'none';
