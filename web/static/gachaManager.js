@@ -176,25 +176,33 @@ export class GachaManager {
     }
 
      updateAllSlots(payload) {
-        // We need to store the full slot data to access luck values later
-        this.gachaSlotData = payload.gachaSlot;
-        this.inventorySlotsData = payload.inventorySlots;
+    this.gachaSlotData = payload.gachaSlot;
+    this.inventorySlotsData = payload.inventorySlots;
+    let totalLuck = 0;
 
-        // Update Gacha Slot
-        const gachaSlotElement = this.slotElements['gacha_slot'];
-        gachaSlotElement.textContent = this.gachaSlotData.item ? this.gachaSlotData.item.emoji : '-';
-        this._updateLuckDisplay(gachaSlotElement, this.gachaSlotData.item);
+    // Update Gacha Slot
+    const gachaSlotElement = this.slotElements['gacha_slot'];
+    // 7. Use empty string instead of '-'
+    gachaSlotElement.textContent = this.gachaSlotData.item ? this.gachaSlotData.item.emoji : '';
+    this._updateLuckDisplay(gachaSlotElement, this.gachaSlotData.item);
 
-        // Update Inventory Slots
-        this.inventorySlotsData.forEach((slotData) => {
-            const slotElement = this.slotElements[slotData.id];
-            if (slotElement) {
-                slotElement.textContent = slotData.item ? slotData.item.emoji : '-';
-                this._updateLuckDisplay(slotElement, slotData.item);
+    // Update Inventory Slots
+    this.inventorySlotsData.forEach((slotData) => {
+        const slotElement = this.slotElements[slotData.id];
+        if (slotElement) {
+            slotElement.textContent = slotData.item ? slotData.item.emoji : '';
+            this._updateLuckDisplay(slotElement, slotData.item);
+            if (slotData.item) {
+                totalLuck += slotData.item.luckValue; // Add to total luck
             }
-        });
-        this._updateDisplayCircle(); 
-    }
+        }
+    });
+
+    // 5. Update Total Luck Display
+    document.getElementById('total-luck-display').textContent = `Total Luck: ${totalLuck}`;
+
+    this._updateDisplayCircle(); 
+}
 
      _updateLuckDisplay(slotElement, item) {
         const wrapper = slotElement.parentElement;
@@ -212,27 +220,32 @@ export class GachaManager {
     }
 
     _updateDisplayCircle() {
+       const infoDisplay = document.getElementById('item-display-info');
+
         if (!this.firstSelectedSlotId) {
-            this.itemDisplayEmoji.textContent = '-';
-            this.itemDisplayLuck.textContent = 'Luck: ?';
+            this.itemDisplayEmoji.textContent = '';
+            infoDisplay.innerHTML = ''; // Clear info
             return;
         }
 
         let selectedItem = null;
-        if (this.firstSelectedSlotId === 'gacha_slot') {
+         if (this.firstSelectedSlotId === 'gacha_slot') {
             selectedItem = this.gachaSlotData?.item;
         } else {
             const slotData = this.inventorySlotsData.find(s => s.id === this.firstSelectedSlotId);
             selectedItem = slotData?.item;
         }
-
         if (selectedItem) {
-            this.itemDisplayEmoji.textContent = selectedItem.emoji;
-            this.itemDisplayLuck.textContent = `Luck: ${selectedItem.luckValue}`;
-        } else {
-            this.itemDisplayEmoji.textContent = '-';
-            this.itemDisplayLuck.textContent = 'Luck: ?';
-        }
+                this.itemDisplayEmoji.textContent = selectedItem.emoji;
+                // 8. Build a multi-line string for the info box
+                let infoText = `Name: ${selectedItem.name}\n`;
+                infoText += `Luck: ${selectedItem.luckValue}\n`;
+                infoText += `Rarity: ${selectedItem.rarity.name}`;
+                infoDisplay.textContent = infoText;
+            } else {
+                this.itemDisplayEmoji.textContent = '';
+                infoDisplay.innerHTML = '';
+            }
     }
 
       _setupSeveritySelector() {
@@ -313,7 +326,10 @@ export class GachaManager {
         this.gachaBarFill.style.backgroundColor = color;
         this.gachaBarFill.style.top = `${sectionIndex * sectionHeight}px`;
 
-        const fillHeightPercentage = (5 - sectionIndex) * 20; // 20% height per section
+        const fillHeightPercentage = (sectionIndex + 1) * 20; // 20% height per section from the top
         this.gachaBarFill.style.height = `${fillHeightPercentage}%`;
+        this.gachaBarFill.style.backgroundColor = color;
     }
+
+    
 }
