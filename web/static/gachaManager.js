@@ -306,29 +306,24 @@ export class GachaManager {
 
 
       _updateSeverityVisuals(handleTop) {
-        const barRect = this.severityBar.getBoundingClientRect();
-        const sectionHeight = barRect.height / 5;
-        const middleOfHandle = handleTop + (this.severityHandle.offsetHeight / 2);
-        let sectionIndex = Math.floor(middleOfHandle / sectionHeight);
-        sectionIndex = Math.max(0, Math.min(4, sectionIndex));
+    const barRect = this.severityBar.getBoundingClientRect();
+    const sectionHeight = barRect.height / 5;
+    const middleOfHandle = handleTop + (this.severityHandle.offsetHeight / 2);
+    let sectionIndex = Math.floor(middleOfHandle / sectionHeight);
+    sectionIndex = Math.max(0, Math.min(4, sectionIndex));
 
-        // Get the color from the current severity section
-        const currentSection = this.severitySections[sectionIndex];
-        const color = window.getComputedStyle(currentSection).backgroundColor;
+    const currentSection = this.severitySections[sectionIndex];
+    const color = window.getComputedStyle(currentSection).backgroundColor;
 
-        // 1. Update the handle's color
-        // Note: We can't directly style ::before, so we use a CSS variable
-        this.severityHandle.style.setProperty('--handle-color', color);
-        this.severityHandleGrip.style.backgroundColor = color;
+    // 1. Update the handle's color
+    this.severityHandle.style.setProperty('--handle-color', color);
 
-        // 2. Update the fill element's color and position
-        this.gachaBarFill.style.backgroundColor = color;
-        this.gachaBarFill.style.top = `${sectionIndex * sectionHeight}px`;
-
-        const fillHeightPercentage = (sectionIndex + 1) * 20; // 20% height per section from the top
-        this.gachaBarFill.style.height = `${fillHeightPercentage}%`;
-        this.gachaBarFill.style.backgroundColor = color;
-    }
-
+    // 2. --- CORRECTED FILL LOGIC ---
+    // The fill should start at the top (top: 0) and have a height
+    // that reaches down to the current section.
+    const fillHeightPercentage = (sectionIndex + 1) * 20; // 20% per section from the top
+    this.gachaBarFill.style.height = `${fillHeightPercentage}%`;
+    this.gachaBarFill.style.backgroundColor = color;
+}
     
 }
