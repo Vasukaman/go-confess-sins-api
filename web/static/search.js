@@ -52,7 +52,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 metaHTML = `<div class="tags-container">${tagsHTML}</div>` + metaHTML;
             }
 
-            sinCard.innerHTML = `<p class="description">"${sin.description}"</p><div class="meta">${metaHTML}</div>`;
+             let emojiHTML = '';
+            if (sin.emoji) {
+                emojiHTML = `<div class="sin-emoji">${sin.emoji}</div>`;
+            }
+            
+
+              sinCard.innerHTML = `
+                ${emojiHTML}
+                <div class="sin-content">
+                    <p class="description">"${sin.description}"</p>
+                    <div class="meta">${metaHTML}</div>
+                </div>
+            `;
             resultsContainer.appendChild(sinCard);
         });
     };

@@ -55,13 +55,14 @@ export class UIManager {
             emojiSpan = `<span class="leaderboard-emoji">${sin.emoji}</span>`;
         }
 
-        // Add the emoji span to the beginning of the innerHTML.
+
+        
         item.innerHTML = `
             ${emojiSpan}
             <span class="leaderboard-text">${sin.description}</span>
             <span class="leaderboard-count">${sin.count}</span>
         `;
-        
+
         this.leaderboardList.appendChild(item);
     });
     }
