@@ -39,7 +39,7 @@ export class GachaManager {
         switch (data.type) {
             case "roll_result":
                 // Start the animation with the data from the server
-                this._runRollAnimation(data.payload.reel, data.payload.winnerIndex);
+                this._runRollAnimation(data.payload.reel, data.payload.prize);
                 break;
             case "player_state_update":
                 this.updateAllSlots(data.payload);
@@ -184,6 +184,10 @@ export class GachaManager {
      _updateLuckDisplay(slotElement, item) {
         const wrapper = slotElement.parentElement;
         const luckDisplay = wrapper.querySelector('.luck-display');
+
+        if (!luckDisplay) {
+            return;
+    }
         if (item) {
             luckDisplay.textContent = '🍀'; // Using an emoji for luck
             luckDisplay.style.display = 'flex';

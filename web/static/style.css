@@ -443,8 +443,8 @@ button {
 /* Position the roll button on top of the viewport */
 #gacha-roll-button {
     position: absolute;
-    right: -25px; /* Position it overlapping the right side */
-    top: 50%;
+    right: 110px; /* Position it overlapping the right side */
+    top: 21%;
     transform: translateY(-50%);
     z-index: 20;
     width: 90px;
