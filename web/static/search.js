@@ -11,6 +11,7 @@ class SearchApp {
         // --- DOM ELEMENTS ---
         this.searchForm = document.getElementById('search-form');
         this.paginationContainer = document.getElementById('pagination-controls');
+        this.resultsContainer = document.getElementById('search-results');
         
         // --- STATE ---
         this.currentPage = 1;
@@ -25,7 +26,7 @@ class SearchApp {
         try {
             const sins = await this.apiClient.searchSins(this.currentParams.toString());
             // The UIManager handles the rendering.
-            this.uiManager.renderSins(sins); 
+             this.uiManager.renderSins(sins, this.resultsContainer);  
             this.renderPagination(sins.length);
         } catch (error) {
             console.error('Search error:', error);

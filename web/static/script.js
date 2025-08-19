@@ -14,13 +14,14 @@ class App {
         this.confessForm = document.getElementById('confess-form');
         this.getKeyButton = document.getElementById('get-key-button');
         this.descriptionTextarea = document.getElementById('sin-description');
+        this.sinsList = document.getElementById('sins-list');
     }
 
     // --- Logic Methods ---
     async refreshData() {
         try {
             const sins = await this.apiClient.fetchSins();
-            this.uiManager.renderSins(sins);
+            this.uiManager.renderSins(sins, thi.sinsList);
         } catch (error) {
             console.error('Fetch sins error:', error);
         }

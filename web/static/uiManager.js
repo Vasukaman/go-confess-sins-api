@@ -11,8 +11,8 @@ export class UIManager {
     }
 
     // --- Render Methods ---
-    renderSins(sins) {
-        this.sinsList.innerHTML = ''; // Clear the list
+   renderSins(sins, container) {
+            if (!container) return;
         sins.forEach(sin => {
             const sinCard = document.createElement('div');
             sinCard.className = 'sin-card';
@@ -39,7 +39,7 @@ export class UIManager {
                     <div class="meta">${metaHTML}</div>
                 </div>
             `;
-            this.sinsList.appendChild(sinCard);
+            container.appendChild(sinCard);
         });
     }
 
@@ -56,7 +56,7 @@ export class UIManager {
         }
 
 
-        
+
         item.innerHTML = `
             ${emojiSpan}
             <span class="leaderboard-text">${sin.description}</span>
