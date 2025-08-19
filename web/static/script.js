@@ -123,7 +123,7 @@ class App {
         this.setupWebSocket();
 
          try {
-            const emojis = this.apiClient.fetchAllowedEmojis();
+            const emojis = this.apiClient.fetchAllowedEmojis();   
             this.uiManager.renderEmojiPicker(emojis);
         } catch (error) {
             console.error("Failed to load emoji picker:", error);
