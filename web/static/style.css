@@ -39,7 +39,11 @@ header p {
     border-radius: 8px;
     padding: 20px;
     transition: transform 0.2s ease-in-out;
-      overflow-wrap: break-word;
+    overflow-wrap: break-word;
+
+    display: flex; 
+    align-items: center; 
+    gap: 20px; 
 }
 
 .sin-card:hover {
@@ -313,4 +317,33 @@ button {
 .nav-button:hover {
     background-color: #bb86fc;
     color: #121212;
+}
+
+/* Add these new styles to your style.css */
+.emoji-picker {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.emoji {
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+.emoji:hover {
+    background-color: #333;
+}
+.emoji.selected {
+    background-color: #bb86fc;
+}
+
+.sin-emoji {
+    font-size: 2.5em;
+}
+
+/* Create a new container for the main content to make it take up the rest of the space */
+.sin-content {
+    flex-grow: 1;
 }

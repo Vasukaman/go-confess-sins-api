@@ -79,7 +79,9 @@ class App {
             const payload = { description };
             if (tags) payload.tags = tags.split(',').map(tag => tag.trim());
             if (severity) payload.severity = parseInt(severity, 10);
-            
+            if (this.uiManager.selectedEmoji) payload.emoji = this.uiManager.selectedEmoji;
+       
+
             try {
                 await this.apiClient.confessSin(payload);
                 this.confessForm.reset();
@@ -119,6 +121,13 @@ class App {
         this.setupEventListeners();
         this.refreshData();
         this.setupWebSocket();
+
+         try {
+            const emojis = this.apiClient.fetchAllowedEmojis();
+            this.uiManager.renderEmojiPicker(emojis);
+        } catch (error) {
+            console.error("Failed to load emoji picker:", error);
+        }
     }
 }
 

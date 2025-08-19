@@ -30,4 +30,9 @@ export class ApiClient {
         }
         return response.json();
     }
+
+    async fetchAllowedEmojis() {
+        const response = await fetch(`${this.sinApiUrl}/emojis`);
+        return response.json();
+    }
 }

@@ -94,10 +94,10 @@ func (s *Store) IncrementSinCount(apiKeyID int, description string, tags []strin
 	var sin models.Sin
 
 	err := s.db.QueryRow(context.Background(), `
-		INSERT INTO sins (api_key_id, description, count, tags, severity) VALUES ($1, $2, 1, $3, $4)
+		INSERT INTO sins (api_key_id, description, count, tags, severity, emoji) VALUES ($1, $2, 1, $3, $4)
 		ON CONFLICT (api_key_id, description) DO UPDATE
 		SET count = sins.count + 1
-		RETURNING id, description, count, created_at, tags, severity`,
+		RETURNING id, description, count, created_at, tags, severity, emoji`,
 		apiKeyID, description, tags, severity,
 	).Scan(
 		&sin.ID,
@@ -106,6 +106,7 @@ func (s *Store) IncrementSinCount(apiKeyID int, description string, tags []strin
 		&sin.CreatedAt,
 		&sin.Tags,
 		&sin.Severity,
+		&sin.Emoji,
 	)
 
 	if err != nil {

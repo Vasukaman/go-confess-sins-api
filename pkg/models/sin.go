@@ -13,4 +13,5 @@ type Sin struct {
 	CreatedAt   time.Time `json:"created_at"`
 	Tags        []string  `json:"tags"` // Just a standard string slice
 	Severity    *int      `json:"severity,omitempty"`
+	Emoji       *string   `json:"emoji,omitempty"`
 }

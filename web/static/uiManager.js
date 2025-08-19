@@ -6,6 +6,8 @@ export class UIManager {
         this.apiKeyInput = document.getElementById('api-key-input');
         this.forgivenOverlay = document.getElementById('forgiven-overlay');
         this.charCounter = document.getElementById('char-counter');
+        this.emojiPicker = document.getElementById('emoji-picker');
+        this.selectedEmoji = null; 
     }
 
     // --- Render Methods ---
@@ -24,7 +26,19 @@ export class UIManager {
                 metaHTML = `<div class="tags-container">${tagsHTML}</div>` + metaHTML;
             }
 
-            sinCard.innerHTML = `<p class="description">"${sin.description}"</p><div class="meta">${metaHTML}</div>`;
+             let emojiHTML = '';
+            if (sin.emoji) {
+                emojiHTML = `<div class="sin-emoji">${sin.emoji}</div>`;
+            }
+            
+
+              sinCard.innerHTML = `
+                ${emojiHTML}
+                <div class="sin-content">
+                    <p class="description">"${sin.description}"</p>
+                    <div class="meta">${metaHTML}</div>
+                </div>
+            `;
             this.sinsList.appendChild(sinCard);
         });
     }
@@ -61,5 +75,26 @@ export class UIManager {
             this.forgivenOverlay.classList.remove('visible');
             elementsToShake.forEach(el => el.classList.remove('shaking'));
         }, 5000); // Animation duration is 5s
+    }
+
+
+     renderEmojiPicker(emojis) {
+        this.emojiPicker.innerHTML = '';
+        emojis.forEach(emoji => {
+            const emojiEl = document.createElement('div');
+            emojiEl.className = 'emoji';
+            emojiEl.textContent = emoji;
+            emojiEl.dataset.emoji = emoji;
+
+            emojiEl.addEventListener('click', () => {
+                // Deselect any currently selected emoji
+                this.emojiPicker.querySelector('.emoji.selected')?.classList.remove('selected');
+                // Select the new one
+                emojiEl.classList.add('selected');
+                this.selectedEmoji = emoji;
+            });
+
+            this.emojiPicker.appendChild(emojiEl);
+        });
     }
 }

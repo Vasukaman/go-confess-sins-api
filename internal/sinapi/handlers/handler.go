@@ -68,6 +68,8 @@ func (h *Handler) GetSins(c *gin.Context) {
 	c.JSON(http.StatusOK, sins)
 }
 
+var allowedEmojis = map[string]bool{"🔥": true, "🐛": true, "💀": true, "🤦": true, "🤔": true}
+
 // CreateSin is a private route that creates a sin for the authenticated user.
 func (h *Handler) CreateSin(c *gin.Context) {
 	apiKeyID := getAPIKeyIDFromContext(c)
@@ -75,7 +77,7 @@ func (h *Handler) CreateSin(c *gin.Context) {
 		return
 	}
 
-	var request models.Sin // Use the model directly for binding
+	var request models.Sin
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -85,6 +87,14 @@ func (h *Handler) CreateSin(c *gin.Context) {
 	if len(request.Description) > maxChars {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Description cannot exceed %d characters.", maxChars)})
 		return
+	}
+
+	//If emoji is provided, we need to validate it
+	if request.Emoji != nil {
+		if _, ok := allowedEmojis[*request.Emoji]; !ok {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid emoji provided."})
+			return
+		}
 	}
 
 	// Use the censor from the handler struct
@@ -155,4 +165,13 @@ func (h *Handler) SearchSins(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, sins)
+}
+
+func (h *Handler) GetAllowedEmojis(c *gin.Context) {
+	// Create a slice of strings from the map keys
+	keys := make([]string, 0, len(allowedEmojis))
+	for k := range allowedEmojis {
+		keys = append(keys, k)
+	}
+	c.JSON(http.StatusOK, keys)
 }

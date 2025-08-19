@@ -52,6 +52,7 @@ func main() {
 		api.POST("/keys", handler.CreateAPIKey)
 		api.GET("/sins", handler.GetSins)
 		api.GET("/search", handler.SearchSins)
+		api.GET("/emojis", handler.GetAllowedEmojis)
 
 		// Private routes
 		private := api.Group("/")
