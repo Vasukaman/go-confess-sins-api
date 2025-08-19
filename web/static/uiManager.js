@@ -48,9 +48,22 @@ export class UIManager {
         topSins.forEach(sin => {
             const item = document.createElement('div');
             item.className = 'leaderboard-item';
-            item.innerHTML = `<span>${sin.description}</span><span>${sin.count}</span>`;
-            this.leaderboardList.appendChild(item);
-        });
+
+            
+     let emojiSpan = '';
+        if (sin.emoji) {
+            emojiSpan = `<span class="leaderboard-emoji">${sin.emoji}</span>`;
+        }
+
+        // Add the emoji span to the beginning of the innerHTML.
+        item.innerHTML = `
+            ${emojiSpan}
+            <span class="leaderboard-text">${sin.description}</span>
+            <span class="leaderboard-count">${sin.count}</span>
+        `;
+        
+        this.leaderboardList.appendChild(item);
+    });
     }
 
     // --- UI Update Methods ---

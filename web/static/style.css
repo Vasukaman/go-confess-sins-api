@@ -162,31 +162,28 @@ button {
 
 .leaderboard-item {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 10px;
     padding: 10px;
     border-bottom: 1px solid #2a2a2a;
     overflow-wrap: break-word;
 }
-
-.leaderboard-item:last-child {
-    border-bottom: none;
+.leaderboard-emoji {
+    font-size: 1.5em;
 }
 
-.leaderboard-item span:first-child {
-    flex-grow: 1;
-    margin-right: 15px;
-    white-space: normal;       /* instead of pre-wrap */
-    overflow-wrap: break-word; /* break long words */
-    word-break: break-word;    /* for extra safety */
 
-    
+.leaderboard-text {
+    flex-grow: 1; /* This will take up the remaining space */
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
-.leaderboard-item span:last-child {
+.leaderboard-count {
     font-weight: bold;
     color: #bb86fc;
 }
-
 
 
 #forgiven-overlay {
