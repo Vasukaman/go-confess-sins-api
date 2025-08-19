@@ -92,20 +92,20 @@ export class GachaManager {
     }
 
     updateReel(payload) {
-        const reelText = payload.reel.map(itemInstance => itemInstance.Item.emoji).join('');
+        const reelText = payload.reel.map(itemInstance => itemInstance.emoji).join('');
         this.reelDisplay.textContent = reelText;
     }
 
     updateAllSlots(payload) {
         // Update the Gacha Slot based on the full player state
         const gachaSlotElement = this.slotElements['gacha_slot'];
-        gachaSlotElement.textContent = payload.gachaSlot.item ? payload.gachaSlot.item.Item.emoji : '-';
+        gachaSlotElement.textContent = payload.gachaSlot.item ? payload.gachaSlot.item.emoji : '-';
 
         // Update Inventory Slots
         payload.inventorySlots.forEach((slotData) => {
             const slotElement = this.slotElements[slotData.id];
             if (slotElement) {
-                slotElement.textContent = slotData.item ? slotData.item.Item.emoji : '-';
+                slotElement.textContent = slotData.item ? slotData.Item.emoji : '-';
             }
         });
     }
