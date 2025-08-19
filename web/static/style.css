@@ -414,9 +414,10 @@ button {
 #gacha-reel {
     display: flex;
     height: 100%;
-    position: absolute; /* Take it out of normal flow */
+    position: absolute;
     left: 0;
     top: 0;
+    z-index: 5; /* Set a lower layer order */
 }
 
 .gacha-reel-area {
@@ -455,16 +456,28 @@ button {
     border: 3px solid #444;
 }
 .gacha-slot-overlay {
-    background: transparent; /* Makes the button background invisible */
-    border: none; /* Removes the border */
-    color: white; /* Ensures the emoji text is visible */
-    pointer-events: all; /* Make sure it's still clickable */
-    /* Add a faint glow so the user knows it's interactive */
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10; /* Set a HIGHER layer order to be on top and clickable */
+
+    /* Force invisibility */
+    background-color: transparent;
+    border: none;
+    
+    /* Ensure the emoji text is visible and looks good */
+    color: white;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+
+    /* Make sure it doesn't interfere with mouse events on the reel below */
+    pointer-events: auto;
 }
+
 .gacha-slot-overlay.selected {
-    /* Override the default selection style for the invisible button */
+    /* A more visible selection style for an invisible button */
     border: 3px dashed #03dac6;
+    background-color: rgba(3, 218, 198, 0.1); /* Slight glow */
     box-shadow: 0 0 10px #03dac6;
 }
 

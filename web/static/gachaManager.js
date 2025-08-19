@@ -43,7 +43,8 @@ export class GachaManager {
         switch (data.type) {
             case "roll_result":
                 // Start the animation with the data from the server
-                this._runRollAnimation(data.payload.reel, this._runRollAnimation(data.payload.reel, data.payload.winnerIndex, data.payload.prize));
+              // in handleServerMessage
+                this._runRollAnimation(data.payload.reel, data.payload.winnerIndex, data.payload.prize);
                 break;
             case "player_state_update":
                 this.updateAllSlots(data.payload);
@@ -156,7 +157,9 @@ export class GachaManager {
             this.slotElements[this.firstSelectedSlotId]?.classList.remove('selected');
         }
         this.firstSelectedSlotId = null;
+          this._updateDisplayCircle(); 
     }
+
 
     updateReel(payload) {
         const reelText = payload.reel.map(itemInstance => itemInstance.emoji).join('');
