@@ -1,5 +1,5 @@
 // in /static/gachaManager.js
-
+import { GachaAnimator } from './gachaAnimator.js';
 export class GachaManager {
     constructor(socket) {
         if (!socket) {
@@ -7,6 +7,12 @@ export class GachaManager {
         }
         this.socket = socket;
         this.firstSelectedSlotId = null;
+        this.animator = new GachaAnimator(); // Create an instance of the animator
+
+
+        this.gachaContainer = document.getElementById('gacha-game-container');
+        this.rollButtonVisual = document.getElementById('gacha-roll-button-visual');
+        this.displayCircleContainer = document.getElementById('item-display-circle-container');
 
         this.rollButton = document.getElementById('gacha-roll-button');
         this.viewportElement = document.getElementById('gacha-viewport');
@@ -68,13 +74,17 @@ export class GachaManager {
         this.isRolling = true;
         this.rollButton.disabled = true; // Disable button during roll
 
-        const message = {
-            type: "start_roll",
-            payload: {
-                severity: this.currentSeverity
-            }
-        };
-        this.socket.send(JSON.stringify(message));
+       this.animator.animateRollButtonPress(this.rollButtonVisual, () => {
+            // When the button is down, shake the container
+            this.animator.animateGachaShake(this.gachaContainer);
+            
+            // Then, send the request to the server
+            const message = {
+                type: "start_roll",
+                payload: { severity: this.currentSeverity }
+            };
+            this.socket.send(JSON.stringify(message));
+        });
     }
 
 
@@ -116,6 +126,7 @@ export class GachaManager {
                 // 2. Place the prize emoji in the gacha slot button
                 this.slotElements['gacha_slot'].textContent = prizeItem.emoji;
                   this.gachaSlotData.item = prizeItem;
+                  this.animator.animateRollButtonReturn(this.rollButtonVisual);
                 // --- END NEW LOGIC ---
                 return;
             }
@@ -219,33 +230,30 @@ export class GachaManager {
         }
     }
 
-    _updateDisplayCircle() {
-       const infoDisplay = document.getElementById('item-display-info');
-
+       _updateDisplayCircle() {
         if (!this.firstSelectedSlotId) {
-            this.itemDisplayEmoji.textContent = '';
-            infoDisplay.innerHTML = ''; // Clear info
+            this.animator.animateDisplayCircle(this.displayCircleContainer, false); // Animate out
             return;
         }
 
         let selectedItem = null;
-         if (this.firstSelectedSlotId === 'gacha_slot') {
+        if (this.firstSelectedSlotId === 'gacha_slot') {
             selectedItem = this.gachaSlotData?.item;
         } else {
             const slotData = this.inventorySlotsData.find(s => s.id === this.firstSelectedSlotId);
             selectedItem = slotData?.item;
         }
+
         if (selectedItem) {
-                this.itemDisplayEmoji.textContent = selectedItem.emoji;
-                // 8. Build a multi-line string for the info box
-                let infoText = `Name: ${selectedItem.name}\n`;
-                infoText += `Luck: ${selectedItem.luckValue}\n`;
-                infoText += `Rarity: ${selectedItem.rarity.name}`;
-                infoDisplay.textContent = infoText;
-            } else {
-                this.itemDisplayEmoji.textContent = '';
-                infoDisplay.innerHTML = '';
-            }
+            this.animator.animateDisplayCircle(this.displayCircleContainer, true); // Animate in
+            this.itemDisplayEmoji.textContent = selectedItem.emoji;
+            let infoText = `Name: ${selectedItem.name}\n`;
+            infoText += `Luck: ${selectedItem.luckValue}\n`;
+            infoText += `Rarity: ${selectedItem.rarity.name}`;
+            document.getElementById('item-display-info').textContent = infoText;
+        } else {
+            this.animator.animateDisplayCircle(this.displayCircleContainer, false); // Animate out
+        }
     }
 
       _setupSeveritySelector() {
