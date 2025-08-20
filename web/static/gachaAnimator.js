@@ -17,7 +17,7 @@ export class GachaAnimator {
     animateRollButtonReturn(buttonElement) {
         anime({
             targets: buttonElement,
-            translateY: '-10%%', // Move it back to its original position
+            translateY: '-30%', // Move it back to its original position
             duration: 300,
             easing: 'easeOutQuad'
         });

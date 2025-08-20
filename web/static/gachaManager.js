@@ -128,9 +128,9 @@ export class GachaManager {
                 this.slotElements['gacha_slot'].textContent = prizeItem.emoji;
                   this.gachaSlotData.item = prizeItem;
                   
-       this.animator.animateGachaShake(this.rollButtonVisual, () => {
+                 this.animator.animateGachaShake(this.rollButtonVisual);
                   this.animator.animateRollButtonReturn(this.rollButtonVisual);
-       });
+     
                 // --- END NEW LOGIC ---
                 return;
             }
