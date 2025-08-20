@@ -357,14 +357,14 @@ button {
     }
 #gacha-game-container {
     background-color: #2a2a2a;
-    padding: 20px;
+    padding: 2%;
     border-radius: 12px;
      /* Increased width for new elements */
     /* margin: 20px auto; */
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     box-sizing: border-box;
     text-align: center;
-    aspect-ratio: 2.3/1;
+    aspect-ratio: 2/1;
     width: 60%;
     position: absolute;
 }
@@ -376,7 +376,7 @@ button {
     align-items: center;
     height: 100%;
     position: relative;
-    margin-left: 8%;
+    margin-left: 12%;
 }
 
 .gacha-center-column {
@@ -427,7 +427,7 @@ button {
 
 .gacha-reel-area {
     position: relative;
-    width: 95%;
+    width: 99%;
     height: 50%;
     display: flex;
     justify-content: center;
@@ -438,14 +438,15 @@ button {
 /* A single emoji item in the reel */
 .reel-item {
     flex-shrink: 0;
+    height: 100%;
     width: 80px;
-    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 48px;
+    font-size: xx-large;
     box-sizing: border-box;
     transition: opacity 0.3s ease; /* For fading out the prize */
+    aspect-ratio: 1/1;
 }
 
 /* Position the roll button on top of the viewport */
@@ -507,7 +508,6 @@ button {
 .inventory-area, .gacha-slot-area {
     margin-top: 1%;
     height: 50%;
-    width: 100%;
 }
 .slots-container {
     display: flex;
@@ -517,9 +517,9 @@ button {
     height: 100%;
 }
 .slot {
-    width: 100%;
-    height: 100%;
-    font-size: 36px;
+    max-width: 100%;
+    max-height: 100%;
+    font-size: xx-large;
     background-color: #333;
     border: 2px solid #555;
     color: white;
@@ -528,11 +528,17 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    aspect-ratio: 1/1;
+    /* aspect-ratio: 1/1; */
+    height: 90%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
 }
 
 .slot-wrapper {
     position: relative; /* For positioning the luck display */
+    aspect-ratio: 1/1;
+    /* height: 80%; */
+    /* width: 80%; */
 }
 
 #item-display-circle {
@@ -757,8 +763,13 @@ button {
 
 #outer-gacha-game-container {
     position: relative;
-    width: 600px;
+    width: 700px;
     height: 300px;
     top: 50px;
-    left: 300px;
+    left: 250px;
+}
+
+.relative-wrapper
+{
+    position:relative;
 }
