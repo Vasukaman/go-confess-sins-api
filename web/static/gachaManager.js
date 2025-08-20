@@ -129,7 +129,7 @@ export class GachaManager {
                   this.gachaSlotData.item = prizeItem;
                   
                  this.animator.animateGachaShake(this.rollButtonVisual);
-                  this.animator.animateRollButtonReturn(this.rollButtonVisual);
+                  this.animator.animateRollButtonReturn(this.gachaContainer);
      
                 // --- END NEW LOGIC ---
                 return;
