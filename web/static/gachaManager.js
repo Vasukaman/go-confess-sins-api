@@ -362,62 +362,67 @@ export class GachaManager {
 
 
   _animateSwap(sourceId, destId, onComplete) {
-        const sourceEl = this.slotElements[sourceId];
-        const destEl = this.slotElements[destId];
-        if (!sourceEl || !destEl) return;
-
-        const sourceRect = sourceEl.getBoundingClientRect();
-        const destRect = destEl.getBoundingClientRect();
-
-        // Create temporary "clone" elements to animate
-        const cloneSource = sourceEl.cloneNode(true);
-        const cloneDest = destEl.cloneNode(true);
-        
-        [cloneSource, cloneDest].forEach(clone => {
-            clone.style.position = 'fixed';
-            clone.style.zIndex = '1000';
-            clone.classList.remove('selected');
-            clone.style.margin = '0'; // Remove any inherited margin
-        });
-        cloneSource.style.left = `${sourceRect.left}px`;
-        cloneSource.style.top = `${sourceRect.top}px`;
-        cloneDest.style.left = `${destRect.left}px`;
-        cloneDest.style.top = `${destRect.top}px`;
-
-        document.body.appendChild(cloneSource);
-        document.body.appendChild(cloneDest);
-
-        // Hide original emojis during animation
-        sourceEl.style.opacity = '0';
-        destEl.style.opacity = '0';
-
-        // Animate clones using Anime.js
-        anime({
-            targets: cloneSource,
-            left: destRect.left,
-            top: destRect.top,
-            duration: 400,
-            easing: 'easeOutExpo'
-        });
-
-        anime({
-            targets: cloneDest,
-            left: sourceRect.left,
-            top: sourceRect.top,
-            duration: 400,
-            easing: 'easeOutExpo',
-            complete: () => {
-                // Animation is done, clean up
-                cloneSource.remove();
-                cloneDest.remove();
-                // Make originals visible again (server update will handle content)
-                sourceEl.style.opacity = '1';
-                destEl.style.opacity = '1';
-                // Call the server now that the animation is finished
-                onComplete();
-            }
-        });
+    const sourceEl = this.slotElements[sourceId];
+    const destEl = this.slotElements[destId];
+    if (!sourceEl || !destEl || !sourceEl.textContent || !destEl.textContent) {
+        onComplete(); // If a slot is empty, just complete immediately
+        return;
     }
+
+    const sourceRect = sourceEl.getBoundingClientRect();
+    const destRect = destEl.getBoundingClientRect();
+
+    // Create temporary "clone" elements for just the emojis
+    const cloneSource = document.createElement('div');
+    const cloneDest = document.createElement('div');
+
+    // Style the clones to look like the emojis
+    [cloneSource, cloneDest].forEach(clone => {
+        clone.style.position = 'fixed';
+        clone.style.zIndex = '1000';
+        clone.style.fontSize = '36px'; // Match the slot font size
+        clone.style.pointerEvents = 'none'; // Prevent interaction
+    });
+
+    cloneSource.textContent = sourceEl.textContent;
+    cloneSource.style.left = `${sourceRect.left + (sourceRect.width / 2) - 18}px`; // Center the clone
+    cloneSource.style.top = `${sourceRect.top + (sourceRect.height / 2) - 18}px`;
+
+    cloneDest.textContent = destEl.textContent;
+    cloneDest.style.left = `${destRect.left + (destRect.width / 2) - 18}px`;
+    cloneDest.style.top = `${destRect.top + (destRect.height / 2) - 18}px`;
+
+    document.body.appendChild(cloneSource);
+    document.body.appendChild(cloneDest);
+
+    // Hide original emojis during animation
+    sourceEl.style.opacity = '0';
+    destEl.style.opacity = '0';
+
+    // Animate the clones (NO SCALING)
+    anime({
+        targets: cloneSource,
+        left: destRect.left + (destRect.width / 2) - 18,
+        top: destRect.top + (destRect.height / 2) - 18,
+        duration: 400,
+        easing: 'easeOutExpo'
+    });
+
+    anime({
+        targets: cloneDest,
+        left: sourceRect.left + (sourceRect.width / 2) - 18,
+        top: sourceRect.top + (sourceRect.height / 2) - 18,
+        duration: 400,
+        easing: 'easeOutExpo',
+        complete: () => {
+            cloneSource.remove();
+            cloneDest.remove();
+            sourceEl.style.opacity = '1';
+            destEl.style.opacity = '1';
+            onComplete();
+        }
+    });
+}
 
     
 }
