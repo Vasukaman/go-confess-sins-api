@@ -41,6 +41,7 @@ export class GachaManager {
 
     // Call this to set up all event listeners
     init() {
+        this.currentSeverity = 1;
         this.rollButton.addEventListener('click', () => this.sendRollRequest());
          this._setupSeveritySelector();     
         // Add a single click listener for all slots
@@ -126,7 +127,10 @@ export class GachaManager {
                 // 2. Place the prize emoji in the gacha slot button
                 this.slotElements['gacha_slot'].textContent = prizeItem.emoji;
                   this.gachaSlotData.item = prizeItem;
+                  
+       this.animator.animateGachaShake(this.rollButtonVisual, () => {
                   this.animator.animateRollButtonReturn(this.rollButtonVisual);
+       });
                 // --- END NEW LOGIC ---
                 return;
             }

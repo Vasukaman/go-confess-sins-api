@@ -6,7 +6,7 @@ export class GachaAnimator {
     animateRollButtonPress(buttonElement, onComplete) {
         anime({
             targets: buttonElement,
-            translateY: '30%', // Move it down by its full height
+            translateY: '25%', // Move it down by its full height
             duration: 200,
             easing: 'easeInQuad',
             complete: onComplete // This function will be called when the animation finishes
