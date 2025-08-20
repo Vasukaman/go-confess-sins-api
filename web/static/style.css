@@ -410,7 +410,7 @@ button {
     height: 70px; /* Match the slot size */
     background-color: transparent; /* No fill */
     border: 4px dashed rgba(255, 255, 255, 0.4); /* Dashed outline */
-    border-radius: 50%; /* Make it a circle to match the slots */
+    border-radius: 0%; /* Make it a circle to match the slots */
     box-sizing: border-box;
     z-index: 1;
 }
@@ -498,9 +498,12 @@ button {
 
 .gacha-slot-overlay.selected {
     /* A more visible selection style for an invisible button */
-    border: 3px dashed #03dac6 !important; ; 
-    background-color: rgba(3, 218, 198, 0.1) !important ; /* Slight glow */
+    border: 3px dashed #03dac6 !important;
+    background-color: rgba(3, 218, 198, 0.1) !important; /* Slight glow */
     box-shadow: 0 0 10px #03dac6;
+    aspect-ratio: 1/1;
+    height: 70px;
+    width: 70px;
 }
 
 
@@ -721,6 +724,8 @@ button {
     position: absolute;
     left: 50%;
     top: 50%;
+    height: 70px;
+    width: 70px;
     transform: translate(-50%, -50%);
     z-index: 10; /* Keep it on top of the reel */
 }

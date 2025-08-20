@@ -93,7 +93,7 @@ export class GachaManager {
         // 1. Setup the reel
         this.reelElement.innerHTML = '';
         this.reelElement.style.transform = 'translateX(0px)';
-        this.slotElements['gacha_slot'].textContent = '-'; // Clear gacha slot
+        this.slotElements['gacha_slot'].textContent = ' '; // Clear gacha slot
 
         reelItems.forEach(itemData => {
             const itemDiv = document.createElement('div');
