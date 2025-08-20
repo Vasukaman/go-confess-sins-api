@@ -144,43 +144,55 @@ export class GachaManager {
     }
 
 
-    handleSlotClick(event) {
-        const clickedSlotId = event.currentTarget.id;
+  handleSlotClick(event) {
+        if (this.isRolling) return;
+        const clickedSlot = event.currentTarget;
+        const clickedSlotId = clickedSlot.id;
 
         if (!this.firstSelectedSlotId) {
-            // This is the first click
+            // First click: select the slot
             this.firstSelectedSlotId = clickedSlotId;
-            event.currentTarget.classList.add('selected');
-              this._updateDisplayCircle();
+            clickedSlot.classList.add('selected');
+            this.animator.animateSlotSelect(clickedSlot); // 2. Trigger selection animation
         } else {
-            // This is the second click
-            if (this.firstSelectedSlotId === clickedSlotId) {
-                // User clicked the same slot twice, so deselect it
-                this.resetSelection();
+            // Second click
+            const sourceSlotId = this.firstSelectedSlotId;
+            const sourceSlot = this.slotElements[sourceSlotId];
+            
+            // Deselect the first slot visually
+            this.resetSelection();
+
+            if (sourceSlotId === clickedSlotId) {
+                // User clicked the same slot twice, do nothing after deselecting
+                this._updateDisplayCircle();
                 return;
             }
 
-            // Send the swap request to the server
-            const message = {
-                type: "swap_items",
-                payload: {
-                    sourceSlotId: this.firstSelectedSlotId,
-                    destSlotId: clickedSlotId,
-                }
-            };
-            this.socket.send(JSON.stringify(message));
-            this.resetSelection();
-            this._updateDisplayCircle();
+            // 1. Animate the swap, then send the message to the server
+            this._animateSwap(sourceSlotId, clickedSlotId, () => {
+                const message = {
+                    type: "swap_items",
+                    payload: { sourceSlotId, destSlotId: clickedSlotId }
+                };
+                this.socket.send(JSON.stringify(message));
+            });
         }
+        this._updateDisplayCircle();
     }
 
-    resetSelection() {
+
+  resetSelection() {
         if (this.firstSelectedSlotId) {
-            this.slotElements[this.firstSelectedSlotId]?.classList.remove('selected');
+            const selectedSlot = this.slotElements[this.firstSelectedSlotId];
+            if (selectedSlot) {
+                selectedSlot.classList.remove('selected');
+                this.animator.animateSlotDeselect(selectedSlot); // 2. Trigger deselection animation
+            }
         }
         this.firstSelectedSlotId = null;
-          this._updateDisplayCircle(); 
+        this._updateDisplayCircle();
     }
+
 
 
     updateReel(payload) {
@@ -197,15 +209,24 @@ export class GachaManager {
 
     // Update Gacha Slot
     const gachaSlotElement = this.slotElements['gacha_slot'];
+        const gachaItem = this.gachaSlotData.item;
+        gachaSlotElement.textContent = gachaItem ? gachaItem.emoji : '';
+        // 3. Set rarity color for the glow
+        gachaSlotElement.style.setProperty('--rarity-color', gachaItem ? gachaItem.rarity.color : '#03dac6');
+        this._updateLuckDisplay(gachaSlotElement, gachaItem);
+
+
     // 7. Use empty string instead of '-'
     gachaSlotElement.textContent = this.gachaSlotData.item ? this.gachaSlotData.item.emoji : '';
     this._updateLuckDisplay(gachaSlotElement, this.gachaSlotData.item);
 
     // Update Inventory Slots
     this.inventorySlotsData.forEach((slotData) => {
-        const slotElement = this.slotElements[slotData.id];
+          const slotElement = this.slotElements[slotData.id];
+            const item = slotData.item;
         if (slotElement) {
             slotElement.textContent = slotData.item ? slotData.item.emoji : '';
+            slotElement.style.setProperty('--rarity-color', item ? item.rarity.color : '#03dac6');
             this._updateLuckDisplay(slotElement, slotData.item);
             if (slotData.item) {
                 totalLuck += slotData.item.luckValue; // Add to total luck
@@ -338,5 +359,65 @@ export class GachaManager {
     this.gachaBarFill.style.height = `${fillHeightPercentage}%`;
     this.gachaBarFill.style.backgroundColor = color;
 }
+
+
+  _animateSwap(sourceId, destId, onComplete) {
+        const sourceEl = this.slotElements[sourceId];
+        const destEl = this.slotElements[destId];
+        if (!sourceEl || !destEl) return;
+
+        const sourceRect = sourceEl.getBoundingClientRect();
+        const destRect = destEl.getBoundingClientRect();
+
+        // Create temporary "clone" elements to animate
+        const cloneSource = sourceEl.cloneNode(true);
+        const cloneDest = destEl.cloneNode(true);
+        
+        [cloneSource, cloneDest].forEach(clone => {
+            clone.style.position = 'fixed';
+            clone.style.zIndex = '1000';
+            clone.classList.remove('selected');
+            clone.style.margin = '0'; // Remove any inherited margin
+        });
+        cloneSource.style.left = `${sourceRect.left}px`;
+        cloneSource.style.top = `${sourceRect.top}px`;
+        cloneDest.style.left = `${destRect.left}px`;
+        cloneDest.style.top = `${destRect.top}px`;
+
+        document.body.appendChild(cloneSource);
+        document.body.appendChild(cloneDest);
+
+        // Hide original emojis during animation
+        sourceEl.style.opacity = '0';
+        destEl.style.opacity = '0';
+
+        // Animate clones using Anime.js
+        anime({
+            targets: cloneSource,
+            left: destRect.left,
+            top: destRect.top,
+            duration: 400,
+            easing: 'easeOutExpo'
+        });
+
+        anime({
+            targets: cloneDest,
+            left: sourceRect.left,
+            top: sourceRect.top,
+            duration: 400,
+            easing: 'easeOutExpo',
+            complete: () => {
+                // Animation is done, clean up
+                cloneSource.remove();
+                cloneDest.remove();
+                // Make originals visible again (server update will handle content)
+                sourceEl.style.opacity = '1';
+                destEl.style.opacity = '1';
+                // Call the server now that the animation is finished
+                onComplete();
+            }
+        });
+    }
+
     
 }

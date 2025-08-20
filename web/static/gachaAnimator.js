@@ -56,4 +56,26 @@ export class GachaAnimator {
             easing: 'easeOutExpo'
         });
     }
+
+      animateSlotSelect(element) {
+        anime({
+            targets: element,
+            rotate: [0, 10, -10, 5, -5, 0], // A little jiggle and rotation
+            scale: [1, 1.1, 1],
+            duration: 400,
+            easing: 'easeInOutSine'
+        });
+    }
+
+    animateSlotDeselect(element) {
+        anime({
+            targets: element,
+            rotate: 0,
+            scale: 1,
+            duration: 300,
+            easing: 'easeOutQuad'
+        });
+    }
+
+
 }
