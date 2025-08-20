@@ -1,7 +1,7 @@
 body {
     font-family: 'Source Code Pro', monospace;
     background-color: #121212;
-    color: #e0e0e0;
+    /* color: #e0e0e0; */
     margin: 0;
     padding: 20px;
 }
@@ -359,12 +359,14 @@ button {
     background-color: #2a2a2a;
     padding: 20px;
     border-radius: 12px;
-    width: 100%;
-    max-width: 700px; /* Increased width for new elements */
-    margin: 20px auto;
+     /* Increased width for new elements */
+    /* margin: 20px auto; */
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     box-sizing: border-box;
     text-align: center;
+    aspect-ratio: 2.3/1;
+    width: 60%;
+    position: absolute;
 }
 
 
@@ -372,22 +374,25 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    height: 100%;
     position: relative;
+    margin-left: 8%;
 }
 
 .gacha-center-column {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 0;
+    width: 100%;
+    height: 100%;
 }
 
 
 /* The visible "window". It's 4 items wide. */
 #gacha-viewport {
-    width: 320px; /* 80px per item * 4 items */
-    height: 80px;
+    width: 100%; /* 80px per item * 4 items */
+    height: 100%;
     background-color: #1e1e1e;
     border: 2px solid #444;
     border-radius: 8px;
@@ -422,6 +427,8 @@ button {
 
 .gacha-reel-area {
     position: relative;
+    width: 95%;
+    height: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -444,17 +451,16 @@ button {
 /* Position the roll button on top of the viewport */
 #gacha-roll-button {
     position: absolute;
-    right: 110px; /* Position it overlapping the right side */
-    top: 21%;
+    top: -15%; /* Position it overlapping the right side */
     transform: translateY(-50%);
-    z-index: 20;
+    z-index: -5;
     width: 90px;
     height: 90px;
     font-size: 40px;
     border-radius: 8px; /* Square with rounded corners */
     padding: 0;
     border: 3px solid #444;
-
+    right: 0%;
 }
 .gacha-slot-overlay {
     position: absolute;
@@ -485,17 +491,20 @@ button {
 
 /* Styling for the inventory and gacha slots */
 .inventory-area, .gacha-slot-area {
-    margin-top: 20px;
+    margin-top: 1%;
+    height: 50%;
+    width: 100%;
 }
 .slots-container {
     display: flex;
     justify-content: center;
     gap: 15px;
     margin-top: 5px;
+    height: 100%;
 }
 .slot {
-    width: 70px;
-    height: 70px;
+    width: 100%;
+    height: 100%;
     font-size: 36px;
     background-color: #333;
     border: 2px solid #555;
@@ -505,6 +514,7 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
+    aspect-ratio: 1/1;
 }
 
 .slot-wrapper {
@@ -512,13 +522,14 @@ button {
 }
 
 #item-display-circle {
-    width: 160px;
-    height: 160px;
+    width: 100%;
+    height: 100%;
     flex-direction: column; /* Stack emoji and text vertically */
     border: 4px solid #444;
     background-color: #1e1e1e;
     position: relative; /* This is the key fix for the info panel */
     overflow: hidden;
+    aspect-ratio: 1/1;
 }
 #item-display-emoji {
     font-size: 70px;
@@ -549,27 +560,27 @@ button {
 }
 /* 5. Left Vertical Bar Styling */
 .gacha-left-bar {
-    width: 40px;
-    height: 180px; /* Adjust height to match reel + slots */
+    width: 70%;
+    height: 100%; /* Adjust height to match reel + slots */
     background-color: #1e1e1e;
     border: 2px solid #444;
     border-radius: 8px;
-    position: relative; 
+    position: absolute;
     overflow: hidden;
+    left: -200%;
+    top: 10;
 }
 
 
 
 #severity-selector-bar {
-    width: 60px;
-    height: 180px;
+    width: 50px;
+    height: 100%;
     background-color: #1e1e1e;
-    border: 2px solid #444;
-    border-radius: 8px;
     display: flex;
     flex-direction: column; /* Stack sections vertically */
     position: relative; /* For positioning the handle */
-     z-index: 10;
+    z-index: 10;
 }
 .severity-section {
     flex-grow: 1; /* Each section takes up equal space */
@@ -580,6 +591,7 @@ button {
     font-weight: bold;
     color: rgba(255, 255, 255, 0.8);
     border-bottom: 1px solid #444;
+    height: 20%;
 }
 .severity-section:last-child {
     border-bottom: none;
@@ -616,8 +628,12 @@ button {
 
 
 .severity-control-wrapper {
+    position: absolute;
     display: flex;
-    position: relative; /* This is crucial for positioning the handle */
+     /* This is crucial for positioning the handle */
+    height: 100%;
+    left: 0;
+    top: 0;
 }
 
 #gacha-bar-fill {
@@ -633,10 +649,10 @@ button {
     position: absolute;
     left: 0;
     /* This is the invisible draggable area. It should match the bar's width. */
-    width: 60px; 
+    width: 60px;
     height: 36px;
     cursor: ns-resize;
-    z-index: 5;
+    z-index: 15;
     transition: top 0.1s ease-out;
     --handle-color: white;
 }
@@ -645,21 +661,20 @@ button {
     content: '';
     position: absolute;
     /* Make the visual part wider and center it */
-    left: 50%;
     transform: translateX(-50%);
-    top: -4px;
-    width: 100px; /* Wider visual handle */
+    width: 70%; /* Wider visual handle */
     height: 36px;
     border: 4px solid var(--handle-color);
     border-radius: 6px;
     box-shadow: 0 0 8px var(--handle-color);
     transition: border-color 0.1s ease-out;
+    left: 40%;
 }
 
 #severity-handle-grip {
     position: absolute;
-    right: -74px; /* Position it relative to the wrapper */
-    top: 50%;
+    right: 95%; /* Position it relative to the wrapper */
+    top: 60%;
     transform: translateY(-50%);
     width: 100px; /* Your desired wider grip */
     height: 80%;
@@ -692,26 +707,35 @@ button {
 
 
 
-#severity-handle-wrapper {
-    position: absolute;
-    left: 0;
-    width: 60px; /* Match the width of the selector bar */
-    height: 36px;
-    cursor: ns-resize;
-    z-index: 5; /* Position it between the bars */
-    transition: top 0.1s ease-out;
-    --handle-color: white;
+
+
+#item-display-circle-container{
+     background-color: #2a2a2a;
+     padding: 20px;
+     border-radius: 12px;
+     /* Increased width for new elements */
+     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+     box-sizing: border-box;
+     text-align: center;
+     position: absolute;
+     right: -38%;
+     z-index: -1;
+     height: 90%;
+     aspect-ratio: 1/1;
+     top: 1%;
 }
 
-#severity-selector-outline {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: -4px;
-    width: 100px; /* The wider visual part */
-    height: 36px;
-    border: 4px solid var(--handle-color);
-    border-radius: 6px;
-    box-shadow: 0 0 8px var(--handle-color);
-    transition: border-color 0.1s ease-out;
+#luck-sum-container{
+     background-color: #2a2a2a;
+     padding: 20px;
+     border-radius: 12px;
+     /* Increased width for new elements */
+     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+     box-sizing: border-box;
+     text-align: center;
+     position: absolute;
+     right: 0;
+     z-index: -1;
+     bottom: -30%;
 }
+
