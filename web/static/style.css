@@ -738,9 +738,9 @@ button {
      box-sizing: border-box;
      text-align: center;
      position: absolute;
-     right: -38%;
+     right: 20%;
      z-index: -1;
-     height: 90%;
+     height: 70%;
      aspect-ratio: 1/1;
      top: 1%;
 }

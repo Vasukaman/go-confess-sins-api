@@ -6,7 +6,7 @@ export class GachaAnimator {
     animateRollButtonPress(buttonElement, onComplete) {
         anime({
             targets: buttonElement,
-            translateY: '100%', // Move it down by its full height
+            translateY: '30%', // Move it down by its full height
             duration: 200,
             easing: 'easeInQuad',
             complete: onComplete // This function will be called when the animation finishes
@@ -17,7 +17,7 @@ export class GachaAnimator {
     animateRollButtonReturn(buttonElement) {
         anime({
             targets: buttonElement,
-            translateY: '0%', // Move it back to its original position
+            translateY: '-10%%', // Move it back to its original position
             duration: 300,
             easing: 'easeOutQuad'
         });
@@ -51,8 +51,7 @@ export class GachaAnimator {
     animateDisplayCircle(containerElement, shouldShow) {
         anime({
             targets: containerElement,
-            translateX: shouldShow ? '0%' : '-150%', // Move in from right or out to left
-            opacity: shouldShow ? 1 : 0,
+            translateX: shouldShow ? '0%' : '-30%', // Move in from right or out to left
             duration: 500,
             easing: 'easeOutExpo'
         });
