@@ -449,11 +449,11 @@ button {
 }
 
 /* Position the roll button on top of the viewport */
-#gacha-roll-button {
+#gacha-roll-button-visual {
     position: absolute;
     top: -15%; /* Position it overlapping the right side */
     transform: translateY(-50%);
-    z-index: -5;
+    z-index: -10;
     width: 90px;
     height: 90px;
     font-size: 40px;
@@ -461,6 +461,20 @@ button {
     padding: 0;
     border: 3px solid #444;
     right: 0%;
+}
+#gacha-roll-button {
+    position: absolute;
+    top: -15%; /* Position it overlapping the right side */
+    transform: translateY(-50%);
+    z-index: 15;
+    width: 90px;
+    height: 90px;
+    font-size: 40px;
+    border-radius: 8px; /* Square with rounded corners */
+    padding: 0;
+    border: 3px solid #444;
+    right: 0%;
+    opacity: 0;
 }
 .gacha-slot-overlay {
     position: absolute;
@@ -739,3 +753,12 @@ button {
      bottom: -30%;
 }
 
+
+
+#outer-gacha-game-container {
+    position: relative;
+    width: 600px;
+    height: 300px;
+    top: 50px;
+    left: 300px;
+}
