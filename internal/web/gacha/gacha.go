@@ -46,21 +46,183 @@ func NewGachaMachine(sender MessageSender) *GachaMachine {
 	}
 
 	// --- DEFINE ITEMS ---
+	//Temp code, later use json
 	sev1Table := []Item{
-		{ID: "bug", Emoji: "🐛", Name: "Simple Bug", RarityID: "common", BaseWeight: 100, BaseLuckValue: 1},
-		{ID: "typo", Emoji: "🤦", Name: "Facepalm Typo", RarityID: "common", BaseWeight: 100, BaseLuckValue: 1},
-		{ID: "performance", Emoji: "🔥", Name: "Performance Issue", RarityID: "uncommon", BaseWeight: 50, BaseLuckValue: 5},
-		{ID: "refactor", Emoji: "🤔", Name: "Needless Refactor", RarityID: "rare", BaseWeight: 20, BaseLuckValue: 10},
-		{ID: "deadsoul", Emoji: "💀", Name: "Dead Soul", RarityID: "legendary", BaseWeight: 1, BaseLuckValue: 100},
+		// Common (Nature/Outdoors) - BaseLuckValue: 1-5
+		{ID: "leaf", Emoji: "🍁", Name: "Fallen Leaf", RarityID: "common", BaseWeight: 100, BaseLuckValue: 1},
+		{ID: "seedling", Emoji: "🌱", Name: "Tiny Seedling", RarityID: "common", BaseWeight: 95, BaseLuckValue: 2},
+		{ID: "cloud", Emoji: "☁️", Name: "Fluffy Cloud", RarityID: "common", BaseWeight: 90, BaseLuckValue: 3},
+		{ID: "rock", Emoji: "🪨", Name: "Smooth Rock", RarityID: "common", BaseWeight: 85, BaseLuckValue: 4},
+		{ID: "rain", Emoji: "🌧️", Name: "Gentle Rain", RarityID: "common", BaseWeight: 80, BaseLuckValue: 5},
+		{ID: "mushroom", Emoji: "🍄", Name: "Forest Mushroom", RarityID: "common", BaseWeight: 75, BaseLuckValue: 5},
+		{ID: "snail", Emoji: "🐌", Name: "Slow Snail", RarityID: "common", BaseWeight: 70, BaseLuckValue: 4},
+		{ID: "worm", Emoji: "🪱", Name: "Muddy Worm", RarityID: "common", BaseWeight: 65, BaseLuckValue: 3},
+
+		// Uncommon (Wildlife) - BaseLuckValue: 6-15
+		{ID: "butterfly", Emoji: "🦋", Name: "Monarch Butterfly", RarityID: "uncommon", BaseWeight: 50, BaseLuckValue: 6},
+		{ID: "bee", Emoji: "🐝", Name: "Fuzzy Bee", RarityID: "uncommon", BaseWeight: 45, BaseLuckValue: 7},
+		{ID: "owl", Emoji: "🦉", Name: "Wise Owl", RarityID: "uncommon", BaseWeight: 40, BaseLuckValue: 9},
+		{ID: "deer", Emoji: "🦌", Name: "Majestic Deer", RarityID: "uncommon", BaseWeight: 35, BaseLuckValue: 12},
+		{ID: "fox", Emoji: "🦊", Name: "Clever Fox", RarityID: "uncommon", BaseWeight: 30, BaseLuckValue: 15},
+
+		// Rare (Mythical Creatures) - BaseLuckValue: 16-30
+		{ID: "unicorn", Emoji: "🦄", Name: "Shining Unicorn", RarityID: "rare", BaseWeight: 20, BaseLuckValue: 18},
+		{ID: "dragon", Emoji: "🐉", Name: "Green Dragon", RarityID: "rare", BaseWeight: 15, BaseLuckValue: 22},
+		{ID: "phoenix", Emoji: "🔥", Name: "Reborn Phoenix", RarityID: "rare", BaseWeight: 10, BaseLuckValue: 28},
+
+		// Mythical (Cosmic) - BaseLuckValue: 31-50
+		{ID: "star", Emoji: "⭐", Name: "Falling Star", RarityID: "mythical", BaseWeight: 5, BaseLuckValue: 35},
+		{ID: "planet", Emoji: "🪐", Name: "Distant Planet", RarityID: "mythical", BaseWeight: 3, BaseLuckValue: 45},
+
+		// Legendary (Galactic Phenomena) - BaseLuckValue: 51-100
+		{ID: "supernova", Emoji: "💥", Name: "Supernova", RarityID: "legendary", BaseWeight: 1, BaseLuckValue: 75},
+		{ID: "blackhole", Emoji: "🕳️", Name: "Singular Black Hole", RarityID: "legendary", BaseWeight: 0.5, BaseLuckValue: 100},
+	}
+
+	sev2Table := []Item{
+		// Common (Daily Life) - BaseLuckValue: 5-10
+		{ID: "coffee", Emoji: "☕", Name: "Morning Coffee", RarityID: "common", BaseWeight: 100, BaseLuckValue: 5},
+		{ID: "book", Emoji: "📖", Name: "Open Book", RarityID: "common", BaseWeight: 95, BaseLuckValue: 6},
+		{ID: "key", Emoji: "🔑", Name: "House Key", RarityID: "common", BaseWeight: 90, BaseLuckValue: 7},
+		{ID: "phone", Emoji: "📱", Name: "Smartphone", RarityID: "common", BaseWeight: 85, BaseLuckValue: 8},
+		{ID: "headphones", Emoji: "🎧", Name: "Headphones", RarityID: "common", BaseWeight: 80, BaseLuckValue: 9},
+		{ID: "soda", Emoji: "🥤", Name: "Ice Cold Soda", RarityID: "common", BaseWeight: 75, BaseLuckValue: 10},
+		{ID: "pen", Emoji: "🖊️", Name: "Ink Pen", RarityID: "common", BaseWeight: 70, BaseLuckValue: 9},
+		{ID: "camera", Emoji: "📸", Name: "Old Camera", RarityID: "common", BaseWeight: 65, BaseLuckValue: 8},
+		{ID: "wallet", Emoji: "👛", Name: "Leather Wallet", RarityID: "common", BaseWeight: 60, BaseLuckValue: 7},
+		{ID: "watch", Emoji: "⌚", Name: "Wrist Watch", RarityID: "common", BaseWeight: 55, BaseLuckValue: 6},
+
+		// Uncommon (Urban Exploration) - BaseLuckValue: 11-20
+		{ID: "subway", Emoji: "🚇", Name: "Subway Train", RarityID: "uncommon", BaseWeight: 40, BaseLuckValue: 12},
+		{ID: "skyscraper", Emoji: "🏙️", Name: "Skyscraper", RarityID: "uncommon", BaseWeight: 35, BaseLuckValue: 14},
+		{ID: "streetart", Emoji: "🎨", Name: "Vibrant Street Art", RarityID: "uncommon", BaseWeight: 30, BaseLuckValue: 16},
+		{ID: "taxi", Emoji: "🚕", Name: "Yellow Taxi", RarityID: "uncommon", BaseWeight: 25, BaseLuckValue: 18},
+		{ID: "bridge", Emoji: "🌉", Name: "City Bridge", RarityID: "uncommon", BaseWeight: 20, BaseLuckValue: 20},
+
+		// Rare (Future Tech) - BaseLuckValue: 21-40
+		{ID: "robot", Emoji: "🤖", Name: "Service Robot", RarityID: "rare", BaseWeight: 15, BaseLuckValue: 25},
+		{ID: "drone", Emoji: "🚁", Name: "Delivery Drone", RarityID: "rare", BaseWeight: 10, BaseLuckValue: 30},
+		{ID: "cyborg", Emoji: "🦾", Name: "Cybernetic Arm", RarityID: "rare", BaseWeight: 8, BaseLuckValue: 35},
+
+		// Mythical (Interdimensional) - BaseLuckValue: 41-70
+		{ID: "portal", Emoji: "🌀", Name: "Interdimensional Portal", RarityID: "mythical", BaseWeight: 4, BaseLuckValue: 50},
+		{ID: "alien", Emoji: "👽", Name: "Friendly Alien", RarityID: "mythical", BaseWeight: 2, BaseLuckValue: 60},
+
+		// Legendary (Reality-Bending) - BaseLuckValue: 71-150
+		{ID: "glitch", Emoji: "👾", Name: "Reality Glitch", RarityID: "legendary", BaseWeight: 1, BaseLuckValue: 120},
+	}
+
+	sev3Table := []Item{
+		// Common (Food & Drink) - BaseLuckValue: 10-20
+		{ID: "pizza", Emoji: "🍕", Name: "Slice of Pizza", RarityID: "common", BaseWeight: 100, BaseLuckValue: 10},
+		{ID: "sushi", Emoji: "🍣", Name: "Sushi Roll", RarityID: "common", BaseWeight: 95, BaseLuckValue: 12},
+		{ID: "taco", Emoji: "🌮", Name: "Crunchy Taco", RarityID: "common", BaseWeight: 90, BaseLuckValue: 14},
+		{ID: "burger", Emoji: "🍔", Name: "Cheeseburger", RarityID: "common", BaseWeight: 85, BaseLuckValue: 16},
+		{ID: "ramen", Emoji: "🍜", Name: "Bowl of Ramen", RarityID: "common", BaseWeight: 80, BaseLuckValue: 18},
+		{ID: "donut", Emoji: "🍩", Name: "Glazed Donut", RarityID: "common", BaseWeight: 75, BaseLuckValue: 20},
+		{ID: "icecream", Emoji: "🍦", Name: "Ice Cream Cone", RarityID: "common", BaseWeight: 70, BaseLuckValue: 19},
+		{ID: "milk", Emoji: "🥛", Name: "Glass of Milk", RarityID: "common", BaseWeight: 65, BaseLuckValue: 18},
+		{ID: "popcorn", Emoji: "🍿", Name: "Popcorn Bucket", RarityID: "common", BaseWeight: 60, BaseLuckValue: 17},
+		{ID: "cake", Emoji: "🎂", Name: "Birthday Cake", RarityID: "common", BaseWeight: 55, BaseLuckValue: 16},
+
+		// Uncommon (Tools & Crafts) - BaseLuckValue: 21-35
+		{ID: "hammer", Emoji: "🔨", Name: "Steel Hammer", RarityID: "uncommon", BaseWeight: 40, BaseLuckValue: 25},
+		{ID: "paintbrush", Emoji: "🖌️", Name: "Artist's Paintbrush", RarityID: "uncommon", BaseWeight: 35, BaseLuckValue: 28},
+		{ID: "scissors", Emoji: "✂️", Name: "Sharp Scissors", RarityID: "uncommon", BaseWeight: 30, BaseLuckValue: 30},
+		{ID: "thread", Emoji: "🧵", Name: "Needle and Thread", RarityID: "uncommon", BaseWeight: 25, BaseLuckValue: 32},
+		{ID: "pottery", Emoji: "🏺", Name: "Ancient Pottery", RarityID: "uncommon", BaseWeight: 20, BaseLuckValue: 35},
+
+		// Rare (Treasures) - BaseLuckValue: 36-60
+		{ID: "gem", Emoji: "💎", Name: "Sparkling Gem", RarityID: "rare", BaseWeight: 15, BaseLuckValue: 45},
+		{ID: "crown", Emoji: "👑", Name: "Royal Crown", RarityID: "rare", BaseWeight: 10, BaseLuckValue: 50},
+		{ID: "treasurechest", Emoji: " chests", Name: "Treasure Chest", RarityID: "rare", BaseWeight: 8, BaseLuckValue: 55},
+
+		// Mythical (Artifacts) - BaseLuckValue: 61-100
+		{ID: "lamp", Emoji: "🧞", Name: "Genie's Lamp", RarityID: "mythical", BaseWeight: 4, BaseLuckValue: 80},
+		{ID: "sword", Emoji: "⚔️", Name: "Excalibur", RarityID: "mythical", BaseWeight: 2, BaseLuckValue: 90},
+
+		// Legendary (Cosmic Entities) - BaseLuckValue: 101-200
+		{ID: "god", Emoji: "✨", Name: "Celestial Being", RarityID: "legendary", BaseWeight: 1, BaseLuckValue: 175},
+	}
+
+	sev4Table := []Item{
+		// Common (Sports) - BaseLuckValue: 15-30
+		{ID: "soccerball", Emoji: "⚽", Name: "Soccer Ball", RarityID: "common", BaseWeight: 100, BaseLuckValue: 15},
+		{ID: "basketball", Emoji: "🏀", Name: "Basketball", RarityID: "common", BaseWeight: 95, BaseLuckValue: 17},
+		{ID: "baseball", Emoji: "⚾", Name: "Baseball", RarityID: "common", BaseWeight: 90, BaseLuckValue: 19},
+		{ID: "football", Emoji: "🏈", Name: "American Football", RarityID: "common", BaseWeight: 85, BaseLuckValue: 21},
+		{ID: "helmet", Emoji: " helmets", Name: "Protective Helmet", RarityID: "common", BaseWeight: 80, BaseLuckValue: 23},
+		{ID: "gloves", Emoji: " gloves", Name: "Boxing Gloves", RarityID: "common", BaseWeight: 75, BaseLuckValue: 25},
+		{ID: "medal", Emoji: "🥇", Name: "Gold Medal", RarityID: "common", BaseWeight: 70, BaseLuckValue: 27},
+		{ID: "trophy", Emoji: "🏆", Name: "Small Trophy", RarityID: "common", BaseWeight: 65, BaseLuckValue: 29},
+		{ID: "whistle", Emoji: " whistle", Name: "Coach's Whistle", RarityID: "common", BaseWeight: 60, BaseLuckValue: 30},
+		{ID: "swim", Emoji: "🏊", Name: "Swimmer", RarityID: "common", BaseWeight: 55, BaseLuckValue: 28},
+
+		// Uncommon (Exploration & Adventure) - BaseLuckValue: 31-50
+		{ID: "compass", Emoji: "🧭", Name: "Old Compass", RarityID: "uncommon", BaseWeight: 40, BaseLuckValue: 35},
+		{ID: "map", Emoji: "🗺️", Name: "Ancient Map", RarityID: "uncommon", BaseWeight: 35, BaseLuckValue: 38},
+		{ID: "tent", Emoji: "⛺", Name: "Camping Tent", RarityID: "uncommon", BaseWeight: 30, BaseLuckValue: 41},
+		{ID: "hiking", Emoji: "🥾", Name: "Hiking Boots", RarityID: "uncommon", BaseWeight: 25, BaseLuckValue: 45},
+		{ID: "parachute", Emoji: "🪂", Name: "Parachute", RarityID: "uncommon", BaseWeight: 20, BaseLuckValue: 50},
+
+		// Rare (Vehicles) - BaseLuckValue: 51-80
+		{ID: "car", Emoji: "🚗", Name: "Sports Car", RarityID: "rare", BaseWeight: 15, BaseLuckValue: 60},
+		{ID: "spaceship", Emoji: "🚀", Name: "Rocket Ship", RarityID: "rare", BaseWeight: 10, BaseLuckValue: 65},
+		{ID: "submarine", Emoji: " submarine", Name: "Submarine", RarityID: "rare", BaseWeight: 8, BaseLuckValue: 70},
+
+		// Mythical (Fantasy Travel) - BaseLuckValue: 81-120
+		{ID: "flyingcarpet", Emoji: "🧞‍♂️", Name: "Flying Carpet", RarityID: "mythical", BaseWeight: 4, BaseLuckValue: 100},
+		{ID: "teleporter", Emoji: "⚛️", Name: "Quantum Teleporter", RarityID: "mythical", BaseWeight: 2, BaseLuckValue: 110},
+
+		// Legendary (Travel to other dimensions) - BaseLuckValue: 121-250
+		{ID: "wormhole", Emoji: "🌀", Name: "Stable Wormhole", RarityID: "legendary", BaseWeight: 1, BaseLuckValue: 220},
+	}
+
+	sev5Table := []Item{
+		// Common (Music) - BaseLuckValue: 20-40
+		{ID: "notes", Emoji: "🎶", Name: "Musical Notes", RarityID: "common", BaseWeight: 100, BaseLuckValue: 20},
+		{ID: "microphone", Emoji: "🎤", Name: "Microphone", RarityID: "common", BaseWeight: 95, BaseLuckValue: 22},
+		{ID: "guitar", Emoji: "🎸", Name: "Electric Guitar", RarityID: "common", BaseWeight: 90, BaseLuckValue: 24},
+		{ID: "drums", Emoji: "🥁", Name: "Drum Set", RarityID: "common", BaseWeight: 85, BaseLuckValue: 26},
+		{ID: "speaker", Emoji: "🔊", Name: "Loud Speaker", RarityID: "common", BaseWeight: 80, BaseLuckValue: 28},
+		{ID: "piano", Emoji: "🎹", Name: "Grand Piano", RarityID: "common", BaseWeight: 75, BaseLuckValue: 30},
+		{ID: "violin", Emoji: "🎻", Name: "Wooden Violin", RarityID: "common", BaseWeight: 70, BaseLuckValue: 32},
+		{ID: "trumpet", Emoji: "🎺", Name: "Shiny Trumpet", RarityID: "common", BaseWeight: 65, BaseLuckValue: 34},
+		{ID: "saxophone", Emoji: "🎷", Name: "Cool Saxophone", RarityID: "common", BaseWeight: 60, BaseLuckValue: 36},
+		{ID: "headset", Emoji: "🎧", Name: "DJ Headset", RarityID: "common", BaseWeight: 55, BaseLuckValue: 38},
+
+		// Uncommon (Performance) - BaseLuckValue: 41-60
+		{ID: "clapper", Emoji: "🎬", Name: "Film Clapper", RarityID: "uncommon", BaseWeight: 40, BaseLuckValue: 45},
+		{ID: "mask", Emoji: "🎭", Name: "Theater Mask", RarityID: "uncommon", BaseWeight: 35, BaseLuckValue: 48},
+		{ID: "spotlight", Emoji: "💡", Name: "Spotlight", RarityID: "uncommon", BaseWeight: 30, BaseLuckValue: 52},
+		{ID: "ballet", Emoji: "🩰", Name: "Ballet Shoes", RarityID: "uncommon", BaseWeight: 25, BaseLuckValue: 55},
+		{ID: "circus", Emoji: "🎪", Name: "Circus Tent", RarityID: "uncommon", BaseWeight: 20, BaseLuckValue: 60},
+
+		// Rare (Fine Arts) - BaseLuckValue: 61-100
+		{ID: "sculpture", Emoji: "🗿", Name: "Abstract Sculpture", RarityID: "rare", BaseWeight: 15, BaseLuckValue: 75},
+		{ID: "statue", Emoji: "🗽", Name: "Statue of Liberty", RarityID: "rare", BaseWeight: 10, BaseLuckValue: 85},
+		{ID: "painting", Emoji: "🖼️", Name: "Masterpiece Painting", RarityID: "rare", BaseWeight: 8, BaseLuckValue: 95},
+
+		// Mythical (Creative Concepts) - BaseLuckValue: 101-150
+		{ID: "idea", Emoji: "💡", Name: "Brilliant Idea", RarityID: "mythical", BaseWeight: 4, BaseLuckValue: 120},
+		{ID: "muse", Emoji: "🎨", Name: "Creative Muse", RarityID: "mythical", BaseWeight: 2, BaseLuckValue: 140},
+
+		// Legendary (Inspiration) - BaseLuckValue: 151-300
+		{ID: "spark", Emoji: "✨", Name: "Divine Spark of Creation", RarityID: "legendary", BaseWeight: 1, BaseLuckValue: 270},
 	}
 
 	source := rand.NewSource(time.Now().UnixNano())
 
 	return &GachaMachine{
-		sender:       sender,
-		players:      make(map[string]*Player),
-		rarities:     raritiesMap,
-		dropTables:   map[int][]Item{1: sev1Table},
+		sender:   sender,
+		players:  make(map[string]*Player),
+		rarities: raritiesMap,
+		dropTables: map[int][]Item{
+			1: sev1Table,
+			2: sev2Table,
+			3: sev3Table,
+			4: sev4Table,
+			5: sev5Table},
 		rng:          rand.New(source),
 		rollDuration: 3 * time.Second, // The base duration of a roll.
 	}
@@ -251,11 +413,13 @@ func (gm *GachaMachine) calculateFinalWeight(item Item, player *Player) float64 
 	// --- FUTURE LOGIC GOES HERE ---
 	// This is where you would add logic based on player.Luck.
 	// For example:
-	// if player.Luck > 50 {
-	//     if rarity.ID == "rare" || rarity.ID == "legendary" {
-	//         finalWeight *= 1.5 // 50% boost to high-tier items for lucky players
-	//     }
-	// }
+	if player.Luck > 0 {
+		if rarity.ID == "rare" || rarity.ID == "legendary" {
+			finalWeight *= 1 + player.Luck/20
+		} else {
+			finalWeight *= 1 - player.Luck/20
+		}
+	}
 
 	return finalWeight
 }
