@@ -138,7 +138,7 @@ export class GachaManager {
                 elements.prizeInfo.prizeNameDisplay.textContent = prize.name;
                 elements.prizeInfo.prizeChanceDisplay.textContent = `(${(prizeDropChance * 100).toFixed(2)}%)`;
                 elements.prizeInfo.prizeNameDisplay.classList.add('visible');
-                elements.prizeInfoprizeChanceDisplay.classList.add('visible');
+                elements.prizeInfo.prizeChanceDisplay.classList.add('visible');
 
                 this.requestCollectionData(); 
                 
