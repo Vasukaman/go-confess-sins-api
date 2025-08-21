@@ -150,7 +150,12 @@ export class GachaManager {
             this._resetSelection();
 
             if (sourceSlotId !== clickedSlotId) {
-                this.animator.animateSwap(sourceSlotId, clickedSlotId, () => {
+
+                   const sourceElement = elements.slots[sourceSlotId];
+                   const destElement = elements.slots[destSlotId];
+
+      
+                   this.animator.animateSwap(sourceElement, destElement, () => {
                     this.socket.send(JSON.stringify({
                         type: "swap_items",
                         payload: { sourceSlotId, destSlotId: clickedSlotId }
