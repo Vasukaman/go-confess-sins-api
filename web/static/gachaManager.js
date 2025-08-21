@@ -133,6 +133,7 @@ export class GachaManager {
                 // Update state and UI
                 this.playerState.gachaSlot.item = prize;
                 this.ui.updateSlot(elements.slots['gacha_slot'], prize);
+                this.requestCollectionData(); 
                 
                 this.animator.animateRollButtonReturn(elements.rollButtonVisual);
                 return;
