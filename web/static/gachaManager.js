@@ -107,7 +107,7 @@ export class GachaManager {
     }
 
     _handleRollResult(payload) {
-        const { reel, winnerIndex, prize } = payload;
+        const { reel, winnerIndex, prize, prizeDropChance} = payload;
         
         // Setup reel for animation
         elements.reel.innerHTML = '';
