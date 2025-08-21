@@ -86,7 +86,7 @@ class App {
             event.preventDefault();
             const description = this.descriptionTextarea.value;
             const tags = document.getElementById('sin-tags').value;
-         //   const severity = document.getElementById('sin-severity').value;
+       //   const severity = document.getElementById('sin-severity').value;
             
             const payload = { description };
             if (tags) payload.tags = tags.split(',').map(tag => tag.trim());
