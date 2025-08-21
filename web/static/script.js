@@ -103,7 +103,7 @@ class App {
                 payload.emoji = displayEmojiElement.textContent;
                 payload.severity = this.gachaManager.currentSeverity;
             }
-
+            console.log("Sending payload to server:", JSON.stringify(payload));
             try {
                 await this.apiClient.confessSin(payload);
                 this.confessForm.reset();
