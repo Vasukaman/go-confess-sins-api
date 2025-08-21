@@ -23,6 +23,7 @@ export class GachaManager {
     }
 
     handleServerMessage(data) {
+        
         console.log("GachaManager received:", data);
         switch (data.type) {
             case "roll_result":
@@ -211,6 +212,7 @@ export class GachaManager {
         type: "get_droptable_info",
         payload: { severity: this.currentSeverity }
     };
+    console.log("Sending to server:", JSON.stringify(message)); 
     this.socket.send(JSON.stringify(message));
 }
 
