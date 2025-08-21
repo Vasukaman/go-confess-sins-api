@@ -242,8 +242,6 @@ export class GachaManager {
 
     requestCollectionData() {
     if (this.isRolling) return; // Don't request while a roll is happening
-    
-    elements.codex.collectionSeveritySpan.textContent = this.currentSeverity;
     const message = {
         type: "get_droptable_info",
         payload: { severity: this.currentSeverity }
