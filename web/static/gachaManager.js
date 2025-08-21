@@ -136,8 +136,8 @@ export class GachaManager {
                 this.playerState.gachaSlot.item = prize;
                 this.ui.updateSlot(elements.slots['gacha_slot'], prize);
                 elements.prizeInfo.prizeInfoprize.NameDisplay.textContent = prize.name;
-                elements.prizeInfoprizeChanceDisplay.textContent = `(${(prizeDropChance * 100).toFixed(2)}%)`;
-                elements.prizeInfoprizeNameDisplay.classList.add('visible');
+                elements.prizeInfoprize.ChanceDisplay.textContent = `(${(prizeDropChance * 100).toFixed(2)}%)`;
+                elements.prizeInfoprize.NameDisplay.classList.add('visible');
                 elements.prizeInfoprizeChanceDisplay.classList.add('visible');
 
                 this.requestCollectionData(); 
