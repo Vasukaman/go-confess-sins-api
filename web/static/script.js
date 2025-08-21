@@ -59,7 +59,7 @@ class App {
             if (typeof event.data === 'string') {
                 const data = JSON.parse(event.data);
                 
-            const gachaMessageTypes = ["roll_result", "player_state_update", "error"];
+            const gachaMessageTypes = ["roll_result", "player_state_update", "droptable_info_update", "error"];
                 if (gachaMessageTypes.includes(data.type)) {
                     this.gachaManager.handleServerMessage(data);
                 } else if (data.type === 'update') { // Your existing logic
