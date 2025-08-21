@@ -109,6 +109,7 @@ func (gm *GachaMachine) HandleMessage(userID string, rawMessage []byte) {
 }
 
 func (gm *GachaMachine) sendDropTableInfo(userID string, payload []DropTableInfoItem) {
+	log.Printf("[DEBUG] User %s: Sending DropTableInfoPayload:", userID)
 	gm.send(userID, "droptable_info_update", payload)
 }
 
@@ -128,6 +129,8 @@ func (gm *GachaMachine) send(userID, msgType string, payload interface{}) {
 	if err := gm.sender.SendToUser(userID, bytes); err != nil {
 		log.Printf("Error sending message to user %s: %v", userID, err)
 	}
+	log.Printf("[DEBUG] User %s: Successfully sent payload to user", userID)
+
 }
 
 // sendPlayerStateUpdate sends the complete, current state of the player's slots.
