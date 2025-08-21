@@ -95,7 +95,7 @@ export class GachaManager {
         this.isRolling = true;
         elements.rollButton.disabled = true;
         this.ui.updateSlot(elements.slots['gacha_slot'], null);
-         elements.prizeInfo.classList.remove('visible');
+         elements.prizeInfo.prizeNameDisplay.classList.remove('visible');
         elements.prizeInfo.prizeChanceDisplay.classList.remove('visible');
         this.animator.animateRollButtonPress(elements.rollButtonVisual, () => {
             this.animator.animateGachaShake(elements.gachaContainer);
