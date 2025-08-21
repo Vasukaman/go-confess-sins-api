@@ -230,7 +230,7 @@ renderCollection(items) {
         emojiDiv.className = 'collection-item-emoji';
         emojiDiv.textContent = itemData.Item.emoji;
 
-        const chanceSpan = document.createElement('spaЫЫn');
+        const chanceSpan = document.createElement('span');
         chanceSpan.className = 'collection-item-chance';
         // Format the chance to a percentage
         chanceSpan.textContent = `${(itemData.DropChance * 100).toFixed(2)}%`;
