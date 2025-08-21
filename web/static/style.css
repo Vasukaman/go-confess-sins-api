@@ -670,6 +670,7 @@ button {
     /* height and background-color will be set by JavaScript */
     right: 120%;
     transition: height 0.1s ease-out, background-color 0.1s ease-out;
+    z-index: 15;
 }
 
 /* Draggable Severity Handle - UPDATED for new shape and size */
@@ -680,7 +681,7 @@ button {
     width: 60px;
     height: 36px;
     cursor: ns-resize;
-    z-index: 15;
+    z-index: 0;
     transition: top 0.1s ease-out;
     --handle-color: white;
 }
