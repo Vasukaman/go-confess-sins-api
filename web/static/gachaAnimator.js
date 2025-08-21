@@ -79,7 +79,7 @@ export class GachaAnimator {
 
 
       animateSwap(sourceEl, destEl, onComplete) {
-        if (!sourceEl || !destEl || !sourceEl.textContent || !destEl.textContent) {
+        if (!sourceEl || !destEl || (!sourceEl.textContent && !destEl.textContent)) {
             onComplete(); // If a slot is empty, just complete immediately
             return;
         }
@@ -111,8 +111,8 @@ export class GachaAnimator {
         document.body.appendChild(cloneDest);
 
         // Hide original emojis during animation
-        sourceEl.style.opacity = '0';
-        destEl.style.opacity = '0';
+        sourceEl.textContent = ' ';
+        destEl.textContent = '0';
 
         // Animate the clones (NO SCALING)
         anime({
