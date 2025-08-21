@@ -206,7 +206,7 @@ export class GachaManager {
     requestCollectionData() {
     if (this.isRolling) return; // Don't request while a roll is happening
     
-    elements.collectionSeveritySpan.textContent = this.currentSeverity;
+    elements.codex.collectionSeveritySpan.textContent = this.currentSeverity;
     const message = {
         type: "get_droptable_info",
         payload: { severity: this.currentSeverity }
@@ -237,7 +237,7 @@ renderCollection(items) {
 
         itemDiv.appendChild(emojiDiv);
         itemDiv.appendChild(chanceSpan);
-        elements.collectionGrid.appendChild(itemDiv);
+        elements.codex.collectionGrid.appendChild(itemDiv);
     });
 }
 }
