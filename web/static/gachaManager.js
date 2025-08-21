@@ -1,7 +1,7 @@
 // in /static/gachaManager.js
 import { GachaAnimator } from './gachaAnimator.js';
-import { elements } from './domElements.js';
-import { UIUpdater } from './uiUpdater.js';
+import { elements } from './domElementsGacha.js';
+import { UIUpdater } from './uiUpdaterGacha.js';
 
 export class GachaManager {
     constructor(socket) {
