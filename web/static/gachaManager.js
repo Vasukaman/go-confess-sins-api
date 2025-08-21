@@ -180,6 +180,10 @@ export class GachaManager {
         const clickedSlotId = clickedSlot.id;
 
         if (!this.firstSelectedSlotId) {
+        if (!clickedSlot.textContent.trim()) {
+                    return; 
+                }
+
             this.firstSelectedSlotId = clickedSlotId;
             clickedSlot.classList.add('selected');
             this.animator.animateSlotSelect(clickedSlot);

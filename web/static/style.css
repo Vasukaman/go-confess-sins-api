@@ -747,9 +747,9 @@ button {
      box-sizing: border-box;
      text-align: center;
      position: absolute;
-     right: 20%;
+     right: 22%;
      z-index: -1;
-     height: 70%;
+     height: 190px;
      aspect-ratio: 1/1;
      top: 1%;
 }
@@ -772,10 +772,21 @@ button {
 
 #outer-gacha-game-container {
     position: relative;
+    width: 0;
+    height: 0;
+    top: 0;
+    left: 0;
+     overflow: hidden;
+     transition: all 0.5s ease-in-out;
+}
+
+
+#outer-gacha-game-container.open {
+    position: relative;
     width: 700px;
-    height: 300px;
+    height: 400px;
     top: 50px;
-    left: 250px;
+    left: 350px;
 }
 
 .relative-wrapper

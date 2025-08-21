@@ -18,6 +18,7 @@ class App {
         this.getKeyButton = document.getElementById('get-key-button');
         this.descriptionTextarea = document.getElementById('sin-description');
         this.sinsList = document.getElementById('sins-list');
+
     }
 
     // --- Logic Methods ---
@@ -137,6 +138,13 @@ class App {
             const remaining = maxLength - this.descriptionTextarea.value.length;
             this.uiManager.updateCharCounter(remaining);
         });
+
+           const toggleButton = document.getElementById('toggle-gacha-button');
+          const gachaContainer = document.getElementById('outer-gacha-game-container');
+
+         toggleButton.addEventListener('click', () => {
+        const isOpen = gachaContainer.classList.toggle('open')
+    });
     }
 
   async  init() {
