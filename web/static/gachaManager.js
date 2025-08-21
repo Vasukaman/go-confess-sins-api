@@ -32,7 +32,8 @@ export class GachaManager {
             case "player_state_update":
                 this.playerState = data.payload;
                 this.ui.updateAllSlots(this.playerState);
-                this._updateDisplayCircle(); // Update display in case selection changed
+                this._updateDisplayCircle();
+                this.requestCollectionData(); 
                 break;
 
             case "droptable_info_update":
@@ -223,7 +224,6 @@ renderCollection(items) {
     items.forEach(itemData => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'collection-item';
-        // Add the 'discovered' class if the item has been found
         if (itemData.TimesObtained > 0) {
             itemDiv.classList.add('discovered');
         }
@@ -234,8 +234,23 @@ renderCollection(items) {
 
         const chanceSpan = document.createElement('span');
         chanceSpan.className = 'collection-item-chance';
-        // Format the chance to a percentage
-        chanceSpan.textContent = `${(itemData.DropChance * 100).toFixed(2)}%`;
+        
+        // --- NEW PROBABILITY LOGIC ---
+        const chance = itemData.DropChance * 100;
+        if (chance > 0 && chance < 0.01) {
+            // If the chance is tiny but not zero, show a minimum value
+            chanceSpan.textContent = `<0.01%`;
+        } else {
+            chanceSpan.textContent = `${chance.toFixed(2)}%`;
+        }
+        
+        // --- NEW COUNTER LOGIC ---
+        if (itemData.TimesObtained > 0) {
+            const counterDiv = document.createElement('div');
+            counterDiv.className = 'collection-item-counter';
+            counterDiv.textContent = itemData.TimesObtained;
+            itemDiv.appendChild(counterDiv); // Add the counter to the item
+        }
 
         itemDiv.appendChild(emojiDiv);
         itemDiv.appendChild(chanceSpan);
