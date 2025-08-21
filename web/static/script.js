@@ -86,12 +86,12 @@ class App {
             event.preventDefault();
             const description = this.descriptionTextarea.value;
             const tags = document.getElementById('sin-tags').value;
-            const severity = document.getElementById('sin-severity').value;
+         //   const severity = document.getElementById('sin-severity').value;
             
             const payload = { description };
             if (tags) payload.tags = tags.split(',').map(tag => tag.trim());
-            if (severity) payload.severity = parseInt(severity, 10);
-            if (this.uiManager.selectedEmoji) payload.emoji = this.uiManager.selectedEmoji;
+         //   if (severity) payload.severity = parseInt(severity, 10);
+          //  if (this.uiManager.selectedEmoji) payload.emoji = this.uiManager.selectedEmoji;
        
 
             try {
