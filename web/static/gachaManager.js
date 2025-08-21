@@ -213,6 +213,7 @@ export class GachaManager {
             }
         }
         this.firstSelectedSlotId = null;
+        _updateDisplayCircle()
     }
 
     _updateDisplayCircle() {
