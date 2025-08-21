@@ -347,7 +347,7 @@ func (gm *GachaMachine) rollOne(table []Item, player *Player) (Item, bool) {
 	}
 
 	// Step 1: Calculate the total weight of all items in the table.
-	totalWeight := 0.0
+	totalWeight := 0.00000
 	for _, item := range table {
 		// We'll use our new flexible weight calculation method here.
 		totalWeight += gm.calculateFinalWeight(item, player)

@@ -665,9 +665,10 @@ button {
 
 #gacha-bar-fill {
     position: absolute;
-    top: 0; /* Anchor the fill to t.he TOP of the bar */
-    width: 100%;
+    top: 1%; /* Anchor the fill to t.he TOP of the bar */
+    width: 300px;
     /* height and background-color will be set by JavaScript */
+    right: 120%;
     transition: height 0.1s ease-out, background-color 0.1s ease-out;
 }
 
@@ -795,15 +796,15 @@ button {
 }
 
 #collection-container {
-    background-color: #1e1e1e;
-    border: 2px solid #444;
     border-radius: 8px;
-    padding: 15px;
-    width: 240px;
-    height: 250px; /* You can adjust this height */
+    padding: 3%;
+    width: 100%;
+    height: 100%; /* You can adjust this height */
     overflow-y: auto; /* Adds a scrollbar if items overflow */
     box-sizing: border-box;
     color: #ccc;
+    padding-top: 0%;
+    overflow: visible;
 }
 
 #collection-container h3 {
@@ -815,24 +816,27 @@ button {
 #collection-grid {
     display: grid;
     /* Creates a responsive grid with 2 columns */
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    height: 100%;
+    width: 100%;
 }
 
 .collection-item {
-    background-color: #2a2a2a;
-    border-radius: 6px;
-    padding: 10px;
+    border-radius: 50%;
     text-align: center;
-     position: relative; 
+    position: relative;
+    white-space: nowrap;
+    overflow: visible;
 }
 
 .collection-item-emoji {
-    font-size: 40px;
+    font-size: 20px;
     /* This CSS filter creates the black silhouette effect */
     filter: grayscale(100%) brightness(0%);
-    opacity: 0.6;
+    opacity: 096;
     transition: filter 0.3s, opacity 0.3s;
+    overflow: visible;
+    white-space: nowrap;
 }
 
 /* This class is added by JS to show the full-color emoji */
@@ -857,4 +861,9 @@ button {
     font-weight: bold;
     padding: 1px 4px;
     border-radius: 4px;
+}
+
+.gacha-bar-fill-wrapper{
+    height: 100%;
+    position: relative;
 }
