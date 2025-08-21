@@ -112,7 +112,7 @@ export class GachaAnimator {
 
         // Hide original emojis during animation
         sourceEl.textContent = ' ';
-        destEl.textContent = '0';
+        destEl.textContent = ' ';
 
         // Animate the clones (NO SCALING)
         anime({
