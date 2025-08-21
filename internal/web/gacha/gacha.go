@@ -2,6 +2,7 @@ package gacha
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"sync"
 	"time"
@@ -423,6 +424,9 @@ func (gm *GachaMachine) calculateFinalWeight(item Item, player *Player) float64 
 }
 
 func (gm *GachaMachine) HandleGetDropTableInfo(userID string, severity int) error {
+	// ADD THIS LOG
+	log.Printf("[DEBUG] User %s: Entering HandleGetDropTableInfo for severity %d", userID, severity)
+
 	player, ok := gm.players[userID]
 	if !ok {
 		return fmt.Errorf("player %s not found", userID)
@@ -433,21 +437,21 @@ func (gm *GachaMachine) HandleGetDropTableInfo(userID string, severity int) erro
 		return fmt.Errorf("no drop table for severity %d", severity)
 	}
 
-	// Lock the player while we do calculations to ensure data consistency
 	player.mu.Lock()
 	defer player.mu.Unlock()
 
-	// Step 1: Calculate the total weight for the entire table for this specific player
 	totalWeight := 0.0
 	for _, item := range table {
 		totalWeight += gm.calculateFinalWeight(item, player)
 	}
 
+	// ADD THIS LOG
+	log.Printf("[DEBUG] User %s: Calculated totalWeight: %f", userID, totalWeight)
+
 	if totalWeight == 0 {
-		return fmt.Errorf("drop table for severity %d has no items", severity)
+		return fmt.Errorf("drop table for severity %d has zero total weight", severity)
 	}
 
-	// Step 2: Build the payload with individual chances
 	payload := make([]DropTableInfoItem, len(table))
 	for i, item := range table {
 		finalWeight := gm.calculateFinalWeight(item, player)
@@ -456,9 +460,12 @@ func (gm *GachaMachine) HandleGetDropTableInfo(userID string, severity int) erro
 		payload[i] = DropTableInfoItem{
 			Item:          item,
 			DropChance:    chance,
-			TimesObtained: player.DiscoveredItems[item.ID], // Will be 0 if not yet discovered
+			TimesObtained: player.DiscoveredItems[item.ID],
 		}
 	}
+
+	// ADD THIS LOG
+	log.Printf("[DEBUG] User %s: Successfully built payload, about to send.", userID)
 
 	gm.sendDropTableInfo(userID, payload)
 	return nil

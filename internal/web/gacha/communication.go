@@ -88,12 +88,18 @@ func (gm *GachaMachine) HandleMessage(userID string, rawMessage []byte) {
 		}
 
 	case "get_droptable_info":
+		// ADD THIS LOG to see if we're entering the correct case
+		log.Printf("[DEBUG] User %s: Handling 'get_droptable_info'", userID)
+
 		var p GetDropTablePayload
 		if err := json.Unmarshal(cmd.Payload, &p); err != nil {
+			log.Printf("[ERROR] User %s: Failed to parse get_droptable_info payload: %v", userID, err)
 			gm.sendError(userID, "Invalid payload for get_droptable_info")
 			return
 		}
 		if err := gm.HandleGetDropTableInfo(userID, p.Severity); err != nil {
+			// This will log any error returned from the main logic function
+			log.Printf("[ERROR] User %s: Error in HandleGetDropTableInfo: %v", userID, err)
 			gm.sendError(userID, err.Error())
 		}
 
