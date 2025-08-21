@@ -152,7 +152,7 @@ export class GachaManager {
             if (sourceSlotId !== clickedSlotId) {
 
                    const sourceElement = elements.slots[sourceSlotId];
-                   const destElement = elements.slots[destSlotId];
+                   const destElement = elements.slots[clickedSlotId];
 
       
                    this.animator.animateSwap(sourceElement, destElement, () => {
