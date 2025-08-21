@@ -262,7 +262,7 @@ func (gm *GachaMachine) Roll(userID string, severity int) error {
 	visualRoll := gm.createVisualRoll(table, player)
 	winnerIndex := 24 // The "winning" item is the 25th in the list
 	visualRoll[winnerIndex] = *prizeInstance
-
+	player.DiscoveredItems[visualRoll[winnerIndex].ID]++
 	// Use the communication helper to send the result
 	gm.sendRollResult(userID, visualRoll, winnerIndex, prizeInstance)
 	return nil
