@@ -869,3 +869,31 @@ button {
     position: relative;
     right: 800%;
 }
+
+.prize-info {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px; /* Give it some width */
+    font-weight: bold;
+    color: #e0e0e0;
+    text-shadow: 0 1px 3px #000;
+    pointer-events: none; /* Make sure it doesn't block clicks */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s ease-in-out;
+}
+
+.prize-info.visible {
+    opacity: 1; /* Make it visible when it has content */
+}
+
+.prize-info.top {
+    bottom: 105%; /* Position it above the wrapper */
+    font-size: 16px;
+}
+
+.prize-info.bottom {
+    top: 105%; /* Position it below the wrapper */
+    font-size: 14px;
+    color: #aaa;
+}

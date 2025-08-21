@@ -17,6 +17,11 @@ export const elements = {
         'inventory_slot_1': document.getElementById('inventory_slot_1'),
         'inventory_slot_2': document.getElementById('inventory_slot_2'),
     },
+
+    prizeInfo:{
+        prizeNameDisplay: document.getElementById('gacha-prize-name'),
+       prizeChanceDisplay: document.getElementById('gacha-prize-chance'),
+    },
     
     // Item Display
     displayCircleContainer: document.getElementById('item-display-circle-container'),

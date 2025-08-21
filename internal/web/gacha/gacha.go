@@ -248,7 +248,7 @@ func (gm *GachaMachine) Roll(userID string, severity int) error {
 	if !ok {
 		return fmt.Errorf("no drop table for severity %d", severity)
 	}
-
+	player.GachaSlot.Item = nil
 	unlockTime := time.Now().Add(gm.rollDuration)
 	player.NextRollTime = unlockTime
 
@@ -260,12 +260,22 @@ func (gm *GachaMachine) Roll(userID string, severity int) error {
 		return time.Now().After(unlockTime)
 	}
 
+	totalWeight := 0.0
+	for _, item := range table {
+		totalWeight += gm.calculateFinalWeight(item, player)
+	}
+	prizeWeight := gm.calculateFinalWeight(prizeBlueprint, player)
+	prizeChance := 0.0
+	if totalWeight > 0 {
+		prizeChance = prizeWeight / totalWeight
+	}
+
 	visualRoll := gm.createVisualRoll(table, player)
 	winnerIndex := 24 // The "winning" item is the 25th in the list
 	visualRoll[winnerIndex] = *prizeInstance
 	player.DiscoveredItems[visualRoll[winnerIndex].ID]++
 	// Use the communication helper to send the result
-	gm.sendRollResult(userID, visualRoll, winnerIndex, prizeInstance)
+	gm.sendRollResult(userID, visualRoll, winnerIndex, prizeInstance, prizeChance)
 	return nil
 }
 

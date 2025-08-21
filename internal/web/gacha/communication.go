@@ -25,10 +25,11 @@ type PlayerStateUpdatePayload struct {
 
 // RollResultPayload is the payload sent when a roll is initiated.
 type RollResultPayload struct {
-	Reel        []ItemInstance `json:"reel"`
-	WinnerIndex int            `json:"winnerIndex"`
-	Prize       *ItemInstance  `json:"prize"`
-	RollTime    float64        `json:"rollTime"` // Send duration in seconds
+	Reel            []ItemInstance `json:"reel"`
+	WinnerIndex     int            `json:"winnerIndex"`
+	PrizeDropChance float64        `json:"prizeDropChance"`
+	Prize           *ItemInstance  `json:"prize"`
+	RollTime        float64        `json:"rollTime"` // Send duration in seconds
 }
 
 // ErrorPayload is used to send errors back to the client.
@@ -149,12 +150,13 @@ func (gm *GachaMachine) sendPlayerStateUpdate(userID string) {
 }
 
 // sendRollResult sends the outcome of a gacha roll.
-func (gm *GachaMachine) sendRollResult(userID string, reel []ItemInstance, winnerIndex int, prize *ItemInstance) {
+func (gm *GachaMachine) sendRollResult(userID string, reel []ItemInstance, winnerIndex int, prize *ItemInstance, prizeChance float64) {
 	payload := RollResultPayload{
-		Reel:        reel,
-		WinnerIndex: winnerIndex,
-		Prize:       prize,
-		RollTime:    gm.rollDuration.Seconds(),
+		Reel:            reel,
+		WinnerIndex:     winnerIndex,
+		Prize:           prize,
+		PrizeDropChance: prizeChance,
+		RollTime:        gm.rollDuration.Seconds(),
 	}
 	gm.send(userID, "roll_result", payload)
 }

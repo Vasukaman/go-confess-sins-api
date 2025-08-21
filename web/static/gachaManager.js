@@ -94,7 +94,9 @@ export class GachaManager {
         if (this.isRolling) return;
         this.isRolling = true;
         elements.rollButton.disabled = true;
-
+        this.ui.updateSlot(elements.slots['gacha_slot'], null);
+         elements.prizeInfo.classList.remove('visible');
+        elements.prizeInfo.prizeChanceDisplay.classList.remove('visible');
         this.animator.animateRollButtonPress(elements.rollButtonVisual, () => {
             this.animator.animateGachaShake(elements.gachaContainer);
             this.socket.send(JSON.stringify({
@@ -133,6 +135,11 @@ export class GachaManager {
                 // Update state and UI
                 this.playerState.gachaSlot.item = prize;
                 this.ui.updateSlot(elements.slots['gacha_slot'], prize);
+                elements.prizeInfo.prizeInfoprize.NameDisplay.textContent = prize.name;
+                elements.prizeInfoprizeChanceDisplay.textContent = `(${(prizeDropChance * 100).toFixed(2)}%)`;
+                elements.prizeInfoprizeNameDisplay.classList.add('visible');
+                elements.prizeInfoprizeChanceDisplay.classList.add('visible');
+
                 this.requestCollectionData(); 
                 
                 this.animator.animateRollButtonReturn(elements.rollButtonVisual);
