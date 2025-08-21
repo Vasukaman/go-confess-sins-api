@@ -51,7 +51,7 @@ export class GachaAnimator {
     animateDisplayCircle(containerElement, shouldShow) {
         anime({
             targets: containerElement,
-            translateX: shouldShow ? '0%' : '-30%', // Move in from right or out to left
+            translateX: shouldShow ? '30%' : '-45%', // Move in from right or out to left
             duration: 500,
             easing: 'easeOutExpo'
         });

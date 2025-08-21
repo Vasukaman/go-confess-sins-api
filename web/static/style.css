@@ -893,9 +893,10 @@ button {
 }
 
 .prize-info.bottom {
-    top: 105%; /* Position it below the wrapper */
+    top: 90%; /* Position it below the wrapper */
     font-size: 14px;
     color: #aaa;
+    z-index: 10;
 }
 
 .prize-info.top-rarity {

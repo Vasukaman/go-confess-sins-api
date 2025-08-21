@@ -109,7 +109,7 @@ export class GachaManager {
         this.ui.updateSlot(elements.slots['gacha_slot'], null);
          elements.prizeInfo.prizeNameDisplay.classList.remove('visible');
         elements.prizeInfo.prizeChanceDisplay.classList.remove('visible');
-        elements.prizeInfo.prizeChanceDisplay.classList.remove('visible');
+        elements.prizeInfo.prizeRarityDisplay.classList.remove('visible');
         this.animator.animateRollButtonPress(elements.rollButtonVisual, () => {
             this.animator.animateGachaShake(elements.gachaContainer);
             this.socket.send(JSON.stringify({
