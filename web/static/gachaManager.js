@@ -19,7 +19,7 @@ export class GachaManager {
     init() {
         this._setupInputHandlers();
         this.ui.updateSeverityVisuals(elements.severity.handle.offsetTop); // Set initial visuals
-        this.requestCollectionData();
+       
     }
 
     handleServerMessage(data) {
