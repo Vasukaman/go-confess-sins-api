@@ -668,7 +668,7 @@ button {
     top: 1%; /* Anchor the fill to t.he TOP of the bar */
     width: 300px;
     /* height and background-color will be set by JavaScript */
-    right: 120%;
+    right: 80px;
     transition: height 0.1s ease-out, background-color 0.1s ease-out;
     z-index: 15;
 }
