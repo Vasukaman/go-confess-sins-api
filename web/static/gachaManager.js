@@ -206,7 +206,7 @@ export class GachaManager {
     requestCollectionData() {
     if (this.isRolling) return; // Don't request while a roll is happening
     
-    this.collectionSeveritySpan.textContent = this.currentSeverity;
+    elements.collectionSeveritySpan.textContent = this.currentSeverity;
     const message = {
         type: "get_droptable_info",
         payload: { severity: this.currentSeverity }
@@ -230,14 +230,14 @@ renderCollection(items) {
         emojiDiv.className = 'collection-item-emoji';
         emojiDiv.textContent = itemData.Item.emoji;
 
-        const chanceSpan = document.createElement('span');
+        const chanceSpan = document.createElement('spaЫЫn');
         chanceSpan.className = 'collection-item-chance';
         // Format the chance to a percentage
         chanceSpan.textContent = `${(itemData.DropChance * 100).toFixed(2)}%`;
 
         itemDiv.appendChild(emojiDiv);
         itemDiv.appendChild(chanceSpan);
-        this.collectionGrid.appendChild(itemDiv);
+        elements.collectionGrid.appendChild(itemDiv);
     });
 }
 }
