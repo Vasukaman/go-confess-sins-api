@@ -5,6 +5,18 @@ import (
 	"time"
 )
 
+// GetDropTablePayload is the payload for a "get_droptable_info" command.
+type GetDropTablePayload struct {
+	Severity int `json:"severity"`
+}
+
+// DropTableInfoItem represents a single item in the droptable view.
+type DropTableInfoItem struct {
+	Item          Item    `json:"Item"`
+	DropChance    float64 `json:"DropChance"`
+	TimesObtained int     `json:"TimesObtained"`
+}
+
 // Rarity and Item structs remain the same as they define static game data.
 type Rarity struct {
 	ID               string  `json:"id"`
@@ -59,10 +71,11 @@ type PlayerStatus string
 
 // Player represents the complete state of a single user in the game.
 type Player struct {
-	mu             sync.Mutex
-	ID             string    `json:"id"`
-	NextRollTime   time.Time `json:"-"` // Time after which the player can roll again.
-	InventorySlots [3]*Slot  `json:"inventorySlots"`
-	GachaSlot      *Slot     `json:"gachaSlot"`
-	Luck           float64   `json:"luck"`
+	mu              sync.Mutex
+	ID              string         `json:"id"`
+	NextRollTime    time.Time      `json:"-"` // Time after which the player can roll again.
+	InventorySlots  [3]*Slot       `json:"inventorySlots"`
+	GachaSlot       *Slot          `json:"gachaSlot"`
+	Luck            float64        `json:"luck"`
+	DiscoveredItems map[string]int `json:"-"`
 }

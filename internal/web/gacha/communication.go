@@ -87,12 +87,24 @@ func (gm *GachaMachine) HandleMessage(userID string, rawMessage []byte) {
 			gm.sendError(userID, err.Error())
 		}
 
+	case "get_droptable_info":
+		var p GetDropTablePayload
+		if err := json.Unmarshal(cmd.Payload, &p); err != nil {
+			gm.sendError(userID, "Invalid payload for get_droptable_info")
+			return
+		}
+		if err := gm.HandleGetDropTableInfo(userID, p.Severity); err != nil {
+			gm.sendError(userID, err.Error())
+		}
+
 	default:
 		gm.sendError(userID, fmt.Sprintf("Unknown command type: %s", cmd.Type))
 	}
 }
 
-// --- 3. Add Helper Functions for Sending Messages ---
+func (gm *GachaMachine) sendDropTableInfo(userID string, payload []DropTableInfoItem) {
+	gm.send(userID, "droptable_info_update", payload)
+}
 
 // send is a private generic helper to marshal and send any message.
 func (gm *GachaMachine) send(userID, msgType string, payload interface{}) {

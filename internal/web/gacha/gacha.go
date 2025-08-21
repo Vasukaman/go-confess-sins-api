@@ -300,7 +300,7 @@ func (gm *GachaMachine) SwapItems(userID, sourceSlotID, destSlotID string) error
 		destSlot.isUnlockable = nil
 	}
 
-	// Use the communication helper to send the updated state
+	gm.recalculatePlayerLuck(player)
 	gm.sendPlayerStateUpdate(userID)
 	return nil
 }
@@ -315,8 +315,9 @@ func (gm *GachaMachine) AddPlayer(userID string) {
 	}
 
 	player := &Player{
-		ID:   userID,
-		Luck: 0,
+		ID:              userID,
+		Luck:            0,
+		DiscoveredItems: make(map[string]int),
 		InventorySlots: [3]*Slot{
 			{ID: "inventory_slot_0"},
 			{ID: "inventory_slot_1"},
@@ -410,9 +411,6 @@ func (gm *GachaMachine) calculateFinalWeight(item Item, player *Player) float64 
 	// Base calculation: Item's own weight multiplied by the rarity's modifier.
 	finalWeight := item.BaseWeight * rarity.WeightMultiplier
 
-	// --- FUTURE LOGIC GOES HERE ---
-	// This is where you would add logic based on player.Luck.
-	// For example:
 	if player.Luck > 0 {
 		if rarity.ID == "rare" || rarity.ID == "legendary" {
 			finalWeight *= 1 + player.Luck/20
@@ -422,4 +420,56 @@ func (gm *GachaMachine) calculateFinalWeight(item Item, player *Player) float64 
 	}
 
 	return finalWeight
+}
+
+func (gm *GachaMachine) HandleGetDropTableInfo(userID string, severity int) error {
+	player, ok := gm.players[userID]
+	if !ok {
+		return fmt.Errorf("player %s not found", userID)
+	}
+
+	table, ok := gm.dropTables[severity]
+	if !ok {
+		return fmt.Errorf("no drop table for severity %d", severity)
+	}
+
+	// Lock the player while we do calculations to ensure data consistency
+	player.mu.Lock()
+	defer player.mu.Unlock()
+
+	// Step 1: Calculate the total weight for the entire table for this specific player
+	totalWeight := 0.0
+	for _, item := range table {
+		totalWeight += gm.calculateFinalWeight(item, player)
+	}
+
+	if totalWeight == 0 {
+		return fmt.Errorf("drop table for severity %d has no items", severity)
+	}
+
+	// Step 2: Build the payload with individual chances
+	payload := make([]DropTableInfoItem, len(table))
+	for i, item := range table {
+		finalWeight := gm.calculateFinalWeight(item, player)
+		chance := finalWeight / totalWeight
+
+		payload[i] = DropTableInfoItem{
+			Item:          item,
+			DropChance:    chance,
+			TimesObtained: player.DiscoveredItems[item.ID], // Will be 0 if not yet discovered
+		}
+	}
+
+	gm.sendDropTableInfo(userID, payload)
+	return nil
+}
+
+func (gm *GachaMachine) recalculatePlayerLuck(player *Player) {
+	var totalLuck float64 = 0
+	for _, slot := range player.InventorySlots {
+		if slot.Item != nil {
+			totalLuck += float64(slot.Item.LuckValue)
+		}
+	}
+	player.Luck = totalLuck
 }
