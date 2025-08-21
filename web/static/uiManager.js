@@ -13,6 +13,7 @@ export class UIManager {
     // --- Render Methods ---
    renderSins(sins, container) {
             if (!container) return;
+                container.innerHTML = ''; 
         sins.forEach(sin => {
             const sinCard = document.createElement('div');
             sinCard.className = 'sin-card';
