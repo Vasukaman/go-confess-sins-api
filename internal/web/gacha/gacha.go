@@ -3,6 +3,7 @@ package gacha
 import (
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"sync"
 	"time"
@@ -410,13 +411,16 @@ func (gm *GachaMachine) calculateFinalWeight(item Item, player *Player) float64 
 	}
 
 	// Base calculation: Item's own weight multiplied by the rarity's modifier.
-	finalWeight := item.BaseWeight * rarity.WeightMultiplier
+	finalWeight := item.BaseWeight * rarity.WeightMultiplier // 0.5*0.1=0.05
 
 	if player.Luck > 0 {
-		if rarity.ID == "rare" || rarity.ID == "legendary" {
-			finalWeight *= 1 + player.Luck/20
+		if rarity.ID == "rare" || rarity.ID == "legendary" || rarity.ID == "mythical" {
+			// Increase chance for higher tier items
+			finalWeight *= (1 + player.Luck/100.0) // Using 100 for a more balanced percentage
 		} else {
-			finalWeight *= 1 - player.Luck/20
+			// Decrease chance for lower tier items, but never let it go below zero
+			multiplier := math.Max(0, 1-player.Luck/100.0)
+			finalWeight *= multiplier
 		}
 	}
 
