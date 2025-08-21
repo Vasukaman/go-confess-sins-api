@@ -793,3 +793,55 @@ button {
     border: 3px solid var(--rarity-color);
     box-shadow: 0 0 15px var(--rarity-color);
 }
+
+#collection-container {
+    background-color: #1e1e1e;
+    border: 2px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    width: 240px;
+    height: 250px; /* You can adjust this height */
+    overflow-y: auto; /* Adds a scrollbar if items overflow */
+    box-sizing: border-box;
+    color: #ccc;
+}
+
+#collection-container h3 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 16px;
+}
+
+#collection-grid {
+    display: grid;
+    /* Creates a responsive grid with 2 columns */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.collection-item {
+    background-color: #2a2a2a;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+}
+
+.collection-item-emoji {
+    font-size: 40px;
+    /* This CSS filter creates the black silhouette effect */
+    filter: grayscale(100%) brightness(0%);
+    opacity: 0.6;
+    transition: filter 0.3s, opacity 0.3s;
+}
+
+/* This class is added by JS to show the full-color emoji */
+.collection-item.discovered .collection-item-emoji {
+    filter: none; /* Removes the silhouette effect */
+    opacity: 1;
+}
+
+.collection-item-chance {
+    font-size: 12px;
+    color: #aaa;
+    display: block;
+}

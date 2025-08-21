@@ -8,7 +8,7 @@ export class GachaManager {
         this.socket = socket;
         this.animator = new GachaAnimator();
         this.ui = new UIUpdater(elements); // Give the UI updater the elements
-        
+
         // Game State
         this.isRolling = false;
         this.firstSelectedSlotId = null;
@@ -19,6 +19,7 @@ export class GachaManager {
     init() {
         this._setupInputHandlers();
         this.ui.updateSeverityVisuals(elements.severity.handle.offsetTop); // Set initial visuals
+        this.requestCollectionData();
     }
 
     handleServerMessage(data) {
@@ -32,6 +33,10 @@ export class GachaManager {
                 this.ui.updateAllSlots(this.playerState);
                 this._updateDisplayCircle(); // Update display in case selection changed
                 break;
+
+            case "droptable_info_update":
+            this.renderCollection(data.payload);
+            break;
             case "error":
                 this._handleError(data.payload.message);
                 break;
@@ -74,6 +79,7 @@ export class GachaManager {
             elements.severity.handle.style.transition = 'top 0.1s ease-out';
             elements.severity.handle.style.top = `${finalTop}px`;
             this.ui.updateSeverityVisuals(finalTop);
+                this.requestCollectionData(); 
         };
         
         elements.severity.handle.addEventListener('mousedown', handleDragStart);
@@ -196,4 +202,42 @@ export class GachaManager {
         this.isRolling = false;
         elements.rollButton.disabled = false;
     }
+
+    requestCollectionData() {
+    if (this.isRolling) return; // Don't request while a roll is happening
+    
+    this.collectionSeveritySpan.textContent = this.currentSeverity;
+    const message = {
+        type: "get_droptable_info",
+        payload: { severity: this.currentSeverity }
+    };
+    this.socket.send(JSON.stringify(message));
+}
+
+// 2. This method renders the data received from the server
+renderCollection(items) {
+    this.collectionGrid.innerHTML = ''; // Clear out old items
+
+    items.forEach(itemData => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'collection-item';
+        // Add the 'discovered' class if the item has been found
+        if (itemData.TimesObtained > 0) {
+            itemDiv.classList.add('discovered');
+        }
+
+        const emojiDiv = document.createElement('div');
+        emojiDiv.className = 'collection-item-emoji';
+        emojiDiv.textContent = itemData.Item.emoji;
+
+        const chanceSpan = document.createElement('span');
+        chanceSpan.className = 'collection-item-chance';
+        // Format the chance to a percentage
+        chanceSpan.textContent = `${(itemData.DropChance * 100).toFixed(2)}%`;
+
+        itemDiv.appendChild(emojiDiv);
+        itemDiv.appendChild(chanceSpan);
+        this.collectionGrid.appendChild(itemDiv);
+    });
+}
 }

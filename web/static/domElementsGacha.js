@@ -31,5 +31,9 @@ export const elements = {
         grip: document.getElementById('severity-handle-grip'),
         fill: document.getElementById('gacha-bar-fill'),
         sections: document.querySelectorAll('.severity-section'),
-    }
+    },
+
+    codex:{  
+          collectionGrid : document.getElementById('collection-grid'),
+    collectionSeveritySpan: document.getElementById('collection-severity')}
 };
