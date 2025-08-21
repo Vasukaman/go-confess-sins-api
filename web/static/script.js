@@ -94,6 +94,16 @@ class App {
           //  if (this.uiManager.selectedEmoji) payload.emoji = this.uiManager.selectedEmoji;
        
 
+            // 1. Find the display emoji element.
+            const displayEmojiElement = document.getElementById('item-display-emoji');
+            
+            // 2. Check if it has content (and it's not the placeholder).
+            if (displayEmojiElement && displayEmojiElement.textContent && displayEmojiElement.textContent !== '-') {
+                // 3. If it has an emoji, add it and the current severity to the payload.
+                payload.emoji = displayEmojiElement.textContent;
+                payload.severity = this.gachaManager.currentSeverity;
+            }
+
             try {
                 await this.apiClient.confessSin(payload);
                 this.confessForm.reset();
