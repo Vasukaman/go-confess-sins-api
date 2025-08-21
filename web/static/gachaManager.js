@@ -218,7 +218,7 @@ export class GachaManager {
 
 // 2. This method renders the data received from the server
 renderCollection(items) {
-    this.collectionGrid.innerHTML = ''; // Clear out old items
+    elements.codex.collectionGrid.innerHTML = ''; // Clear out old items
 
     items.forEach(itemData => {
         const itemDiv = document.createElement('div');
