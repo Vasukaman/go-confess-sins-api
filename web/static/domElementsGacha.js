@@ -21,6 +21,7 @@ export const elements = {
     prizeInfo:{
         prizeNameDisplay: document.getElementById('gacha-prize-name'),
        prizeChanceDisplay: document.getElementById('gacha-prize-chance'),
+      prizeRarityDisplay: document.getElementById('gacha-prize-rarity'),
     },
     
     // Item Display

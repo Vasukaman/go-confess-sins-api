@@ -55,8 +55,9 @@ export class GachaManager {
         }
         
         // Severity Selector Drag Logic
-        let isDragging = false;
+     let isDragging = false;
         const handleDragStart = (e) => { isDragging = true; e.preventDefault(); };
+        
         const handleDragMove = (e) => {
             if (!isDragging) return;
             const barRect = elements.severity.bar.getBoundingClientRect();
@@ -66,6 +67,15 @@ export class GachaManager {
             elements.severity.handle.style.transition = 'none';
             elements.severity.handle.style.top = `${handleTop}px`;
             this.ui.updateSeverityVisuals(handleTop);
+
+            const sectionHeight = barRect.height / 5;
+            const sectionIndex = Math.max(0, Math.min(4, Math.floor((handleTop + elements.severity.handle.offsetHeight / 2) / sectionHeight)));
+            const hoverSeverity = 5 - sectionIndex;
+            
+            if (hoverSeverity !== this.lastRequestedSeverity) {
+                this.lastRequestedSeverity = hoverSeverity;
+                this.requestCollectionData(); // Request new data as we drag
+            }
         };
         const handleDragEnd = () => {
             if (!isDragging) return;
@@ -94,9 +104,12 @@ export class GachaManager {
         if (this.isRolling) return;
         this.isRolling = true;
         elements.rollButton.disabled = true;
+         this._resetSelection();
+
         this.ui.updateSlot(elements.slots['gacha_slot'], null);
          elements.prizeInfo.prizeNameDisplay.classList.remove('visible');
         elements.prizeInfo.prizeChanceDisplay.classList.remove('visible');
+        elements.prizeChanceDisplay.classList.remove('visible');
         this.animator.animateRollButtonPress(elements.rollButtonVisual, () => {
             this.animator.animateGachaShake(elements.gachaContainer);
             this.socket.send(JSON.stringify({
@@ -137,11 +150,20 @@ export class GachaManager {
                 this.ui.updateSlot(elements.slots['gacha_slot'], prize);
                 elements.prizeInfo.prizeNameDisplay.textContent = prize.name;
                 elements.prizeInfo.prizeChanceDisplay.textContent = `(${(prizeDropChance * 100).toFixed(2)}%)`;
+                
+                elements.prizeInfo.prizeRarityDisplay.textContent = prize.rarity.name;
+                elements.prizeInfo.prizeRarityDisplay.style.color = prize.rarity.color;
+                
+                elements.prizeInfo.prizeRarityDisplay.classList.add('visible');
                 elements.prizeInfo.prizeNameDisplay.classList.add('visible');
                 elements.prizeInfo.prizeChanceDisplay.classList.add('visible');
 
                 this.requestCollectionData(); 
                 
+                //Deselect everything and select new item
+                 this._resetSelection();
+                elements.slots['gacha_slot'].click(); 
+
                 this.animator.animateRollButtonReturn(elements.rollButtonVisual);
                 return;
             }

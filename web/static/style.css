@@ -897,3 +897,15 @@ button {
     font-size: 14px;
     color: #aaa;
 }
+
+.prize-info.top-rarity {
+    bottom: 125%; /* Position it highest */
+    font-size: 14px;
+    font-style: italic;
+    /* The color will be set by JavaScript */
+}
+
+.prize-info.top-name {
+    bottom: 105%; /* Position it just above the slot */
+    font-size: 16px;
+}
